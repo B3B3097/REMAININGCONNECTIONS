@@ -1,0 +1,1292 @@
+name: 03 | Utility Discovery Pipeline
+
+on:
+  schedule:
+    # Каждые 6 часов, в 20 минут
+    - cron: "20 */6 * * *"
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: не коммитить результаты"
+        required: false
+        type: boolean
+        default: false
+
+      max_repos:
+        description: "Сколько репозиториев искать за один запрос"
+        required: false
+        type: string
+        default: "80"
+
+      max_probe:
+        description: "Сколько уникальных утилит детально проверять"
+        required: false
+        type: string
+        default: "300"
+
+      include_readme:
+        description: "Читать README для улучшения определения платформ"
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: utils-discovery
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+
+env:
+  PYTHON_VERSION: "3.11"
+  OUTPUT_DIR: "data"
+  UTILS_OUTPUT: "data/utils_found.json"
+
+  GH_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ github.token }}
+
+  MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
+  MAX_PROBE: ${{ github.event.inputs.max_probe || '300' }}
+  INCLUDE_README: ${{ github.event.inputs.include_readme == true && '1' || '0' }}
+  DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
+
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 NetWatchUtilsBot/1.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # =========================================================
+  # 1. Подготовка
+  # =========================================================
+  prepare:
+    name: Prepare utility discovery
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install base dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Create working directories
+        run: |
+          mkdir -p raw
+          mkdir -p candidates
+          mkdir -p probed
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Write run metadata
+        run: |
+          python - <<'PY'
+          import json
+          import datetime
+          import os
+
+          payload = {
+              "run_id": "${{ github.run_id }}",
+              "run_number": "${{ github.run_number }}",
+              "workflow": "${{ github.workflow }}",
+              "repository": "${{ github.repository }}",
+              "actor": "${{ github.actor }}",
+              "event_name": "${{ github.event_name }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+              "max_repos": os.getenv("MAX_REPOS", "80"),
+              "max_probe": os.getenv("MAX_PROBE", "300"),
+              "include_readme": os.getenv("INCLUDE_README", "1") == "1",
+              "dry_run": os.getenv("DRY_RUN", "0") == "1",
+          }
+
+          os.makedirs("raw", exist_ok=True)
+
+          with open("raw/utils_run_metadata.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=2)
+
+          print("Utility discovery metadata saved")
+          PY
+
+      - name: Upload prepare metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-prepare-metadata
+          path: raw/utils_run_metadata.json
+          if-no-files-found: error
+          retention-days: 7
+
+  # =========================================================
+  # 2. Поиск утилит по ключевым словам
+  # =========================================================
+  search-github-keywords:
+    name: GH utility keyword search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 30
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: throne
+            query: "throne OR throne-proxy OR throne-client"
+
+          - slug: throne-vpn
+            query: "throne vpn OR throne proxy OR throne app"
+
+          - slug: throne-alternative
+            query: "throne alternative OR throne like"
+
+          - slug: v2ray-client
+            query: "v2ray client OR v2ray gui"
+
+          - slug: xray-client
+            query: "xray client OR xray gui"
+
+          - slug: singbox-client
+            query: "sing-box client OR singbox gui"
+
+          - slug: clash-client
+            query: "clash client OR clash gui"
+
+          - slug: mihomo-client
+            query: "mihomo client OR clash meta gui"
+
+          - slug: shadowsocks-client
+            query: "shadowsocks client OR shadowsocks gui"
+
+          - slug: trojan-client
+            query: "trojan client OR trojan gui"
+
+          - slug: hysteria-client
+            query: "hysteria client OR hysteria2 client"
+
+          - slug: tuic-client
+            query: "tuic client OR tuic gui"
+
+          - slug: wireguard-client
+            query: "wireguard client OR wireguard gui"
+
+          - slug: android-proxy
+            query: "android proxy client OR android vpn client"
+
+          - slug: android-v2ray
+            query: "v2ray android OR xray android"
+
+          - slug: android-singbox
+            query: "sing-box android OR singbox android"
+
+          - slug: android-clash
+            query: "clash android OR mihomo android"
+
+          - slug: android-shadowsocks
+            query: "shadowsocks android"
+
+          - slug: android-trojan
+            query: "trojan android"
+
+          - slug: android-hysteria
+            query: "hysteria android OR hysteria2 android"
+
+          - slug: ios-proxy
+            query: "ios proxy client OR ios vpn client"
+
+          - slug: ios-v2ray
+            query: "ios v2ray OR ios xray"
+
+          - slug: ios-singbox
+            query: "ios sing-box OR ios singbox"
+
+          - slug: ios-shadowsocks
+            query: "ios shadowsocks"
+
+          - slug: windows-proxy
+            query: "windows proxy client OR windows vpn gui"
+
+          - slug: windows-clash
+            query: "clash windows OR clash verge"
+
+          - slug: windows-v2ray
+            query: "v2ray windows OR xray windows"
+
+          - slug: windows-singbox
+            query: "sing-box windows OR singbox windows"
+
+          - slug: linux-proxy
+            query: "linux proxy client OR linux vpn gui"
+
+          - slug: linux-clash
+            query: "clash linux OR mihomo linux"
+
+          - slug: linux-singbox
+            query: "sing-box linux"
+
+          - slug: linux-v2ray
+            query: "v2ray linux OR xray linux"
+
+          - slug: cross-platform-proxy
+            query: "cross platform proxy client OR universal proxy client"
+
+          - slug: proxy-manager
+            query: "proxy manager OR subscription manager"
+
+          - slug: subscription-client
+            query: "subscription client OR subscription converter gui"
+
+          - slug: anti-censorship
+            query: "anti censorship client OR censorship circumvention gui"
+
+          - slug: open-source-vpn
+            query: "open source vpn client OR open source proxy client"
+
+          - slug: proxy-gui
+            query: "proxy gui OR vpn gui"
+
+          - slug: v2ray-ui
+            query: "v2ray ui OR xray ui"
+
+          - slug: singbox-ui
+            query: "sing-box ui OR singbox ui"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Search GitHub repositories for ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/utils_github_keyword_${SLUG}.jsonl"
+          API_OUT="raw/utils_github_keyword_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching GitHub repositories"
+          echo "[*] Query: ${QUERY}"
+
+          FULL_QUERY="${QUERY} fork:true archived:false"
+
+          if ! gh api -X GET search/repositories \
+            -f q="${FULL_QUERY}" \
+            -f per_page="${MAX_REPOS}" \
+            -f sort=stars \
+            -f order=desc > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c --arg slug "$SLUG" '.items[]? | {
+            source: "github",
+            kind: "keyword",
+            query_slug: $slug,
+            repo: .full_name,
+            name: .name,
+            url: .html_url,
+            stars: .stargazers_count,
+            forks: .forks_count,
+            description: .description,
+            language: .language,
+            topics: .topics,
+            updated_at: .updated_at,
+            pushed_at: .pushed_at,
+            archived: .archived,
+            fork: .fork
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Candidates found: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 6 + 3))
+
+      - name: Upload keyword artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-search-keyword-${{ matrix.slug }}
+          path: raw/utils_github_keyword_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 3. Поиск утилит по темам
+  # =========================================================
+  search-github-topics:
+    name: GH utility topic search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 30
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: topic-throne
+            query: "topic:throne"
+
+          - slug: topic-v2ray
+            query: "topic:v2ray"
+
+          - slug: topic-xray
+            query: "topic:xray"
+
+          - slug: topic-singbox
+            query: "topic:sing-box"
+
+          - slug: topic-clash
+            query: "topic:clash"
+
+          - slug: topic-mihomo
+            query: "topic:mihomo"
+
+          - slug: topic-shadowsocks
+            query: "topic:shadowsocks"
+
+          - slug: topic-trojan
+            query: "topic:trojan"
+
+          - slug: topic-hysteria
+            query: "topic:hysteria"
+
+          - slug: topic-hysteria2
+            query: "topic:hysteria2"
+
+          - slug: topic-tuic
+            query: "topic:tuic"
+
+          - slug: topic-wireguard
+            query: "topic:wireguard"
+
+          - slug: topic-proxy
+            query: "topic:proxy"
+
+          - slug: topic-vpn
+            query: "topic:vpn"
+
+          - slug: topic-android
+            query: "topic:android"
+
+          - slug: topic-ios
+            query: "topic:ios"
+
+          - slug: topic-windows
+            query: "topic:windows"
+
+          - slug: topic-linux
+            query: "topic:linux"
+
+          - slug: topic-gui
+            query: "topic:gui"
+
+          - slug: topic-client
+            query: "topic:client"
+
+          - slug: topic-subscription
+            query: "topic:subscription"
+
+          - slug: topic-censorship
+            query: "topic:censorship-circumvention"
+
+          - slug: topic-v2ray-ng
+            query: "topic:v2ray-ng"
+
+          - slug: topic-clash-verge
+            query: "topic:clash-verge"
+
+          - slug: topic-mihomo-party
+            query: "topic:mihomo-party"
+
+          - slug: topic-hiddify
+            query: "topic:hiddify"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Search GitHub repositories by topic ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/utils_github_${SLUG}.jsonl"
+          API_OUT="raw/utils_github_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching topic: ${QUERY}"
+
+          FULL_QUERY="${QUERY} fork:true archived:false"
+
+          if ! gh api -X GET search/repositories \
+            -f q="${FULL_QUERY}" \
+            -f per_page="${MAX_REPOS}" \
+            -f sort=stars \
+            -f order=desc > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c --arg slug "$SLUG" '.items[]? | {
+            source: "github",
+            kind: "topic",
+            query_slug: $slug,
+            repo: .full_name,
+            name: .name,
+            url: .html_url,
+            stars: .stargazers_count,
+            forks: .forks_count,
+            description: .description,
+            language: .language,
+            topics: .topics,
+            updated_at: .updated_at,
+            pushed_at: .pushed_at,
+            archived: .archived,
+            fork: .fork
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Topic candidates found: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 6 + 3))
+
+      - name: Upload topic artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-search-${{ matrix.slug }}
+          path: raw/utils_github_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 4. Сбор всех кандидатов
+  # =========================================================
+  collect-candidates:
+    name: Collect utility candidates
+    runs-on: ubuntu-latest
+    needs:
+      - search-github-keywords
+      - search-github-topics
+    if: always()
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create directories
+        run: |
+          mkdir -p raw
+          mkdir -p candidates
+
+      - name: Download search artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: utils-search-*
+          path: candidates
+          merge-multiple: true
+
+      - name: Normalize utility candidates
+        run: |
+          python - <<'PY'
+          import os
+          import json
+          import glob
+
+          files = glob.glob("candidates/**/*.jsonl", recursive=True)
+          files += glob.glob("raw/**/*.jsonl", recursive=True)
+
+          out_path = "raw/utils_candidates.jsonl"
+
+          seen = {}
+          total = 0
+
+          for file_path in sorted(files):
+              try:
+                  with open(file_path, "r", encoding="utf-8") as f:
+                      for line in f:
+                          line = line.strip()
+                          if not line:
+                              continue
+
+                          total += 1
+
+                          try:
+                              obj = json.loads(line)
+                          except Exception:
+                              continue
+
+                          repo = obj.get("repo")
+                          if not repo:
+                              continue
+
+                          if repo not in seen:
+                              seen[repo] = obj
+                          else:
+                              # Объединяем информацию об источниках поиска
+                              old = seen[repo]
+
+                              old_slugs = old.get("query_slugs", [])
+                              if old.get("query_slug") and old["query_slug"] not in old_slugs:
+                                  old_slugs.append(old["query_slug"])
+
+                              new_slug = obj.get("query_slug")
+                              if new_slug and new_slug not in old_slugs:
+                                  old_slugs.append(new_slug)
+
+                              old["query_slugs"] = old_slugs
+
+                              # Обновляем звезды, если вдруг нашлись больше
+                              if obj.get("stars", 0) > old.get("stars", 0):
+                                  old["stars"] = obj.get("stars", 0)
+
+                              # Обновляем описание, если оно длиннее
+                              if len(obj.get("description") or "") > len(old.get("description") or ""):
+                                  old["description"] = obj.get("description")
+
+                              # Обновляем topics
+                              old_topics = set(old.get("topics") or [])
+                              new_topics = set(obj.get("topics") or [])
+                              old["topics"] = list(old_topics | new_topics)
+
+              except Exception as e:
+                  print(f"[!] Failed to read {file_path}: {e}")
+
+          # Сортируем по звездам
+          candidates = list(seen.values())
+          candidates.sort(key=lambda x: x.get("stars", 0), reverse=True)
+
+          os.makedirs("raw", exist_ok=True)
+
+          with open(out_path, "w", encoding="utf-8") as out:
+              for item in candidates:
+                  out.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+          print(f"[*] Total raw utility candidates: {total}")
+          print(f"[*] Unique utility candidates: {len(candidates)}")
+          print(f"[*] Saved to {out_path}")
+          PY
+
+      - name: Upload normalized candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-candidates
+          path: raw/utils_candidates.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  # =========================================================
+  # 5. Проверка репозиториев, релизов и платформ
+  # =========================================================
+  probe-utilities:
+    name: Probe utility repos and releases
+    runs-on: ubuntu-latest
+    needs: collect-candidates
+    if: always()
+    timeout-minutes: 70
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Create directories
+        run: |
+          mkdir -p raw
+          mkdir -p probed
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Download candidates
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: utils-candidates
+          path: raw
+
+      - name: Probe utilities
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MAX_PROBE: ${{ env.MAX_PROBE }}
+          INCLUDE_README: ${{ env.INCLUDE_README }}
+          USER_AGENT: ${{ env.USER_AGENT }}
+          UTILS_OUTPUT: ${{ env.UTILS_OUTPUT }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import json
+          import time
+          import random
+          import datetime
+          import requests
+
+          GITHUB_API = "https://api.github.com"
+          TOKEN = os.getenv("GITHUB_TOKEN", "")
+          USER_AGENT = os.getenv("USER_AGENT", "NetWatchUtilsBot/1.0")
+          MAX_PROBE = int(os.getenv("MAX_PROBE", "300"))
+          INCLUDE_README = os.getenv("INCLUDE_README", "1") == "1"
+          UTILS_OUTPUT = os.getenv("UTILS_OUTPUT", "data/utils_found.json")
+
+          HEADERS = {
+              "Accept": "application/vnd.github+json",
+              "User-Agent": USER_AGENT,
+          }
+
+          if TOKEN:
+              HEADERS["Authorization"] = f"Bearer {TOKEN}"
+
+          session = requests.Session()
+          session.headers.update(HEADERS)
+
+          ANDROID_KEYS = [
+              "android",
+              ".apk",
+              ".aab",
+              "apk",
+              "play google",
+              "f-droid",
+              "fdroid",
+          ]
+
+          IOS_KEYS = [
+              "ios",
+              "iphone",
+              "ipad",
+              ".ipa",
+              "ipa",
+              "testflight",
+              "app store",
+          ]
+
+          WINDOWS_KEYS = [
+              "windows",
+              "win64",
+              "win32",
+              "win-arm",
+              ".exe",
+              ".msi",
+              ".msix",
+              ".appx",
+              "portable.exe",
+          ]
+
+          LINUX_KEYS = [
+              "linux",
+              "ubuntu",
+              "debian",
+              "fedora",
+              "archlinux",
+              "arch linux",
+              "appimage",
+              ".deb",
+              ".rpm",
+              ".snap",
+              ".flatpak",
+              ".pkg.tar.zst",
+              ".tar.gz",
+              ".tar.xz",
+              ".tar.zst",
+              ".tar.bz2",
+          ]
+
+          def now_iso():
+              return (
+                  datetime.datetime.now(datetime.timezone.utc)
+                  .isoformat()
+                  .replace("+00:00", "Z")
+              )
+
+          def parse_date(value):
+              if not value:
+                  return None
+
+              try:
+                  value = value.replace("Z", "+00:00")
+                  dt = datetime.datetime.fromisoformat(value)
+
+                  if dt.tzinfo is None:
+                      dt = dt.replace(tzinfo=datetime.timezone.utc)
+
+                  return dt
+              except Exception:
+                  return None
+
+          def days_since(dt):
+              if not dt:
+                  return None
+
+              return int((datetime.datetime.now(datetime.timezone.utc) - dt).total_seconds() / 86400)
+
+          def fetch_json(url, params=None):
+              for attempt in range(3):
+                  try:
+                      r = session.get(url, params=params, timeout=25)
+
+                      if r.status_code == 200:
+                          return r.json()
+
+                      if r.status_code == 404:
+                          return None
+
+                      if r.status_code in (403, 429):
+                          retry_after = r.headers.get("Retry-After")
+                          wait = int(retry_after) if retry_after and retry_after.isdigit() else 6
+                          print(f"[!] Rate limit? {r.status_code} for {url}, waiting {wait}s")
+                          time.sleep(wait)
+                          continue
+
+                      if 500 <= r.status_code < 600:
+                          time.sleep(2 + attempt)
+                          continue
+
+                      return None
+                  except Exception as e:
+                      print(f"[!] fetch_json error {url}: {e}")
+                      time.sleep(2 + attempt)
+
+              return None
+
+          def fetch_text(url, accept=None):
+              try:
+                  headers = {}
+                  if accept:
+                      headers["Accept"] = accept
+
+                  r = session.get(url, headers=headers, timeout=25)
+
+                  if r.status_code == 200 and r.text:
+                      return r.text
+
+                  return None
+              except Exception as e:
+                  print(f"[!] fetch_text error {url}: {e}")
+                  return None
+
+          def detect_from_text(text, flags):
+              if not text:
+                  return flags
+
+              low = text.lower()
+
+              if any(x in low for x in ANDROID_KEYS):
+                  flags["android"] = True
+
+              if any(x in low for x in IOS_KEYS):
+                  flags["ios"] = True
+
+              if any(x in low for x in WINDOWS_KEYS):
+                  flags["windows"] = True
+
+              if any(x in low for x in LINUX_KEYS):
+                  flags["linux"] = True
+
+              return flags
+
+          def detect_from_asset_name(name):
+              flags = {
+                  "android": False,
+                  "ios": False,
+                  "windows": False,
+                  "linux": False,
+              }
+
+              if not name:
+                  return flags
+
+              n = name.lower()
+
+              if n.endswith((".apk", ".aab")) or "android" in n:
+                  flags["android"] = True
+
+              if n.endswith(".ipa") or "ios" in n or "iphone" in n or "ipad" in n:
+                  flags["ios"] = True
+
+              if (
+                  n.endswith((".exe", ".msi", ".msix", ".appx"))
+                  or "windows" in n
+                  or ("win" in n and ("64" in n or "32" in n or "arm" in n))
+              ):
+                  flags["windows"] = True
+
+              if (
+                  n.endswith((".appimage", ".deb", ".rpm", ".snap", ".flatpak", ".pkg.tar.zst"))
+                  or "linux" in n
+                  or ("linux" in n and ".tar" in n)
+              ):
+                  flags["linux"] = True
+
+              return flags
+
+          def merge_flags(target, source):
+              for key in target:
+                  if source.get(key):
+                      target[key] = True
+
+              return target
+
+          def platform_labels(flags):
+              labels = []
+
+              if flags.get("android"):
+                  labels.append("Android")
+
+              if flags.get("ios"):
+                  labels.append("iOS")
+
+              if flags.get("windows"):
+                  labels.append("Windows")
+
+              if flags.get("linux"):
+                  labels.append("Linux")
+
+              return labels
+
+          def make_status(release_age_days, pushed_at):
+              if release_age_days is None:
+                  pushed_days = days_since(parse_date(pushed_at))
+
+                  if pushed_days is not None and pushed_days <= 90:
+                      return "no_release_recent_repo"
+
+                  return "no_release"
+
+              if release_age_days <= 365:
+                  return "active"
+
+              if release_age_days <= 730:
+                  return "stale"
+
+              return "outdated"
+
+          def calculate_score(stars, flags, release_age_days, has_release):
+              platforms_count = sum(1 for x in flags.values() if x)
+
+              score = stars
+              score += platforms_count * 2500
+
+              if has_release:
+                  if release_age_days is not None:
+                      score += max(0, 6000 - release_age_days * 8)
+
+              return int(score)
+
+          def load_candidates():
+              path = "raw/utils_candidates.jsonl"
+              candidates = []
+
+              if not os.path.exists(path):
+                  print(f"[!] Candidate file not found: {path}")
+                  return candidates
+
+              with open(path, "r", encoding="utf-8") as f:
+                  for line in f:
+                      line = line.strip()
+                      if not line:
+                          continue
+
+                      try:
+                          candidates.append(json.loads(line))
+                      except Exception:
+                          continue
+
+              return candidates
+
+          candidates = load_candidates()
+          print(f"[*] Loaded utility candidates: {len(candidates)}")
+
+          # Уже отсортированы по звездам, но на всякий случай повторим
+          candidates.sort(key=lambda x: x.get("stars", 0), reverse=True)
+
+          utilities = []
+
+          for idx, candidate in enumerate(candidates[:MAX_PROBE], start=1):
+              repo = candidate.get("repo")
+
+              if not repo:
+                  continue
+
+              print(f"[*] Probing {idx}/{min(len(candidates), MAX_PROBE)}: {repo}")
+
+              repo_api = f"{GITHUB_API}/repos/{repo}"
+              repo_data = fetch_json(repo_api)
+
+              if not repo_data:
+                  print(f"[!] Cannot fetch repo {repo}")
+                  time.sleep(1)
+                  continue
+
+              full_name = repo_data.get("full_name", repo)
+              html_url = repo_data.get("html_url", candidate.get("url"))
+              name = repo_data.get("name", candidate.get("name", full_name.split("/")[-1]))
+              description = repo_data.get("description") or candidate.get("description")
+              language = repo_data.get("language")
+              topics = repo_data.get("topics") or candidate.get("topics") or []
+              stars = repo_data.get("stargazers_count", candidate.get("stars", 0))
+              forks = repo_data.get("forks_count", candidate.get("forks", 0))
+              pushed_at = repo_data.get("pushed_at")
+              archived = repo_data.get("archived", False)
+
+              flags = {
+                  "android": False,
+                  "ios": False,
+                  "windows": False,
+                  "linux": False,
+              }
+
+              # 1. Topics
+              detect_from_text(" ".join(topics), flags)
+
+              # 2. Name/description
+              detect_from_text(name, flags)
+              detect_from_text(description, flags)
+
+              # 3. Releases
+              release = fetch_json(f"{repo_api}/releases/latest")
+
+              if not release:
+                  releases = fetch_json(f"{repo_api}/releases", params={"per_page": 1})
+
+                  if isinstance(releases, list) and releases:
+                      release = releases[0]
+
+              has_release = False
+              latest_release_tag = None
+              latest_release_name = None
+              latest_release_url = None
+              latest_release_published_at = None
+              release_age_days = None
+              release_assets = []
+
+              if release:
+                  has_release = True
+                  latest_release_tag = release.get("tag_name")
+                  latest_release_name = release.get("name") or release.get("tag_name")
+                  latest_release_url = release.get("html_url")
+                  latest_release_published_at = release.get("published_at") or release.get("created_at")
+                  release_age_days = days_since(parse_date(latest_release_published_at))
+
+                  assets = release.get("assets", []) or []
+
+                  for asset in assets[:20]:
+                      asset_name = asset.get("name")
+                      asset_url = asset.get("browser_download_url")
+
+                      if not asset_name or not asset_url:
+                          continue
+
+                      asset_flags = detect_from_asset_name(asset_name)
+                      merge_flags(flags, asset_flags)
+
+                      release_assets.append({
+                          "name": asset_name,
+                          "url": asset_url,
+                          "size_mb": round((asset.get("size") or 0) / (1024 * 1024), 2),
+                          "content_type": asset.get("content_type"),
+                          "platform_hint": platform_labels(asset_flags),
+                      })
+
+              # 4. README, если платформ пока нет или включено принудительное чтение
+              if INCLUDE_README and (not any(flags.values()) or not has_release):
+                  readme_text = fetch_text(f"{repo_api}/readme", accept="application/vnd.github.raw")
+
+                  if readme_text:
+                      detect_from_text(readme_text[:80000], flags)
+
+              labels = platform_labels(flags)
+
+              status = make_status(release_age_days, pushed_at)
+
+              score = calculate_score(
+                  stars=stars,
+                  flags=flags,
+                  release_age_days=release_age_days,
+                  has_release=has_release,
+              )
+
+              utilities.append({
+                  "id": idx,
+                  "name": name,
+                  "full_name": full_name,
+                  "url": html_url,
+                  "description": description,
+                  "language": language,
+                  "topics": topics,
+                  "stars": stars,
+                  "forks": forks,
+                  "archived": archived,
+                  "pushed_at": pushed_at,
+                  "query_slugs": candidate.get("query_slugs", []),
+                  "has_release": has_release,
+                  "latest_release_tag": latest_release_tag,
+                  "latest_release_name": latest_release_name,
+                  "latest_release_url": latest_release_url,
+                  "latest_release_published_at": latest_release_published_at,
+                  "release_age_days": release_age_days,
+                  "platforms": flags,
+                  "platform_labels": labels,
+                  "platforms_text": ", ".join(labels) if labels else "Unknown",
+                  "release_assets_count": len(release_assets),
+                  "release_assets": release_assets[:12],
+                  "status": status,
+                  "score": score,
+              })
+
+              time.sleep(random.uniform(0.35, 1.1))
+
+          # Финальная сортировка: сначала самые ценные
+          utilities.sort(key=lambda x: x["score"], reverse=True)
+
+          # Пересчитываем ID после сортировки
+          for idx, item in enumerate(utilities, start=1):
+              item["id"] = idx
+
+          summary = {
+              "total_utilities": len(utilities),
+              "with_release": sum(1 for x in utilities if x["has_release"]),
+              "without_release": sum(1 for x in utilities if not x["has_release"]),
+              "android": sum(1 for x in utilities if x["platforms"]["android"]),
+              "ios": sum(1 for x in utilities if x["platforms"]["ios"]),
+              "windows": sum(1 for x in utilities if x["platforms"]["windows"]),
+              "linux": sum(1 for x in utilities if x["platforms"]["linux"]),
+              "active": sum(1 for x in utilities if x["status"] == "active"),
+              "stale": sum(1 for x in utilities if x["status"] == "stale"),
+              "outdated": sum(1 for x in utilities if x["status"] == "outdated"),
+              "no_release": sum(1 for x in utilities if x["status"] == "no_release"),
+              "no_release_recent_repo": sum(1 for x in utilities if x["status"] == "no_release_recent_repo"),
+          }
+
+          payload = {
+              "generated_at": now_iso(),
+              "generator": "utils-discovery.yml",
+              "project": "REMAININGCONNECTIONS dashboard",
+              "telegram_channel": "https://t.me/REMAININGCONNECTIONS",
+              "candidates_checked": len(utilities),
+              "summary": summary,
+              "utilities": utilities,
+          }
+
+          os.makedirs(os.path.dirname(UTILS_OUTPUT), exist_ok=True)
+
+          with open("probed/utils_probed.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=2)
+
+          with open(UTILS_OUTPUT, "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=2)
+
+          print("==================================================")
+          print(" Utility discovery finished")
+          print("==================================================")
+          print(f"Utilities: {summary['total_utilities']}")
+          print(f"With release: {summary['with_release']}")
+          print(f"Android: {summary['android']}")
+          print(f"iOS: {summary['ios']}")
+          print(f"Windows: {summary['windows']}")
+          print(f"Linux: {summary['linux']}")
+          print(f"Saved to {UTILS_OUTPUT}")
+          print("==================================================")
+          PY
+
+      - name: Upload utility results
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-results
+          path: |
+            probed/utils_probed.json
+            data/utils_found.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  # =========================================================
+  # 6. Публикация результата
+  # =========================================================
+  publish-results:
+    name: Publish utility results
+    runs-on: ubuntu-latest
+    needs: probe-utilities
+    if: always() && needs.probe-utilities.result == 'success' && env.DRY_RUN != '1'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create directories
+        run: |
+          mkdir -p data
+          mkdir -p downloaded
+
+      - name: Download utility results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: utils-results
+          path: downloaded
+
+      - name: Move result into data directory
+        run: |
+          set -euo pipefail
+
+          FOUND_FILE="$(find downloaded -type f -name 'utils_found.json' | head -n 1 || true)"
+
+          if [[ -z "${FOUND_FILE}" ]]; then
+            echo "[!] utils_found.json not found in artifact"
+            echo "[!] Creating empty placeholder"
+
+            cat > data/utils_found.json <<'JSON'
+          {
+            "generated_at": "",
+            "generator": "utils-discovery.yml",
+            "candidates_checked": 0,
+            "summary": {
+              "total_utilities": 0,
+              "with_release": 0,
+              "without_release": 0,
+              "android": 0,
+              "ios": 0,
+              "windows": 0,
+              "linux": 0,
+              "active": 0,
+              "stale": 0,
+              "outdated": 0,
+              "no_release": 0,
+              "no_release_recent_repo": 0
+            },
+            "utilities": []
+          }
+          JSON
+          else
+            cp "${FOUND_FILE}" data/utils_found.json
+          fi
+
+          echo "[*] Result file:"
+          ls -lah data || true
+
+      - name: Commit and push utility data
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+
+          git add data/utils_found.json || true
+
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore(data): update utils_found.json [skip ci]"
+            git push origin "${GITHUB_REF_NAME}"
+            echo "[*] Pushed updated utility data"
+          fi
+
+  # =========================================================
+  # 7. Финальный отчет
+  # =========================================================
+  report:
+    name: Utility discovery report
+    runs-on: ubuntu-latest
+    needs:
+      - collect-candidates
+      - probe-utilities
+      - publish-results
+    if: always()
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download utility results for report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: utils-results
+          path: utils-report-artifacts
+
+      - name: Print short report
+        run: |
+          echo "=================================================="
+          echo " Utility Discovery Pipeline finished"
+          echo "=================================================="
+
+          FILE="$(find utils-report-artifacts -type f -name 'utils_found.json' | head -n 1 || true)"
+
+          if [[ -z "${FILE}" ]]; then
+            echo "[!] No utility result file found."
+            exit 0
+          fi
+
+          python - "$FILE" <<'PY'
+          import json
+          import sys
+
+          path = sys.argv[1]
+
+          try:
+              with open(path, "r", encoding="utf-8") as f:
+                  data = json.load(f)
+
+              summary = data.get("summary", {})
+              utilities = data.get("utilities", [])
+
+              print(f"Generated at: {data.get('generated_at')}")
+              print(f"Utilities: {summary.get('total_utilities')}")
+              print(f"With release: {summary.get('with_release')}")
+              print(f"Without release: {summary.get('without_release')}")
+              print(f"Android: {summary.get('android')}")
+              print(f"iOS: {summary.get('ios')}")
+              print(f"Windows: {summary.get('windows')}")
+              print(f"Linux: {summary.get('linux')}")
+              print(f"Active: {summary.get('active')}")
+              print(f"Stale: {summary.get('stale')}")
+              print(f"Outdated: {summary.get('outdated')}")
+
+              print("\nTop 10 utilities by score:")
+              for item in utilities[:10]:
+                  name = item.get("name")
+                  stars = item.get("stars")
+                  platforms = item.get("platforms_text")
+                  release = item.get("latest_release_tag") or "no release"
+                  print(f"- {name} | stars: {stars} | platforms: {platforms} | release: {release}")
+
+          except Exception as e:
+              print(f"[!] Failed to print report: {e}")
+          PY
+
+          echo "=================================================="
