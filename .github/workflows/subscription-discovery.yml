@@ -1,0 +1,1578 @@
+name: 01 | Subscription Discovery Pipeline
+
+on:
+  schedule:
+    # Каждый 2 часа, в 15 минут
+    - cron: "15 */2 * * *"
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: не коммитить результаты в репозиторий"
+        required: false
+        type: boolean
+        default: false
+
+      max_repos:
+        description: "Сколько репозиториев искать за один запрос"
+        required: false
+        type: string
+        default: "80"
+
+      max_probe:
+        description: "Сколько уникальных репозиториев проверять после поиска"
+        required: false
+        type: string
+        default: "220"
+
+      include_gitverse:
+        description: "Искать также в Gitverse"
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: subscription-discovery
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+
+env:
+  PYTHON_VERSION: "3.11"
+  OUTPUT_DIR: "data"
+  GITVERSE_BASE: "https://gitverse.ru"
+  GH_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ github.token }}
+
+  # Значения для ручного запуска.
+  # При schedule значения будут дефолтными.
+  MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
+  MAX_PROBE: ${{ github.event.inputs.max_probe || '220' }}
+
+  # Если include_gitverse == false, тогда '0', иначе '1'
+  INCLUDE_GITVERSE: ${{ github.event.inputs.include_gitverse == false && '0' || '1' }}
+
+  # Если dry_run == true, тогда '1', иначе '0'
+  DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
+
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 NetWatchBot/1.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # =========================================================
+  # 1. Подготовка рабочего окружения и метаданных запуска
+  # =========================================================
+  prepare:
+    name: Prepare workspace
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install base dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pyyaml
+
+      - name: Create working directories
+        run: |
+          mkdir -p raw
+          mkdir -p candidates
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Write run metadata
+        run: |
+          python - <<'PY'
+          import json
+          import datetime
+          import os
+
+          payload = {
+              "run_id": "${{ github.run_id }}",
+              "run_number": "${{ github.run_number }}",
+              "workflow": "${{ github.workflow }}",
+              "repository": "${{ github.repository }}",
+              "actor": "${{ github.actor }}",
+              "event_name": "${{ github.event_name }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+              "max_repos": os.getenv("MAX_REPOS", "80"),
+              "max_probe": os.getenv("MAX_PROBE", "220"),
+              "include_gitverse": os.getenv("INCLUDE_GITVERSE", "1") == "1",
+              "dry_run": os.getenv("DRY_RUN", "0") == "1",
+          }
+
+          os.makedirs("raw", exist_ok=True)
+          with open("raw/run_metadata.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=2)
+
+          print("Run metadata saved to raw/run_metadata.json")
+          PY
+
+      - name: Upload prepare metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: prepare-metadata
+          path: raw/run_metadata.json
+          if-no-files-found: error
+          retention-days: 7
+
+  # =========================================================
+  # 2. Поиск GitHub репозиториев по ключевым словам
+  # =========================================================
+  search-github-keywords:
+    name: GH keyword search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 25
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: v2ray
+            query: "v2ray OR xray OR vless OR vmess"
+            code_query: "vless OR vmess OR v2ray in:file"
+
+          - slug: xray
+            query: "xray OR xray-core OR reality"
+            code_query: "xray OR reality OR vless in:file"
+
+          - slug: singbox
+            query: "sing-box OR singbox"
+            code_query: "sing-box OR singbox in:file"
+
+          - slug: clash
+            query: "clash OR clash-sub OR clash subscription"
+            code_query: "clash OR proxy-groups OR proxies filename:.yaml"
+
+          - slug: clash-meta
+            query: "clash-meta OR mihomo OR clash meta"
+            code_query: "mihomo OR clash-meta OR proxy-providers in:file"
+
+          - slug: shadowsocks
+            query: "shadowsocks OR ss OR shadowsocks-rust"
+            code_query: "ss:// OR shadowsocks in:file"
+
+          - slug: trojan
+            query: "trojan OR trojan-go OR trojan proxy"
+            code_query: "trojan:// OR trojan-go in:file"
+
+          - slug: hysteria
+            query: "hysteria OR hysteria2 OR hy2"
+            code_query: "hysteria2:// OR hy2:// OR hysteria in:file"
+
+          - slug: reality
+            query: "reality OR vless-reality OR xray-reality"
+            code_query: "reality OR vless:// in:file"
+
+          - slug: vless
+            query: "vless OR vless-sub OR vless subscription"
+            code_query: "vless:// in:file"
+
+          - slug: vmess
+            query: "vmess OR vmess-sub OR vmess subscription"
+            code_query: "vmess:// in:file"
+
+          - slug: tuic
+            query: "tuic OR tuic-v5 OR tuic proxy"
+            code_query: "tuic:// OR tuic in:file"
+
+          - slug: wireguard
+            query: "wireguard OR wg OR wireguard subscription"
+            code_query: "wireguard:// OR Interface OR PrivateKey filename:.conf"
+
+          - slug: proxy-list
+            query: "proxy-list OR proxies OR free proxies"
+            code_query: "proxies OR proxy-list in:file"
+
+          - slug: free-nodes
+            query: "free-nodes OR free nodes OR free subscription"
+            code_query: "free nodes OR subscription in:file"
+
+          - slug: subconverter
+            query: "subconverter OR subscription converter"
+            code_query: "subconverter OR acl OR rules in:file"
+
+          - slug: aggregation
+            query: "subscription aggregation OR sub aggregation OR proxy aggregation"
+            code_query: "subscribe OR subscription OR aggregate in:file"
+
+          - slug: telegram-proxy
+            query: "telegram proxy OR tg proxy OR mtproto proxy"
+            code_query: "tg://proxy OR mtproxy OR mtproto in:file"
+
+          - slug: ru-net
+            query: "обход блокировок OR подписка прокси OR vpn подписка"
+            code_query: "обход OR подписка OR vpn in:file"
+
+          - slug: remain-connection
+            query: "remainingconnections OR remain connection OR stay connected"
+            code_query: "remainingconnections OR stay connected in:file"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Search GitHub repositories for ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/github_repos_${SLUG}.jsonl"
+          API_OUT="raw/github_repos_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching GitHub repositories"
+          echo "[*] Query: ${QUERY}"
+          echo "[*] Max repos per query: ${MAX_REPOS}"
+
+          FULL_QUERY="${QUERY} in:name,description,readme fork:true archived:false"
+
+          if ! gh api -X GET search/repositories \
+            -f q="${FULL_QUERY}" \
+            -f per_page="${MAX_REPOS}" \
+            -f sort=updated \
+            -f order=desc > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c '.items[]? | {
+            source: "github",
+            kind: "repo",
+            repo: .full_name,
+            url: .html_url,
+            path: null,
+            score: .score,
+            stars: .stargazers_count,
+            updated_at: .updated_at,
+            pushed_at: .pushed_at,
+            description: .description
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Found repository candidates: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 7 + 3))
+
+      - name: Search GitHub code for ${{ matrix.slug }}
+        env:
+          CODE_QUERY: ${{ matrix.code_query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/github_code_${SLUG}.jsonl"
+          API_OUT="raw/github_code_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching GitHub code"
+          echo "[*] Code query: ${CODE_QUERY}"
+
+          if ! gh api -X GET search/code \
+            -f q="${CODE_QUERY}" \
+            -f per_page=50 > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c '.items[]? | {
+            source: "github",
+            kind: "code",
+            repo: .repository.full_name,
+            url: .repository.html_url,
+            path: .path,
+            score: .score
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Found code candidates: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 8 + 4))
+
+      - name: Upload search artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-github-keyword-${{ matrix.slug }}
+          path: raw/github_*_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 3. Поиск GitHub по темам
+  # =========================================================
+  search-github-topics:
+    name: GH topic search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 20
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: topic-v2ray
+            query: "topic:v2ray"
+
+          - slug: topic-xray
+            query: "topic:xray"
+
+          - slug: topic-singbox
+            query: "topic:sing-box"
+
+          - slug: topic-clash
+            query: "topic:clash"
+
+          - slug: topic-mihomo
+            query: "topic:mihomo"
+
+          - slug: topic-shadowsocks
+            query: "topic:shadowsocks"
+
+          - slug: topic-trojan
+            query: "topic:trojan"
+
+          - slug: topic-hysteria
+            query: "topic:hysteria"
+
+          - slug: topic-hysteria2
+            query: "topic:hysteria2"
+
+          - slug: topic-reality
+            query: "topic:reality"
+
+          - slug: topic-vless
+            query: "topic:vless"
+
+          - slug: topic-vmess
+            query: "topic:vmess"
+
+          - slug: topic-tuic
+            query: "topic:tuic"
+
+          - slug: topic-wireguard
+            query: "topic:wireguard"
+
+          - slug: topic-proxy
+            query: "topic:proxy"
+
+          - slug: topic-vpn
+            query: "topic:vpn"
+
+          - slug: topic-subscription
+            query: "topic:subscription"
+
+          - slug: topic-proxy-list
+            query: "topic:proxy-list"
+
+          - slug: topic-free-nodes
+            query: "topic:free-nodes"
+
+          - slug: topic-censorship
+            query: "topic:censorship-circumvention"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Search GitHub repositories by topic ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/github_topics_${SLUG}.jsonl"
+          API_OUT="raw/github_topics_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching topic: ${QUERY}"
+
+          FULL_QUERY="${QUERY} fork:true archived:false"
+
+          if ! gh api -X GET search/repositories \
+            -f q="${FULL_QUERY}" \
+            -f per_page="${MAX_REPOS}" \
+            -f sort=updated \
+            -f order=desc > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c '.items[]? | {
+            source: "github",
+            kind: "topic",
+            repo: .full_name,
+            url: .html_url,
+            path: null,
+            score: .score,
+            stars: .stargazers_count,
+            updated_at: .updated_at,
+            pushed_at: .pushed_at,
+            description: .description
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Found topic candidates: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 7 + 3))
+
+      - name: Upload topic artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-github-${{ matrix.slug }}
+          path: raw/github_topics_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 4. Поиск GitHub по именам файлов подписок
+  # =========================================================
+  search-github-files:
+    name: GH filename search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 25
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: file-sub-txt
+            query: "vless OR vmess OR ss OR trojan OR proxy filename:sub.txt"
+
+          - slug: file-subscribe-txt
+            query: "vless OR vmess OR ss OR trojan OR proxy filename:subscribe.txt"
+
+          - slug: file-subscription-txt
+            query: "vless OR vmess OR ss OR trojan OR proxy filename:subscription.txt"
+
+          - slug: file-subscriptions-txt
+            query: "vless OR vmess OR ss OR trojan OR proxy filename:subscriptions.txt"
+
+          - slug: file-v2ray-txt
+            query: "vless OR vmess OR v2ray filename:v2ray.txt"
+
+          - slug: file-nodes-txt
+            query: "vless OR vmess OR ss OR trojan filename:nodes.txt"
+
+          - slug: file-proxy-txt
+            query: "proxy OR proxies OR vless OR vmess filename:proxy.txt"
+
+          - slug: file-list-txt
+            query: "vless OR vmess OR ss OR trojan OR proxy filename:list.txt"
+
+          - slug: file-clash-yaml
+            query: "proxies OR proxy-groups OR clash filename:clash.yaml"
+
+          - slug: file-config-yaml
+            query: "proxies OR proxy-groups OR clash filename:config.yaml"
+
+          - slug: file-sub-yaml
+            query: "proxies OR proxy-groups OR clash filename:sub.yaml"
+
+          - slug: file-subscription-yaml
+            query: "proxies OR proxy-groups OR clash filename:subscription.yaml"
+
+          - slug: file-proxies-yaml
+            query: "proxies OR proxy-groups filename:proxies.yaml"
+
+          - slug: file-mihomo-yaml
+            query: "mihomo OR clash OR proxies filename:mihomo.yaml"
+
+          - slug: file-wireguard-conf
+            query: "Interface OR PrivateKey OR WireGuard filename:.conf"
+
+          - slug: file-singbox-json
+            query: "sing-box OR outbound OR inbounds filename:sing-box.json"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Search GitHub code filenames for ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p raw
+
+          OUT="raw/github_files_${SLUG}.jsonl"
+          API_OUT="raw/github_files_api_${SLUG}.json"
+          : > "${OUT}"
+
+          echo "[*] Searching GitHub code by filename"
+          echo "[*] Query: ${QUERY}"
+
+          if ! gh api -X GET search/code \
+            -f q="${QUERY}" \
+            -f per_page=50 > "${API_OUT}"; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+
+          jq -c '.items[]? | {
+            source: "github",
+            kind: "file",
+            repo: .repository.full_name,
+            url: .repository.html_url,
+            path: .path,
+            score: .score
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+
+          echo "[*] Found file candidates: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 9 + 5))
+
+      - name: Upload filename artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-github-${{ matrix.slug }}
+          path: raw/github_files_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 5. Поиск Gitverse
+  # =========================================================
+  search-gitverse-keywords:
+    name: Gitverse keyword search
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 20
+    continue-on-error: true
+    if: env.INCLUDE_GITVERSE == '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: gv-v2ray
+            query: "v2ray"
+
+          - slug: gv-xray
+            query: "xray"
+
+          - slug: gv-singbox
+            query: "sing-box"
+
+          - slug: gv-clash
+            query: "clash"
+
+          - slug: gv-shadowsocks
+            query: "shadowsocks"
+
+          - slug: gv-trojan
+            query: "trojan"
+
+          - slug: gv-hysteria
+            query: "hysteria"
+
+          - slug: gv-reality
+            query: "reality"
+
+          - slug: gv-vless
+            query: "vless"
+
+          - slug: gv-vmess
+            query: "vmess"
+
+          - slug: gv-tuic
+            query: "tuic"
+
+          - slug: gv-wireguard
+            query: "wireguard"
+
+          - slug: gv-proxy
+            query: "proxy"
+
+          - slug: gv-vpn
+            query: "vpn"
+
+          - slug: gv-subscription
+            query: "subscription"
+
+          - slug: gv-podpiska
+            query: "подписка"
+
+          - slug: gv-obhod
+            query: "обход"
+
+          - slug: gv-remaining
+            query: "remainingconnections"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Search Gitverse for ${{ matrix.slug }}
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+        run: |
+          python - <<'PY'
+          import os
+          import json
+          import time
+          import requests
+
+          query = os.getenv("QUERY", "")
+          slug = os.getenv("SLUG", "unknown")
+          base = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
+          user_agent = os.getenv("USER_AGENT", "NetWatchBot/1.0")
+
+          out_path = f"raw/gitverse_{slug}.jsonl"
+          os.makedirs("raw", exist_ok=True)
+
+          headers = {
+              "User-Agent": user_agent,
+              "Accept": "application/json",
+          }
+
+          results = []
+
+          # Пробуем Gitea-совместимый API.
+          # Если Gitverse использует другой API, этот блок надо будет адаптировать.
+          endpoints = [
+              f"{base}/api/v1/repos/search",
+              f"{base}/api/v1/repositories/search",
+          ]
+
+          params = {
+              "q": query,
+              "limit": 50,
+          }
+
+          for endpoint in endpoints:
+              try:
+                  print(f"[*] Trying endpoint: {endpoint}")
+                  r = requests.get(endpoint, params=params, headers=headers, timeout=25)
+
+                  print(f"[*] Status: {r.status_code}")
+
+                  if r.status_code != 200:
+                      continue
+
+                  data = r.json()
+
+                  items = []
+                  if isinstance(data, dict):
+                      items = data.get("data", []) or data.get("items", []) or data.get("repos", [])
+                  elif isinstance(data, list):
+                      items = data
+
+                  for item in items:
+                      full_name = item.get("full_name") or item.get("name")
+                      html_url = item.get("html_url") or item.get("url")
+
+                      if not full_name:
+                          continue
+
+                      if html_url and not html_url.startswith("http"):
+                          html_url = f"{base}/{full_name}"
+
+                      results.append({
+                          "source": "gitverse",
+                          "kind": "repo",
+                          "repo": full_name,
+                          "url": html_url,
+                          "path": None,
+                          "score": 1.0,
+                          "updated_at": item.get("updated_at"),
+                          "description": item.get("description"),
+                      })
+
+                  if results:
+                      break
+
+              except Exception as e:
+                  print(f"[!] Gitverse request failed: {e}")
+                  time.sleep(2)
+
+          # Если нет нормального API, можно позже добавить парсинг HTML.
+          # Пока сохраняем то, что нашли, даже если пусто.
+          with open(out_path, "w", encoding="utf-8") as f:
+              for row in results:
+                  f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+          print(f"[*] Saved {len(results)} Gitverse candidates to {out_path}")
+          time.sleep(2)
+          PY
+
+      - name: Upload Gitverse artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-gitverse-${{ matrix.slug }}
+          path: raw/gitverse_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # =========================================================
+  # 6. Сбор всех кандидатов
+  # =========================================================
+  collect-candidates:
+    name: Collect candidates
+    runs-on: ubuntu-latest
+    needs:
+      - search-github-keywords
+      - search-github-topics
+      - search-github-files
+      - search-gitverse-keywords
+    if: always()
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create candidates directory
+        run: |
+          mkdir -p candidates
+          mkdir -p raw
+
+      - name: Download all search artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: search-*
+          path: candidates
+          merge-multiple: true
+
+      - name: Download prepare metadata
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: prepare-metadata
+          path: raw
+
+      - name: Normalize candidates into one JSONL
+        run: |
+          python - <<'PY'
+          import os
+          import json
+          import glob
+          from pathlib import Path
+
+          candidates_dir = "candidates"
+          raw_dir = "raw"
+          out_path = "raw/all_candidates.jsonl"
+
+          seen = set()
+          total = 0
+          written = 0
+
+          os.makedirs(raw_dir, exist_ok=True)
+
+          patterns = [
+              os.path.join(candidates_dir, "**", "*.jsonl"),
+              os.path.join(raw_dir, "**", "*.jsonl"),
+          ]
+
+          files = []
+          for pattern in patterns:
+              files.extend(glob.glob(pattern, recursive=True))
+
+          # Исключаем итоговый файл, если он вдруг уже есть
+          files = [f for f in files if os.path.basename(f) != "all_candidates.jsonl"]
+
+          with open(out_path, "w", encoding="utf-8") as out:
+              for file_path in sorted(files):
+                  try:
+                      with open(file_path, "r", encoding="utf-8") as f:
+                          for line in f:
+                              line = line.strip()
+                              if not line:
+                                  continue
+
+                              total += 1
+
+                              try:
+                                  obj = json.loads(line)
+                              except Exception:
+                                  continue
+
+                              repo = obj.get("repo")
+                              source = obj.get("source")
+
+                              if not repo or not source:
+                                  continue
+
+                              path = obj.get("path") or ""
+                              key = f"{source}::{repo.lower()}::{path.lower()}"
+
+                              if key in seen:
+                                  continue
+
+                              seen.add(key)
+
+                              normalized = {
+                                  "source": source,
+                                  "kind": obj.get("kind", "repo"),
+                                  "repo": repo,
+                                  "url": obj.get("url"),
+                                  "path": path or None,
+                                  "score": obj.get("score", 0),
+                                  "stars": obj.get("stars"),
+                                  "updated_at": obj.get("updated_at"),
+                                  "pushed_at": obj.get("pushed_at"),
+                                  "description": obj.get("description"),
+                              }
+
+                              out.write(json.dumps(normalized, ensure_ascii=False) + "\n")
+                              written += 1
+                  except Exception as e:
+                      print(f"[!] Failed to read {file_path}: {e}")
+
+          print(f"[*] Total raw candidates: {total}")
+          print(f"[*] Unique normalized candidates: {written}")
+          print(f"[*] Saved to {out_path}")
+          PY
+
+      - name: Upload normalized candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-candidates
+          path: raw/all_candidates.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  # =========================================================
+  # 7. Проверка найденных репозиториев и файлов подписок
+  # =========================================================
+  probe-candidates:
+    name: Probe candidates
+    runs-on: ubuntu-latest
+    needs: collect-candidates
+    if: always()
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pyyaml
+
+      - name: Create directories
+        run: |
+          mkdir -p candidates
+          mkdir -p raw
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Download normalized candidates
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: all-candidates
+          path: raw
+
+      - name: Probe repositories and subscription files
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITVERSE_BASE: ${{ env.GITVERSE_BASE }}
+          MAX_PROBE: ${{ env.MAX_PROBE }}
+          USER_AGENT: ${{ env.USER_AGENT }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import json
+          import time
+          import datetime
+          import requests
+          import yaml
+
+          GITHUB_API = "https://api.github.com"
+          GITVERSE_BASE = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
+          TOKEN = os.getenv("GITHUB_TOKEN", "")
+          USER_AGENT = os.getenv("USER_AGENT", "NetWatchBot/1.0")
+          MAX_PROBE = int(os.getenv("MAX_PROBE", "220"))
+          OUTPUT_DIR = os.getenv("OUTPUT_DIR", "data")
+
+          HEADERS = {
+              "Accept": "application/vnd.github+json",
+              "User-Agent": USER_AGENT,
+          }
+
+          if TOKEN:
+              HEADERS["Authorization"] = f"Bearer {TOKEN}"
+
+          COMMON_PATHS = [
+              "sub.txt",
+              "subscribe.txt",
+              "subscription.txt",
+              "subscriptions.txt",
+              "v2ray.txt",
+              "xray.txt",
+              "nodes.txt",
+              "proxy.txt",
+              "proxies.txt",
+              "list.txt",
+              "clash.yaml",
+              "clash.yml",
+              "config.yaml",
+              "config.yml",
+              "sub.yaml",
+              "sub.yml",
+              "subscription.yaml",
+              "subscription.yml",
+              "proxies.yaml",
+              "proxies.yml",
+              "mihomo.yaml",
+              "mihomo.yml",
+              "sing-box.json",
+              "singbox.json",
+              "wireguard.conf",
+              "wg.conf",
+          ]
+
+          PROTO_RE = re.compile(
+              r"^(vless|vmess|ss|ssr|trojan|trojan-go|hysteria|hysteria2|hy2|tuic|wireguard|socks5|http|https|tg|mtproto)://",
+              re.IGNORECASE,
+          )
+
+          BS_MARKERS = [
+              "whitelist",
+              "white_list",
+              "white list",
+              "белый список",
+              "белые списки",
+              "белый-список",
+              "bs: true",
+              "bs=true",
+              '"bs": true',
+              "'bs': true",
+              "bypass_list",
+              "bypass-list",
+          ]
+
+          session = requests.Session()
+          session.headers.update(HEADERS)
+
+          def now_utc():
+              return datetime.datetime.now(datetime.timezone.utc)
+
+          def parse_date(value):
+              if not value:
+                  return None
+              try:
+                  value = value.replace("Z", "+00:00")
+                  dt = datetime.datetime.fromisoformat(value)
+                  if dt.tzinfo is None:
+                      dt = dt.replace(tzinfo=datetime.timezone.utc)
+                  return dt
+              except Exception:
+                  return None
+
+          def minutes_ago(dt):
+              if not dt:
+                  return None
+              delta = now_utc() - dt
+              return int(delta.total_seconds() / 60)
+
+          def sleep_random(min_seconds=1, max_seconds=3):
+              time.sleep(min_seconds + (time.time() % (max_seconds - min_seconds)))
+
+          def fetch_json(url, params=None):
+              for attempt in range(3):
+                  try:
+                      r = session.get(url, params=params, timeout=25)
+
+                      if r.status_code == 200:
+                          return r.json()
+
+                      if r.status_code in (403, 429):
+                          retry_after = r.headers.get("Retry-After")
+                          wait = int(retry_after) if retry_after and retry_after.isdigit() else 6
+                          print(f"[!] Rate limit? {r.status_code} for {url}, waiting {wait}s")
+                          time.sleep(wait)
+                          continue
+
+                      if 500 <= r.status_code < 600:
+                          time.sleep(2 + attempt)
+                          continue
+
+                      return None
+                  except Exception as e:
+                      print(f"[!] fetch_json error {url}: {e}")
+                      time.sleep(2 + attempt)
+
+              return None
+
+          def fetch_text(url):
+              for attempt in range(2):
+                  try:
+                      r = session.get(url, timeout=25)
+                      if r.status_code == 200 and r.text and len(r.text.strip()) > 0:
+                          return r.text
+                      return None
+                  except Exception as e:
+                      print(f"[!] fetch_text error {url}: {e}")
+                      time.sleep(1 + attempt)
+              return None
+
+          def check_bs(text):
+              if not text:
+                  return False
+              low = text.lower()
+              return any(marker in low for marker in BS_MARKERS)
+
+          def count_text_configs(text):
+              if not text:
+                  return 0
+
+              lines = []
+              for line in text.splitlines():
+                  s = line.strip()
+                  if not s:
+                      continue
+                  if s.startswith("#"):
+                      continue
+                  if s.startswith("//"):
+                      continue
+                  lines.append(s)
+
+              if not lines:
+                  return 0
+
+              proto_lines = [x for x in lines if PROTO_RE.match(x)]
+
+              # Если есть явные протокольные ссылки, считаем их.
+              if len(proto_lines) >= max(1, int(len(lines) * 0.25)):
+                  return len(proto_lines)
+
+              # Иначе считаем все осмысленные строки.
+              return len(lines)
+
+          def count_yaml_configs(text):
+              if not text:
+                  return 0
+
+              try:
+                  doc = yaml.safe_load(text)
+
+                  if isinstance(doc, dict):
+                      if isinstance(doc.get("proxies"), list):
+                          return len(doc["proxies"])
+
+                      if isinstance(doc.get("proxy-providers"), dict):
+                          return len(doc["proxy-providers"])
+
+                      if isinstance(doc.get("nodes"), list):
+                          return len(doc["nodes"])
+
+                      if isinstance(doc.get("subnets"), list):
+                          return len(doc["subnets"])
+
+                  if isinstance(doc, list):
+                      return len(doc)
+
+              except Exception:
+                  pass
+
+              return count_text_configs(text)
+
+          def count_by_path(text, path):
+              p = (path or "").lower()
+              if p.endswith((".yaml", ".yml")):
+                  return count_yaml_configs(text)
+              return count_text_configs(text)
+
+          def make_name(repo):
+              if not repo:
+                  return "Unknown"
+              return repo.split("/")[-1]
+
+          def probe_github_repo(repo, candidate_path=None):
+              print(f"[*] Probing GitHub repo: {repo}")
+
+              api_repo = f"{GITHUB_API}/repos/{repo}"
+              repo_data = fetch_json(api_repo)
+
+              if not repo_data:
+                  print(f"[!] Cannot fetch repo {repo}")
+                  return None
+
+              default_branch = repo_data.get("default_branch", "main")
+              html_url = repo_data.get("html_url", f"https://github.com/{repo}")
+
+              commits = fetch_json(f"{api_repo}/commits", params={"per_page": 1})
+              updated_mins = None
+              last_commit_message = None
+
+              if isinstance(commits, list) and commits:
+                  commit = commits[0]
+                  commit_data = commit.get("commit", {})
+                  committer = commit_data.get("committer", {})
+                  date_str = committer.get("date") or commit_data.get("author", {}).get("date")
+                  updated_mins = minutes_ago(parse_date(date_str))
+                  last_commit_message = commit_data.get("message")
+
+              paths = []
+              if candidate_path:
+                  paths.append(candidate_path)
+
+              paths.extend(COMMON_PATHS)
+
+              # Убираем дубли, сохраняем порядок
+              seen = set()
+              unique_paths = []
+              for p in paths:
+                  if p and p not in seen:
+                      seen.add(p)
+                      unique_paths.append(p)
+
+              found_url = None
+              found_path = None
+              configs_count = 0
+              has_bs = False
+              content_sample = ""
+
+              for path in unique_paths[:18]:
+                  raw_url = f"https://raw.githubusercontent.com/{repo}/{default_branch}/{path}"
+                  text = fetch_text(raw_url)
+
+                  if not text:
+                      continue
+
+                  cnt = count_by_path(text, path)
+                  bs = check_bs(text)
+
+                  if cnt > 0:
+                      found_url = raw_url
+                      found_path = path
+                      configs_count = cnt
+                      has_bs = bs
+                      content_sample = text[:800]
+                      break
+
+                  # Если файл есть, но конфигов 0, все равно запомним как слабый кандидат
+                  if not found_url:
+                      found_url = raw_url
+                      found_path = path
+                      content_sample = text[:800]
+                      has_bs = bs
+
+                  sleep_random(1, 2)
+
+              status = "active"
+              if configs_count <= 0:
+                  status = "unknown"
+              elif updated_mins is not None and updated_mins > 60 * 24 * 14:
+                  status = "stale"
+
+              return {
+                  "name": make_name(repo),
+                  "source": "github",
+                  "repo": repo,
+                  "url": html_url,
+                  "subscription_url": found_url,
+                  "config_path": found_path,
+                  "updated_mins_ago": updated_mins,
+                  "configs_count": configs_count,
+                  "has_bs": has_bs,
+                  "status": status,
+                  "last_commit_message": last_commit_message,
+                  "content_sample": content_sample,
+              }
+
+          def probe_gitverse_repo(repo, candidate_path=None):
+              print(f"[*] Probing Gitverse repo: {repo}")
+
+              api_repo = f"{GITVERSE_BASE}/api/v1/repos/{repo}"
+              repo_data = fetch_json(api_repo)
+
+              default_branch = "main"
+              html_url = f"{GITVERSE_BASE}/{repo}"
+
+              if repo_data:
+                  default_branch = repo_data.get("default_branch", "main") or "main"
+                  html_url = repo_data.get("html_url") or html_url
+
+              commits = fetch_json(f"{api_repo}/commits", params={"limit": 1})
+              updated_mins = None
+              last_commit_message = None
+
+              if isinstance(commits, list) and commits:
+                  commit = commits[0]
+                  commit_obj = commit.get("commit", {})
+                  committer = commit_obj.get("committer", {})
+                  date_str = committer.get("date") or commit_obj.get("author", {}).get("date")
+                  updated_mins = minutes_ago(parse_date(date_str))
+                  last_commit_message = commit_obj.get("message")
+
+              paths = []
+              if candidate_path:
+                  paths.append(candidate_path)
+              paths.extend(COMMON_PATHS)
+
+              seen = set()
+              unique_paths = []
+              for p in paths:
+                  if p and p not in seen:
+                      seen.add(p)
+                      unique_paths.append(p)
+
+              branches = [default_branch, "main", "master"]
+              found_url = None
+              found_path = None
+              configs_count = 0
+              has_bs = False
+              content_sample = ""
+
+              for branch in branches:
+                  if found_url and configs_count > 0:
+                      break
+
+                  for path in unique_paths[:12]:
+                      raw_candidates = [
+                          f"{GITVERSE_BASE}/{repo}/raw/branch/{branch}/{path}",
+                          f"{GITVERSE_BASE}/{repo}/raw/{branch}/{path}",
+                          f"{GITVERSE_BASE}/{repo}/raw/{path}",
+                      ]
+
+                      for raw_url in raw_candidates:
+                          text = fetch_text(raw_url)
+                          if not text:
+                              continue
+
+                          cnt = count_by_path(text, path)
+                          bs = check_bs(text)
+
+                          if cnt > 0:
+                              found_url = raw_url
+                              found_path = path
+                              configs_count = cnt
+                              has_bs = bs
+                              content_sample = text[:800]
+                              break
+
+                          if not found_url:
+                              found_url = raw_url
+                              found_path = path
+                              content_sample = text[:800]
+                              has_bs = bs
+
+                      if found_url and configs_count > 0:
+                          break
+
+                      sleep_random(1, 2)
+
+              status = "active"
+              if configs_count <= 0:
+                  status = "unknown"
+              elif updated_mins is not None and updated_mins > 60 * 24 * 14:
+                  status = "stale"
+
+              return {
+                  "name": make_name(repo),
+                  "source": "gitverse",
+                  "repo": repo,
+                  "url": html_url,
+                  "subscription_url": found_url,
+                  "config_path": found_path,
+                  "updated_mins_ago": updated_mins,
+                  "configs_count": configs_count,
+                  "has_bs": has_bs,
+                  "status": status,
+                  "last_commit_message": last_commit_message,
+                  "content_sample": content_sample,
+              }
+
+          def load_candidates():
+              candidates = []
+              path = "raw/all_candidates.jsonl"
+
+              if not os.path.exists(path):
+                  print(f"[!] Candidate file not found: {path}")
+                  return candidates
+
+              with open(path, "r", encoding="utf-8") as f:
+                  for line in f:
+                      line = line.strip()
+                      if not line:
+                          continue
+                      try:
+                          candidates.append(json.loads(line))
+                      except Exception:
+                          continue
+
+              return candidates
+
+          candidates = load_candidates()
+          print(f"[*] Loaded candidates: {len(candidates)}")
+
+          # Сначала кандидаты с более высоким score и с найденными путями файлов
+          candidates.sort(
+              key=lambda x: (
+                  x.get("source") != "github",
+                  x.get("path") is None,
+                  -(x.get("score") or 0),
+              )
+          )
+
+          results = []
+          probed_repos = set()
+
+          for candidate in candidates:
+              if len(results) >= MAX_PROBE:
+                  print(f"[*] Reached MAX_PROBE limit: {MAX_PROBE}")
+                  break
+
+              repo = candidate.get("repo")
+              source = candidate.get("source")
+              path = candidate.get("path")
+
+              if not repo or not source:
+                  continue
+
+              repo_key = f"{source}::{repo.lower()}"
+              if repo_key in probed_repos:
+                  continue
+
+              probed_repos.add(repo_key)
+
+              try:
+                  if source == "github":
+                      item = probe_github_repo(repo, path)
+                  elif source == "gitverse":
+                      item = probe_gitverse_repo(repo, path)
+                  else:
+                      item = None
+
+                  if item:
+                      results.append(item)
+
+              except Exception as e:
+                  print(f"[!] Probe failed for {repo_key}: {e}")
+
+              sleep_random(1, 3)
+
+          output = {
+              "generated_at": now_utc().isoformat().replace("+00:00", "Z"),
+              "generator": "subscription-discovery.yml",
+              "candidates_found": len(candidates),
+              "probed_count": len(results),
+              "subscriptions": results,
+          }
+
+          os.makedirs(OUTPUT_DIR, exist_ok=True)
+          out_file = os.path.join(OUTPUT_DIR, "subscriptions_found.json")
+
+          with open(out_file, "w", encoding="utf-8") as f:
+              json.dump(output, f, ensure_ascii=False, indent=2)
+
+          print(f"[*] Saved {len(results)} probed subscriptions to {out_file}")
+          PY
+
+      - name: Upload probe results
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-results
+          path: data/subscriptions_found.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  # =========================================================
+  # 8. Публикация результата в репозиторий
+  # =========================================================
+  publish-results:
+    name: Publish results
+    runs-on: ubuntu-latest
+    needs: probe-candidates
+    if: always() && needs.probe-candidates.result == 'success' && env.DRY_RUN != '1'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create data directory
+        run: |
+          mkdir -p data
+          mkdir -p downloaded
+
+      - name: Download probe results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: probe-results
+          path: downloaded
+
+      - name: Move result into data directory
+        run: |
+          set -euo pipefail
+
+          FOUND_FILE="$(find downloaded -type f -name 'subscriptions_found.json' | head -n 1 || true)"
+
+          if [[ -z "${FOUND_FILE}" ]]; then
+            echo "[!] subscriptions_found.json not found in artifact"
+            echo "[!] Creating empty placeholder"
+
+            cat > data/subscriptions_found.json <<'JSON'
+          {
+            "generated_at": "",
+            "generator": "subscription-discovery.yml",
+            "candidates_found": 0,
+            "probed_count": 0,
+            "subscriptions": []
+          }
+          JSON
+          else
+            cp "${FOUND_FILE}" data/subscriptions_found.json
+          fi
+
+          echo "[*] Result file:"
+          ls -lah data || true
+
+      - name: Commit and push data
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Подтягиваем изменения, чтобы уменьшить конфликты
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+
+          git add data/subscriptions_found.json || true
+
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore(data): update subscriptions_found.json [skip ci]"
+            git push origin "${GITHUB_REF_NAME}"
+            echo "[*] Pushed updated subscription data"
+          fi
+
+  # =========================================================
+  # 9. Финальный отчет
+  # =========================================================
+  report:
+    name: Final report
+    runs-on: ubuntu-latest
+    needs:
+      - collect-candidates
+      - probe-candidates
+      - publish-results
+    if: always()
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download probe results for report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: probe-results
+          path: report-artifacts
+
+      - name: Print short report
+        run: |
+          echo "=================================================="
+          echo " Subscription Discovery Pipeline finished"
+          echo "=================================================="
+
+          FILE="$(find report-artifacts -type f -name 'subscriptions_found.json' | head -n 1 || true)"
+
+          if [[ -z "${FILE}" ]]; then
+            echo "[!] No probe result file found."
+            exit 0
+          fi
+
+          python - <<'PY'
+          import json
+
+          path = "${FILE}"
+
+          try:
+              with open(path, "r", encoding="utf-8") as f:
+                  data = json.load(f)
+
+              print(f"Generated at: {data.get('generated_at')}")
+              print(f"Candidates found: {data.get('candidates_found')}")
+              print(f"Probed subscriptions: {data.get('probed_count')}")
+
+              subs = data.get("subscriptions", [])
+
+              active = sum(1 for x in subs if x.get("status") == "active")
+              unknown = sum(1 for x in subs if x.get("status") == "unknown")
+              stale = sum(1 for x in subs if x.get("status") == "stale")
+              bs = sum(1 for x in subs if x.get("has_bs"))
+
+              print(f"Active: {active}")
+              print(f"Unknown: {unknown}")
+              print(f"Stale: {stale}")
+              print(f"With BS marker: {bs}")
+
+              top = sorted(
+                  subs,
+                  key=lambda x: (
+                      -(x.get('configs_count') or 0),
+                      x.get('updated_mins_ago') if x.get('updated_mins_ago') is not None else 999999
+                  )
+              )[:10]
+
+              print("\nTop 10 subscriptions by configs:")
+              for item in top:
+                  name = item.get('name', 'unknown')
+                  source = item.get('source', 'unknown')
+                  count = item.get('configs_count', 0)
+                  updated = item.get('updated_mins_ago')
+                  updated_text = f"{updated} min ago" if updated is not None else "unknown"
+                  print(f"- {name} | {source} | configs: {count} | updated: {updated_text}")
+
+          except Exception as e:
+              print(f"[!] Failed to print report: {e}")
+          PY
+
+          echo "=================================================="
