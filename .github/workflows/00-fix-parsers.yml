@@ -1,0 +1,277 @@
+name: 00 | ONE-TIME FIX · Fix all parsers
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Напиши 'fix' для подтверждения"
+        required: true
+        type: string
+        default: "fix"
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  fix:
+    name: Fix all workflows
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'fix'
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ github.token }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Create data directory
+        run: |
+          mkdir -p data
+          mkdir -p .github/generated
+          touch data/.gitkeep
+          touch .github/generated/.gitkeep
+          echo "[+] Созданы папки data/ и .github/generated/"
+
+      - name: Patch workflow files (remove push trigger)
+        run: |
+          python - <<'PY'
+          import yaml
+          import os
+          from pathlib import Path
+
+          WORKFLOWS_DIR = Path(".github/workflows")
+
+          # Файлы парсеров, из которых нужно УБРАТЬ push
+          PARSER_FILES = [
+              "subscription-discovery.yml",
+              "tg-proxy-discovery.yml",
+              "utils-discovery.yml",
+              "search-query-generator.yml",
+          ]
+
+          changes = []
+
+          for filename in PARSER_FILES:
+              filepath = WORKFLOWS_DIR / filename
+
+              if not filepath.exists():
+                  print(f"[!] Файл не найден: {filepath}")
+                  continue
+
+              print(f"\n[*] Патчу {filename}...")
+
+              with open(filepath, "r", encoding="utf-8") as f:
+                  content = f.read()
+
+              try:
+                  data = yaml.safe_load(content)
+              except Exception as e:
+                  print(f"[!] Ошибка парсинга {filename}: {e}")
+                  continue
+
+              on_block = data.get("on", {})
+
+              if not isinstance(on_block, dict):
+                  print(f"[*] В {filename} 'on' не словарь — пропускаю")
+                  continue
+
+              if "push" in on_block:
+                  del on_block["push"]
+                  print(f"[+] Удалён блок 'push' из {filename}")
+                  changes.append(filename)
+              else:
+                  print(f"[*] В {filename} уже нет 'push'")
+
+              # Записываем обратно
+              with open(filepath, "w", encoding="utf-8") as f:
+                  yaml.dump(data, f, allow_unicode=True, sort_keys=False, default_flow_style=False)
+
+          if changes:
+              print(f"\n[+] Исправлено файлов: {len(changes)}")
+              for f in changes:
+                  print(f"    - {f}")
+          else:
+              print("\n[*] Ничего не пришлось менять")
+          PY
+
+      - name: Create dispatch-parsers.yml
+        run: |
+          cat > .github/workflows/dispatch-parsers.yml <<'YAML'
+          name: Dispatch Parsers
+
+          on:
+            push:
+              branches:
+                - main
+              paths-ignore:
+                - 'README.md'
+                - 'LICENSE'
+                - '.github/workflows/**'
+                - 'docs/**'
+                - '*.md'
+                - '.gitignore'
+                - 'ОПИСАНИЕ.md'
+
+            workflow_dispatch:
+              inputs:
+                force_run:
+                  description: "Принудительный запуск (игнорировать 2 часа)"
+                  required: false
+                  type: boolean
+                  default: false
+
+          permissions:
+            actions: write
+            contents: read
+
+          jobs:
+            dispatch:
+              name: Dispatch parsers
+              runs-on: ubuntu-latest
+              timeout-minutes: 5
+
+              steps:
+                - name: Check last workflow run
+                  id: check
+                  env:
+                    GH_TOKEN: ${{ github.token }}
+                  run: |
+                    FORCE="${{ github.event.inputs.force_run }}"
+
+                    if [[ "$FORCE" == "true" ]]; then
+                      echo "[*] Принудительный запуск"
+                      echo "should_run=true" >> "$GITHUB_OUTPUT"
+                      exit 0
+                    fi
+
+                    LAST_RUN=$(gh api repos/${{ github.repository }}/actions/runs \
+                      --jq '.workflow_runs[] | select(.name | test("Discovery|Generator")) | select(.conclusion == "success") | .created_at' \
+                      2>/dev/null | head -n 1 || true)
+
+                    if [[ -z "$LAST_RUN" ]]; then
+                      echo "[*] Успешных запусков ещё не было"
+                      echo "should_run=true" >> "$GITHUB_OUTPUT"
+                      exit 0
+                    fi
+
+                    LAST_TS=$(date -d "$LAST_RUN" +%s)
+                    NOW_TS=$(date +%s)
+                    DIFF=$(( (NOW_TS - LAST_TS) / 60 ))
+
+                    echo "[*] Последний запуск: $DIFF минут назад"
+
+                    if [[ $DIFF -lt 120 ]]; then
+                      echo "[*] Слишком рано — пропускаю"
+                      echo "should_run=false" >> "$GITHUB_OUTPUT"
+                    else
+                      echo "[*] Можно запускать"
+                      echo "should_run=true" >> "$GITHUB_OUTPUT"
+                    fi
+
+                - name: Trigger subscription-discovery
+                  if: steps.check.outputs.should_run == 'true'
+                  env:
+                    GH_TOKEN: ${{ github.token }}
+                  run: |
+                    echo "[*] Запускаю subscription-discovery..."
+                    gh workflow run subscription-discovery.yml --ref main || true
+                    sleep 10
+
+                - name: Trigger tg-proxy-discovery
+                  if: steps.check.outputs.should_run == 'true'
+                  env:
+                    GH_TOKEN: ${{ github.token }}
+                  run: |
+                    echo "[*] Запускаю tg-proxy-discovery..."
+                    gh workflow run tg-proxy-discovery.yml --ref main || true
+                    sleep 10
+
+                - name: Trigger utils-discovery
+                  if: steps.check.outputs.should_run == 'true'
+                  env:
+                    GH_TOKEN: ${{ github.token }}
+                  run: |
+                    echo "[*] Запускаю utils-discovery..."
+                    gh workflow run utils-discovery.yml --ref main || true
+                    sleep 10
+
+                - name: Trigger search-query-generator
+                  if: steps.check.outputs.should_run == 'true'
+                  env:
+                    GH_TOKEN: ${{ github.token }}
+                  run: |
+                    echo "[*] Запускаю search-query-generator..."
+                    gh workflow run search-query-generator.yml --ref main || true
+
+                - name: Skip
+                  if: steps.check.outputs.should_run == 'false'
+                  run: |
+                    echo "[*] Парсеры не запущены (прошло < 2 часов)"
+          YAML
+
+          echo "[+] Создан dispatch-parsers.yml"
+
+      - name: Remove this fix workflow
+        run: |
+          rm -f .github/workflows/00-fix-parsers.yml
+          echo "[+] Удалён 00-fix-parsers.yml (он одноразовый)"
+
+      - name: Commit all fixes
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add . || true
+
+          if git diff --staged --quiet; then
+            echo "[*] Нет изменений для коммита"
+          else
+            git commit -m "fix: remove push triggers from parsers, add dispatch workflow [skip ci]"
+            git push origin main
+            echo "[+] Все исправления закоммичены!"
+          fi
+
+      - name: Success summary
+        run: |
+          echo "=================================================="
+          echo " ✅ ВСЕ ОШИБКИ ИСПРАВЛЕНЫ!"
+          echo "=================================================="
+          echo ""
+          echo " Что было сделано:"
+          echo "   1. Убран 'push' из 4 парсеров:"
+          echo "      - subscription-discovery.yml"
+          echo "      - tg-proxy-discovery.yml"
+          echo "      - utils-discovery.yml"
+          echo "      - search-query-generator.yml"
+          echo ""
+          echo "   2. Создан dispatch-parsers.yml:"
+          echo "      - Запускает парсеры по очереди"
+          echo "      - Защищает от перегрузки (2 часа между запусками)"
+          echo "      - Игнорирует коммиты README/доков"
+          echo ""
+          echo "   3. Созданы папки:"
+          echo "      - data/"
+          echo "      - .github/generated/"
+          echo ""
+          echo "   4. Удалён этот workflow (он одноразовый)"
+          echo ""
+          echo " Что делать дальше:"
+          echo "   1. Открой Actions → Dispatch Parsers"
+          echo "   2. Нажми Run workflow"
+          echo "   3. Поставь force_run: true"
+          echo "   4. Парсеры запустятся по очереди и отработают!"
+          echo ""
+          echo "=================================================="
