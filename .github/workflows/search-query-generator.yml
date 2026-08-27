@@ -1,0 +1,438 @@
+name: 05 | Search Query Generator
+
+on:
+  schedule:
+    # Каждые 6 часов, в 40 минут
+    - cron: "40 */6 * * *"
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: генерируем, но не коммитим"
+        required: false
+        type: boolean
+        default: false
+
+      commit_generated:
+        description: "Коммитить сгенерированные запросы"
+        required: false
+        type: boolean
+        default: true
+
+      target:
+        description: "Целевой проект/репозиторий, например: Throne или owner/repo"
+        required: false
+        type: string
+        default: ""
+
+      target_aliases:
+        description: "Алиасы цели через запятую или пробел"
+        required: false
+        type: string
+        default: ""
+
+      existing_data:
+        description: "Файлы для адаптивной генерации"
+        required: false
+        type: string
+        default: "data/subscriptions_found.json,data/found.json,data/tg_proxies_found.json,data/utils_found.json"
+
+      max_repo_queries:
+        description: "Лимит запросов для репозиториев на категорию"
+        required: false
+        type: string
+        default: "900"
+
+      max_code_queries:
+        description: "Лимит запросов для кода на категорию"
+        required: false
+        type: string
+        default: "600"
+
+      max_topic_queries:
+        description: "Лимит запросов для тем"
+        required: false
+        type: string
+        default: "250"
+
+      max_gitverse_queries:
+        description: "Лимит запросов для Gitverse"
+        required: false
+        type: string
+        default: "600"
+
+      adaptive_terms:
+        description: "Сколько адаптивных терминов вытаскивать из старых данных"
+        required: false
+        type: string
+        default: "80"
+
+      seed:
+        description: "Seed для генератора"
+        required: false
+        type: string
+        default: "1337"
+
+concurrency:
+  group: search-query-generator
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  OUTPUT_DIR: ".github/generated"
+
+  TARGET: ${{ github.event.inputs.target || '' }}
+  TARGET_ALIASES_RAW: ${{ github.event.inputs.target_aliases || '' }}
+  EXISTING_DATA_RAW: ${{ github.event.inputs.existing_data || 'data/subscriptions_found.json,data/found.json,data/tg_proxies_found.json,data/utils_found.json' }}
+
+  MAX_REPO_QUERIES: ${{ github.event.inputs.max_repo_queries || '900' }}
+  MAX_CODE_QUERIES: ${{ github.event.inputs.max_code_queries || '600' }}
+  MAX_TOPIC_QUERIES: ${{ github.event.inputs.max_topic_queries || '250' }}
+  MAX_GITVERSE_QUERIES: ${{ github.event.inputs.max_gitverse_queries || '600' }}
+  ADAPTIVE_TERMS: ${{ github.event.inputs.adaptive_terms || '80' }}
+  SEED: ${{ github.event.inputs.seed || '1337' }}
+
+  DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
+  COMMIT_GENERATED: ${{ github.event.inputs.commit_generated == false && '0' || '1' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # =========================================================
+  # 1. Генерация запросов
+  # =========================================================
+  generate-queries:
+    name: Generate search queries
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check generator script exists
+        run: |
+          if [[ ! -f scripts/generate_search_queries.py ]]; then
+            echo "[!] Не найден файл: scripts/generate_search_queries.py"
+            echo "[!] Сначала добавь генератор в репозиторий."
+            exit 1
+          fi
+
+      - name: Create output directory
+        run: |
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Generate queries
+        env:
+          TARGET: ${{ env.TARGET }}
+          TARGET_ALIASES_RAW: ${{ env.TARGET_ALIASES_RAW }}
+          EXISTING_DATA_RAW: ${{ env.EXISTING_DATA_RAW }}
+        run: |
+          set -euo pipefail
+
+          echo "[*] Generating search queries"
+          echo "[*] Target: ${TARGET:-<none>}"
+          echo "[*] Output dir: ${OUTPUT_DIR}"
+          echo "[*] Max repo queries: ${MAX_REPO_QUERIES}"
+          echo "[*] Max code queries: ${MAX_CODE_QUERIES}"
+          echo "[*] Max topic queries: ${MAX_TOPIC_QUERIES}"
+          echo "[*] Max Gitverse queries: ${MAX_GITVERSE_QUERIES}"
+          echo "[*] Adaptive terms: ${ADAPTIVE_TERMS}"
+          echo "[*] Seed: ${SEED}"
+
+          ARGS=(
+            --output-dir "${OUTPUT_DIR}"
+            --max-repo-queries "${MAX_REPO_QUERIES}"
+            --max-code-queries "${MAX_CODE_QUERIES}"
+            --max-topic-queries "${MAX_TOPIC_QUERIES}"
+            --max-gitverse-queries "${MAX_GITVERSE_QUERIES}"
+            --adaptive-terms "${ADAPTIVE_TERMS}"
+            --seed "${SEED}"
+          )
+
+          if [[ -n "${TARGET}" ]]; then
+            ARGS+=(--target "${TARGET}")
+          fi
+
+          # Превращаем запятые и точки с запятой в пробелы
+          TARGET_ALIASES_CLEAN="$(echo "${TARGET_ALIASES_RAW}" | tr ',' ' ' | tr ';' ' ' | xargs || true)"
+
+          if [[ -n "${TARGET_ALIASES_CLEAN}" ]]; then
+            echo "[*] Target aliases: ${TARGET_ALIASES_CLEAN}"
+
+            read -r -a TARGET_ALIASES_ARRAY <<< "${TARGET_ALIASES_CLEAN}"
+
+            ARGS+=(--target-aliases)
+            ARGS+=("${TARGET_ALIASES_ARRAY[@]}")
+          fi
+
+          EXISTING_DATA_CLEAN="$(echo "${EXISTING_DATA_RAW}" | tr ',' ' ' | tr ';' ' ' | xargs || true)"
+
+          if [[ -n "${EXISTING_DATA_CLEAN}" ]]; then
+            echo "[*] Existing data files: ${EXISTING_DATA_CLEAN}"
+
+            read -r -a EXISTING_DATA_ARRAY <<< "${EXISTING_DATA_CLEAN}"
+
+            ARGS+=(--existing-data)
+            ARGS+=("${EXISTING_DATA_ARRAY[@]}")
+          fi
+
+          python scripts/generate_search_queries.py "${ARGS[@]}"
+
+      - name: List generated files
+        run: |
+          echo "[*] Generated files:"
+          ls -lah "${OUTPUT_DIR}" || true
+
+      - name: Write GitHub step summary
+        run: |
+          python - <<'PY'
+          import json
+          import os
+
+          output_dir = os.getenv("OUTPUT_DIR", ".github/generated")
+          queries_file = os.path.join(output_dir, "queries.json")
+          summary_file = os.getenv("GITHUB_STEP_SUMMARY")
+
+          if not os.path.exists(queries_file):
+              print("[!] queries.json не найден, пропускаю summary")
+              raise SystemExit(0)
+
+          try:
+              with open(queries_file, "r", encoding="utf-8") as f:
+                  data = json.load(f)
+
+              summary = data.get("summary", {})
+
+              if summary_file:
+                  with open(summary_file, "a", encoding="utf-8") as f:
+                      f.write("## Search Query Generator\n\n")
+                      f.write(f"Target: `{data.get('target') or '<none>'}`\n\n")
+
+                      for key, value in summary.items():
+                          f.write(f"- `{key}`: **{value}**\n")
+
+                      f.write("\n")
+
+              print("[*] Summary written")
+          except Exception as e:
+              print(f"[!] Failed to write summary: {e}")
+          PY
+
+      - name: Upload generated queries artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-queries
+          path: .github/generated/
+          if-no-files-found: error
+          retention-days: 14
+
+  # =========================================================
+  # 2. Валидация сгенерированных файлов
+  # =========================================================
+  validate-queries:
+    name: Validate generated queries
+    runs-on: ubuntu-latest
+    needs: generate-queries
+    timeout-minutes: 15
+
+    steps:
+      - name: Download generated queries
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-queries
+          path: generated-validate
+
+      - name: Validate JSON files
+        run: |
+          python - <<'PY'
+          import glob
+          import json
+          import os
+          import sys
+
+          files = glob.glob("generated-validate/**/*.json", recursive=True)
+
+          if not files:
+              print("[!] JSON files not found")
+              sys.exit(1)
+
+          failed = []
+
+          for file_path in files:
+              try:
+                  with open(file_path, "r", encoding="utf-8") as f:
+                      json.load(f)
+
+                  print(f"[OK] {file_path}")
+              except Exception as e:
+                  print(f"[FAIL] {file_path}: {e}")
+                  failed.append(file_path)
+
+          if failed:
+              print(f"[!] Failed files: {len(failed)}")
+              sys.exit(1)
+
+          print(f"[+] Validated JSON files: {len(files)}")
+          PY
+
+      - name: Check important files exist
+        run: |
+          set -euo pipefail
+
+          REQUIRED_FILES=(
+            "generated-validate/queries.json"
+            "generated-validate/matrix_subscriptions_repo.json"
+            "generated-validate/matrix_tg_proxies_repo.json"
+            "generated-validate/matrix_utilities_repo.json"
+          )
+
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [[ ! -f "$file" ]]; then
+              echo "[!] Missing required file: $file"
+              exit 1
+            fi
+
+            echo "[OK] $file"
+          done
+
+          echo "[+] All required generated files exist"
+
+  # =========================================================
+  # 3. Публикация сгенерированных запросов
+  # =========================================================
+  publish-queries:
+    name: Publish generated queries
+    runs-on: ubuntu-latest
+    needs:
+      - generate-queries
+      - validate-queries
+    if: needs.generate-queries.result == 'success' && needs.validate-queries.result == 'success' && env.DRY_RUN != '1' && env.COMMIT_GENERATED == '1'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download generated queries
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-queries
+          path: generated-publish
+
+      - name: Prepare target directory
+        run: |
+          mkdir -p "${OUTPUT_DIR}"
+
+      - name: Copy generated files into repository
+        run: |
+          set -euo pipefail
+
+          echo "[*] Copying generated files into ${OUTPUT_DIR}"
+
+          if [[ ! -d generated-publish ]]; then
+            echo "[!] generated-publish directory not found"
+            exit 1
+          fi
+
+          cp -a generated-publish/. "${OUTPUT_DIR}/"
+
+          echo "[*] Files after copy:"
+          ls -lah "${OUTPUT_DIR}" || true
+
+      - name: Commit and push generated queries
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+
+          git add "${OUTPUT_DIR}" || true
+
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore(queries): auto-generate search queries [skip ci]"
+            git push origin "${GITHUB_REF_NAME}"
+            echo "[*] Pushed generated search queries"
+          fi
+
+  # =========================================================
+  # 4. Финальный отчет
+  # =========================================================
+  report:
+    name: Generator report
+    runs-on: ubuntu-latest
+    needs:
+      - generate-queries
+      - validate-queries
+      - publish-queries
+    if: always()
+    timeout-minutes: 10
+
+    steps:
+      - name: Download generated queries for report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: generated-queries
+          path: report-queries
+
+      - name: Print report
+        run: |
+          echo "=================================================="
+          echo " Search Query Generator finished"
+          echo "=================================================="
+
+          FILE="report-queries/queries.json"
+
+          if [[ ! -f "$FILE" ]]; then
+            echo "[!] queries.json not found in artifacts"
+            exit 0
+          fi
+
+          python - "$FILE" <<'PY'
+          import json
+          import sys
+
+          path = sys.argv[1]
+
+          try:
+              with open(path, "r", encoding="utf-8") as f:
+                  data = json.load(f)
+
+              summary = data.get("summary", {})
+              adaptive = data.get("adaptive_terms", [])
+
+              print(f"Generated at: {data.get('generated_at')}")
+              print(f"Target: {data.get('target') or '<none>'}")
+              print(f"Adaptive terms: {len(adaptive)}")
+
+              print("\nSummary:")
+
+              for key, value in summary.items():
+                  print(f"- {key}: {value}")
+
+              print("\nTop adaptive terms:")
+              print(", ".join(adaptive[:30]) if adaptive else "<none>")
+
+          except Exception as e:
+              print(f"[!] Failed to print report: {e}")
+          PY
+
+          echo "=================================================="
