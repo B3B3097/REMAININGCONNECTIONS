@@ -1,0 +1,115 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Автодеплой при пуше в main, если изменились файлы сайта или данных
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'data/**'
+      - '.github/workflows/deploy.yml'
+
+  # Возможность запустить вручную
+  workflow_dispatch:
+
+# Права для деплоя на Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Только один деплой одновременно, старые прерываются
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # =========================================================
+  # 1. СБОРКА И ПРОВЕРКА
+  # =========================================================
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure docs/index.html exists
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "[*] Создаю папку docs/"
+            mkdir -p docs
+          fi
+
+          if [ ! -f "docs/index.html" ]; then
+            echo "[!] docs/index.html отсутствует — создаю заглушку"
+            cat > docs/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="ru">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>REMAININGCONNECTIONS · Остаться на связи</title>
+            <style>
+              body { font-family: system-ui, sans-serif; background:#0b0f19; color:#f9fafb; margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; }
+              h1 { font-size: clamp(40px, 8vw, 96px); background:linear-gradient(90deg,#60a5fa,#a78bfa,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+              p { color:#9ca3af; max-width:600px; }
+              a { color:#60a5fa; }
+            </style>
+          </head>
+          <body>
+            <div>
+              <h1>ОСТАТЬСЯ НА СВЯЗИ 🛜</h1>
+              <p>Сайт задеплоен, но <code>docs/index.html</code> отсутствует.</p>
+              <p><a href="https://t.me/REMAININGCONNECTIONS" target="_blank">@REMAININGCONNECTIONS</a></p>
+            </div>
+          </body>
+          </html>
+          HTML
+          fi
+
+          echo "[+] docs/index.html готов ($(wc -c < docs/index.html) bytes)"
+
+      - name: Ensure data directory exists
+        run: |
+          mkdir -p data
+          echo "[+] data/ готова"
+          ls -lah data/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+  # =========================================================
+  # 2. ДЕПЛОЙ
+  # =========================================================
+  deploy:
+    name: Deploy to Pages
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Print success
+        run: |
+          echo "=================================================="
+          echo " ✅ Сайт задеплоен!"
+          echo "=================================================="
+          echo " 🌐 URL: ${{ steps.deployment.outputs.page_url }}"
+          echo " 🌍 Translate: https://translate.google.com/translate?sl=en&tl=ru&u=${{ steps.deployment.outputs.page_url }}"
+          echo "=================================================="
