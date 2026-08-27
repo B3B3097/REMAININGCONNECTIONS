@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Мониторинг подписок, ТГ прокси и Open Source утилит. Остаться на связи.">
+    <title>🛜 Остаться на связи | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           1. CSS VARIABLES & ROOT SETTINGS
+           ========================================= */
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-tertiary: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-blue-glow: rgba(59, 130, 246, 0.4);
+            --accent-emerald: #10b981;
+            --accent-emerald-glow: rgba(16, 185, 129, 0.4);
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.4);
+            --accent-yellow: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow-blue: 0 0 20px var(--accent-blue-glow);
+            --shadow-glow-emerald: 0 0 20px var(--accent-emerald-glow);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =========================================
+           2. BASE & RESET
+           ========================================= */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        input, select, textarea {
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            background: none;
+            border: none;
+            outline: none;
+        }
+        img, svg {
+            display: block;
+            max-width: 100%;
+        }
+        ul, ol {
+            list-style: none;
+        }
+
+        /* =========================================
+           3. SCROLLBARS
+           ========================================= */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            transition: background var(--transition-fast);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-tertiary) var(--bg-secondary);
+        }
+
+        /* =========================================
+           4. ANIMATIONS & KEYFRAMES
+           ========================================= */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px var(--accent-blue-glow); }
+            50% { box-shadow: 0 0 30px var(--accent-blue-glow), 0 0 45px var(--accent-blue-glow); }
+        }
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes borderPulse {
+            0%, 100% { border-color: var(--accent-blue); }
+            50% { border-color: var(--accent-emerald); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.3s ease-out forwards; }
+        .animate-slide-in-right { animation: slideInRight 0.5s ease-out forwards; }
+        .animate-pulse-glow { animation: pulseGlow 2s infinite; }
+        .animate-text-glow { animation: textGlow 3s infinite; }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        /* =========================================
+           5. BACKGROUND & CANVAS
+           ========================================= */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+        }
+
+        /* =========================================
+           6. LAYOUT & CONTAINERS
+           ========================================= */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        @media (min-width: 768px) {
+            .container { padding: 0 40px; }
+        }
+        .section {
+            padding: 40px 0;
+        }
+        @media (min-width: 768px) {
+            .section { padding: 60px 0; }
+        }
+
+        /* =========================================
+           7. TYPOGRAPHY
+           ========================================= */
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-emerald {
+            background: linear-gradient(135deg, #34d399, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-multi {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* =========================================
+           8. GLASSMORPHISM & CARDS
+           ========================================= */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+        .glass-hover:hover {
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* =========================================
+           9. BUTTONS
+           ========================================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 6px 10px -1px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: #374151;
+            border-color: var(--border-hover);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        .btn-ghost:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: var(--radius-md);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* =========================================
+           10. FORMS & INPUTS
+           ========================================= */
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-tertiary);
+            pointer-events: none;
+            transition: color var(--transition-fast);
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all var(--transition-fast);
+        }
+        .input-field::placeholder {
+            color: var(--text-tertiary);
+        }
+        .input-field:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: var(--bg-tertiary);
+        }
+        .input-field:focus + .icon,
+        .input-group:focus-within .icon {
+            color: var(--accent-blue);
+        }
+        .select-field {
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        /* =========================================
+           11. BADGES & TAGS
+           ========================================= */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-bs {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .badge-cs {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .badge-github {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .badge-gitverse {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* =========================================
+           12. HEADER & NAVIGATION
+           ========================================= */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow-blue);
+        }
+        .nav-links {
+            display: none;
+            gap: 8px;
+        }
+        @media (min-width: 1024px) {
+            .nav-links { display: flex; }
+        }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* =========================================
+           13. HERO SECTION (ОСТАТЬСЯ НА СВЯЗИ)
+           ========================================= */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        @media (min-width: 768px) {
+            .hero-title { font-size: 72px; }
+        }
+        @media (min-width: 1024px) {
+            .hero-title { font-size: 96px; }
+        }
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 9999px;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all var(--transition-normal);
+            animation: pulseGlow 3s infinite;
+        }
+        .hero-link:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+            border-color: rgba(59, 130, 246, 0.8);
+        }
+        .hero-emoji {
+            font-size: 28px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* =========================================
+           14. TABS
+           ========================================= */
+        .tabs-container {
+            display: flex;
+            gap: 4px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        .tab-btn.active {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-hover);
+        }
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* =========================================
+           15. FILTERS BAR
+           ========================================= */
+        .filters-bar {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        @media (min-width: 768px) {
+            .filters-bar {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+            }
+        }
+
+        /* =========================================
+           16. STATS GRID (DASHBOARD)
+           ========================================= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        @media (min-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        .stat-card {
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .stat-card .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+        }
+        .trend-up { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .trend-down { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        /* =========================================
+           17. SUBSCRIPTION CARDS
+           ========================================= */
+        .subs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .subs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1200px) {
+            .subs-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .sub-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .sub-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sub-card-source {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        .sub-card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+        .sub-stat-item {
+            text-align: center;
+        }
+        .sub-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .sub-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .sub-card-footer {
+            display: flex;
+            gap: 8px;
+        }
+        .sub-card-footer .btn {
+            flex: 1;
+        }
+
+        /* =========================================
+           18. PROXY TABLE / LIST
+           ========================================= */
+        .proxy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .proxy-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: center;
+            padding: 16px 20px;
+            transition: all var(--transition-fast);
+        }
+        @media (min-width: 768px) {
+            .proxy-item {
+                grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            }
+        }
+        .proxy-item:hover {
+            background: var(--bg-glass);
+            border-color: var(--border-hover);
+        }
+        .proxy-host {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .proxy-protocol {
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .proxy-ping {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .ping-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .ping-good { background: var(--accent-emerald); box-shadow: 0 0 8px var(--accent-emerald-glow); }
+        .ping-medium { background: var(--accent-yellow); box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+        .ping-bad { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red-glow); }
+
+        /* =========================================
+           19. OPEN SOURCE CARDS
+           ========================================= */
+        .oss-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .oss-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1200px) {
+            .oss-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .oss-card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .oss-card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+        .oss-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .oss-langs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .lang-tag {
+            padding: 2px 8px;
+            background: var(--bg-secondary);
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* =========================================
+           20. MODALS & OVERLAYS
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(20px);
+            transition: transform var(--transition-normal);
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* =========================================
+           21. TOAST NOTIFICATIONS
+           ========================================= */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-xl);
+            pointer-events: auto;
+            animation: slideInRight 0.3s ease-out;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        .toast-success { border-left: 4px solid var(--accent-emerald); }
+        .toast-error { border-left: 4px solid var(--accent-red); }
+        .toast-info { border-left: 4px solid var(--accent-blue); }
+
+        /* =========================================
+           22. FOOTER
+           ========================================= */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        .footer-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* =========================================
+           23. UTILITIES
+           ========================================= */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-sm { font-size: 14px; }
+        .text-xs { font-size: 12px; }
+        .font-bold { font-weight: 700; }
+        .text-secondary { color: var(--text-secondary); }
+        .text-tertiary { color: var(--text-tertiary); }
+        .hidden { display: none !important; }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND EFFECTS -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-grid"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+                <span class="text-gradient-blue">NetWatch</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#" class="nav-link active" data-nav="dashboard">Дашборд</a>
+                <a href="#" class="nav-link" data-nav="subs">Подписки</a>
+                <a href="#" class="nav-link" data-nav="proxies">Прокси</a>
+                <a href="#" class="nav-link" data-nav="oss">Open Source</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn btn-ghost btn-icon" id="themeToggle" title="Тема">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <button class="btn btn-primary btn-sm" id="refreshBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span class="hidden md:inline">Обновить</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container">
+                <a href="https://t.me/REMAININGCONNECTIONS" target="_blank" class="hero-link">
+                    <span class="hero-emoji">🛜</span>
+                    <span class="text-gradient-multi animate-text-glow">ОСТАТЬСЯ НА СВЯЗИ</span>
+                </a>
+                <p class="hero-subtitle mt-4">
+                    Мониторинг подписок, ТГ-прокси и Open Source утилит в реальном времени. 
+                    Актуальность, статусы БС/ЧС и мгновенный доступ к конфигам.
+                </p>
+            </div>
+        </section>
+
+        <!-- DASHBOARD CONTENT -->
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                
+                <!-- TABS NAVIGATION -->
+                <div class="tabs-container" id="mainTabs">
+                    <button class="tab-btn active" data-tab="dashboard">
+                        <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Дашборд
+                        </span>
+                    </button>
+                    <button class="tab-btn" data-tab="subscriptions">
+                        <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            Подписки (ЧС/БС)
+                        </span>
+                    </button>
+                    <button class="tab-btn" data-tab="proxies">
+                        <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                            ТГ Прокси
+                        </span>
+                    </button>
+                    <button class="tab-btn" data-tab="opensource">
+                        <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                            Open Source
+                        </span>
+                    </button>
+                </div>
+
+                <!-- FILTERS BAR -->
+                <div class="filters-bar glass" style="padding: 20px;">
+                    <div class="input-group">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="searchInput" class="input-field" placeholder="Поиск по названию, IP, описанию...">
+                    </div>
+                    <select id="filterSource" class="input-field select-field">
+                        <option value="all">Все источники</option>
+                        <option value="github">GitHub</option>
+                        <option value="gitverse">Gitverse</option>
+                        <option value="telegram">Telegram</option>
+                    </select>
+                    <select id="filterStatus" class="input-field select-field">
+                        <option value="all">Любой статус</option>
+                        <option value="bs">Есть БС</option>
+                        <option value="cs">В ЧС</option>
+                        <option value="unknown">Неизвестно</option>
+                    </select>
+                    <select id="filterSort" class="input-field select-field">
+                        <option value="updated">Сначала новые</option>
+                        <option value="configs">Больше конфигов</option>
+                        <option value="name">По алфавиту</option>
+                    </select>
+                </div>
+
+                <!-- TAB 1: DASHBOARD -->
+                <div class="tab-content active" id="tab-dashboard">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="card stat-card">
+                            <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            </div>
+                            <div class="stat-value text-gradient-blue" id="statTotalSubs">0</div>
+                            <div class="stat-label">Всего подписок</div>
+                            <div class="stat-trend trend-up">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                +12%
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="stat-value text-gradient-emerald" id="statActiveConfigs">0</div>
+                            <div class="stat-label">Активных конфигов</div>
+                            <div class="stat-trend trend-up">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                +5%
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <div class="stat-value" style="color: var(--accent-yellow);" id="statAvgUpdate">0</div>
+                            <div class="stat-label">Ср. обновление (мин)</div>
+                            <div class="stat-trend trend-down">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+                                -2 мин
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                            </div>
+                            <div class="stat-value" style="color: var(--accent-purple);" id="statProxies">0</div>
+                            <div class="stat-label">ТГ Прокси</div>
+                            <div class="stat-trend trend-up">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                +3
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            Последняя активность
+                        </h3>
+                        <div id="activityFeed" class="flex flex-col gap-3">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SUBSCRIPTIONS -->
+                <div class="tab-content" id="tab-subscriptions">
+                    <div class="subs-grid" id="subsGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: PROXIES -->
+                <div class="tab-content" id="tab-proxies">
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold flex items-center gap-2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                                Активные ТГ Прокси
+                            </h3>
+                            <span class="badge badge-bs" id="proxyCountBadge">0 онлайн</span>
+                        </div>
+                        <div class="proxy-list" id="proxyList">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: OPEN SOURCE -->
+                <div class="tab-content" id="tab-opensource">
+                    <div class="oss-grid" id="ossGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://t.me/REMAININGCONNECTIONS" target="_blank" class="footer-link">Telegram</a>
+                <a href="#" class="footer-link">GitHub</a>
+                <a href="#" class="footer-link">Gitverse</a>
+                <a href="#" class="footer-link">Документация</a>
+            </div>
+            <p>© 2024 NetWatch Dashboard. Оставаться на связи — это не выбор, это необходимость.</p>
+            <p class="text-xs mt-2 text-tertiary">Данные обновляются автоматически каждые 2 часа через GitHub Actions.</p>
+        </div>
+    </footer>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        /* =========================================
+           1. MOCK DATA (Имитация данных от парсера)
+           ========================================= */
+        
+        const MOCK_SUBSCRIPTIONS = [
+            { id: 1, name: "V2Ray Aggregator", source: "github", url: "https://github.com/v2ray/aggregator", updated_mins_ago: 12, configs_count: 1452, has_bs: true, status: "active", last_commit: "fix: update nodes" },
+            { id: 2, name: "SingBox Free", source: "github", url: "https://github.com/singbox/free", updated_mins_ago: 45, configs_count: 890, has_bs: true, status: "active", last_commit: "chore: daily update" },
+            { id: 3, name: "Gitverse Proxy Hub", source: "gitverse", url: "https://gitverse.ru/repo/proxyhub", updated_mins_ago: 120, configs_count: 340, has_bs: false, status: "warning", last_commit: "add: new servers" },
+            { id: 4, name: "Shadowsocks Mirror", source: "github", url: "https://github.com/ss/mirror", updated_mins_ago: 300, configs_count: 2100, has_bs: true, status: "active", last_commit: "perf: optimize list" },
+            { id: 5, name: "Trojan Global", source: "github", url: "https://github.com/trojan/global", updated_mins_ago: 15, configs_count: 567, has_bs: false, status: "active", last_commit: "feat: add regions" },
+            { id: 6, name: "Hysteria2 Nodes", source: "gitverse", url: "https://gitverse.ru/repo/hysteria2", updated_mins_ago: 600, configs_count: 120, has_bs: false, status: "error", last_commit: "fix: timeout issues" },
+            { id: 7, name: "Clash Meta Subs", source: "github", url: "https://github.com/clash/meta-subs", updated_mins_ago: 5, configs_count: 3400, has_bs: true, status: "active", last_commit: "auto: merge PRs" },
+            { id: 8, name: "NaiveProxy List", source: "github", url: "https://github.com/naive/list", updated_mins_ago: 80, configs_count: 210, has_bs: true, status: "active", last_commit: "update: certs" },
+            { id: 9, name: "TUIC Aggregator", source: "gitverse", url: "https://gitverse.ru/repo/tuic-agg", updated_mins_ago: 240, configs_count: 450, has_bs: false, status: "warning", last_commit: "refactor: parser" },
+            { id: 10, name: "WireGuard Configs", source: "github", url: "https://github.com/wg/configs", updated_mins_ago: 30, configs_count: 780, has_bs: true, status: "active", last_commit: "add: EU nodes" },
+            { id: 11, name: "Reality Nodes", source: "github", url: "https://github.com/reality/nodes", updated_mins_ago: 180, configs_count: 950, has_bs: true, status: "active", last_commit: "update: xray-core" },
+            { id: 12, name: "ShadowTLS Pool", source: "gitverse", url: "https://gitverse.ru/repo/shadowtls", updated_mins_ago: 400, configs_count: 150, has_bs: false, status: "error", last_commit: "fix: handshake" }
+        ];
+
+        const MOCK_PROXIES = [
+            { id: 1, host: "proxy1.remaining.tg", port: 443, protocol: "MTProto", ping: 45, status: "online", country: "🇳🇱" },
+            { id: 2, host: "tg-free.secure.net", port: 8443, protocol: "MTProto", ping: 120, status: "online", country: "🇩🇪" },
+            { id: 3, host: "fast-proxy.onion.rs", port: 443, protocol: "MTProto", ping: 30, status: "online", country: "🇫🇷" },
+            { id: 4, host: "node-eu.remaining.tg", port: 443, protocol: "MTProto", ping: 250, status: "online", country: "🇸🇪" },
+            { id: 5, host: "asia-gateway.tg", port: 443, protocol: "MTProto", ping: 180, status: "online", country: "🇸🇬" },
+            { id: 6, host: "us-west-proxy.net", port: 8443, protocol: "MTProto", ping: 90, status: "online", country: "🇺🇸" },
+            { id: 7, host: "dead-node.old.tg", port: 443, protocol: "MTProto", ping: 9999, status: "offline", country: "🇬🇧" },
+            { id: 8, host: "secure-relay.eu", port: 443, protocol: "MTProto", ping: 60, status: "online", country: "🇫🇮" }
+        ];
+
+        const MOCK_OSS = [
+            { id: 1, name: "xray-core", desc: "Универсальный сетевой прокси-инструмент. Поддержка VLESS, XTLS, Trojan и других протоколов.", stars: 24500, forks: 4100, langs: ["Go", "JavaScript"], url: "#" },
+            { id: 2, name: "sing-box", desc: "Универсальная платформа прокси. Поддержка сложных правил маршрутизации и множества протоколов.", stars: 12300, forks: 1800, langs: ["Go"], url: "#" },
+            { id: 3, name: "hiddify-app", desc: "Кроссплатформенное приложение для обхода цензуры на базе sing-box с удобным GUI.", stars: 18900, forks: 2200, langs: ["Dart", "Kotlin", "Swift"], url: "#" },
+            { id: 4, name: "v2rayN", desc: "Менеджер прокси для Windows с поддержкой Xray, Sing-box, Shadowsocks и других ядер.", stars: 15600, forks: 2800, langs: ["C#"], url: "#" },
+            { id: 5, name: "NekoBox", desc: "Менеджер прокси для Android, основанный на sing-box и V2Ray. Поддержка всех современных протоколов.", stars: 9800, forks: 1100, langs: ["Kotlin", "Go"], url: "#" },
+            { id: 6, name: "subconverter", desc: "Бэкенд для конвертации подписок. Поддержка различных форматов и кастомных правил.", stars: 8500, forks: 2100, langs: ["C++"], url: "#" }
+        ];
+
+        const MOCK_ACTIVITY = [
+            { time: "2 мин назад", text: "Обновлена подписка <b>Clash Meta Subs</b>", type: "success" },
+            { time: "15 мин назад", text: "Добавлено 45 новых конфигов в <b>V2Ray Aggregator</b>", type: "info" },
+            { time: "45 мин назад", text: "Подписка <b>Hysteria2 Nodes</b> не отвечает (таймаут)", type: "error" },
+            { time: "1 час назад", text: "Проверка БС/ЧС завершена. Найдено 3 новых узла в ЧС", type: "warning" },
+            { time: "2 часа назад", text: "Автоматический парсинг Gitverse запущен", type: "info" },
+            { time: "3 часа назад", text: "Успешно собран и задеплоен дашборд", type: "success" }
+        ];
+
+        /* =========================================
+           2. STATE & DOM ELEMENTS
+           ========================================= */
+        
+        const state = {
+            currentTab: 'dashboard',
+            searchQuery: '',
+            filterSource: 'all',
+            filterStatus: 'all',
+            sortBy: 'updated'
+        };
+
+        const dom = {
+            tabs: document.querySelectorAll('.tab-btn'),
+            tabContents: document.querySelectorAll('.tab-content'),
+            searchInput: document.getElementById('searchInput'),
+            filterSource: document.getElementById('filterSource'),
+            filterStatus: document.getElementById('filterStatus'),
+            filterSort: document.getElementById('filterSort'),
+            subsGrid: document.getElementById('subsGrid'),
+            proxyList: document.getElementById('proxyList'),
+            ossGrid: document.getElementById('ossGrid'),
+            activityFeed: document.getElementById('activityFeed'),
+            toastContainer: document.getElementById('toastContainer'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            themeToggle: document.getElementById('themeToggle')
+        };
+
+        /* =========================================
+           3. UTILITY FUNCTIONS
+           ========================================= */
+
+        function formatTimeAgo(mins) {
+            if (mins < 60) return `${mins} мин`;
+            if (mins < 1440) return `${Math.floor(mins / 60)} ч`;
+            return `${Math.floor(mins / 1440)} дн`;
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+            return num.toString();
+        }
+
+        function getPingClass(ping) {
+            if (ping < 100) return 'ping-good';
+            if (ping < 200) return 'ping-medium';
+            return 'ping-bad';
+        }
+
+        function getPingText(ping) {
+            if (ping >= 9999) return 'Offline';
+            return `${ping} ms`;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconSvg = '';
+            if (type === 'success') iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+            if (type === 'error') iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            if (type === 'info') iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+            toast.innerHTML = `${iconSvg}<span>${message}</span>`;
+            dom.toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(30px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        /* =========================================
+           4. RENDER FUNCTIONS
+           ========================================= */
+
+        function renderStats() {
+            document.getElementById('statTotalSubs').textContent = MOCK_SUBSCRIPTIONS.length;
+            const totalConfigs = MOCK_SUBSCRIPTIONS.reduce((sum, s) => sum + s.configs_count, 0);
+            document.getElementById('statActiveConfigs').textContent = formatNumber(totalConfigs);
+            const avgUpdate = Math.round(MOCK_SUBSCRIPTIONS.reduce((sum, s) => sum + s.updated_mins_ago, 0) / MOCK_SUBSCRIPTIONS.length);
+            document.getElementById('statAvgUpdate').textContent = avgUpdate;
+            document.getElementById('statProxies').textContent = MOCK_PROXIES.filter(p => p.status === 'online').length;
+        }
+
+        function renderActivity() {
+            dom.activityFeed.innerHTML = MOCK_ACTIVITY.map(act => {
+                let color = 'var(--text-secondary)';
+                if (act.type === 'success') color = 'var(--accent-emerald)';
+                if (act.type === 'error') color = 'var(--accent-red)';
+                if (act.type === 'warning') color = 'var(--accent-yellow)';
+                
+                return `
+                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition">
+                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background: ${color}; box-shadow: 0 0 8px ${color};"></div>
+                        <div class="flex-grow">
+                            <p class="text-sm">${act.text}</p>
+                        </div>
+                        <span class="text-xs text-tertiary flex-shrink-0">${act.time}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getFilteredSubs() {
+            return MOCK_SUBSCRIPTIONS.filter(sub => {
+                const matchSearch = sub.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+                const matchSource = state.filterSource === 'all' || sub.source === state.filterSource;
+                
+                let matchStatus = true;
+                if (state.filterStatus === 'bs') matchStatus = sub.has_bs;
+                if (state.filterStatus === 'cs') matchStatus = !sub.has_bs;
+                
+                return matchSearch && matchSource && matchStatus;
+            }).sort((a, b) => {
+                if (state.sortBy === 'updated') return a.updated_mins_ago - b.updated_mins_ago;
+                if (state.sortBy === 'configs') return b.configs_count - a.configs_count;
+                if (state.sortBy === 'name') return a.name.localeCompare(b.name);
+                return 0;
+            });
+        }
+
+        function renderSubscriptions() {
+            const subs = getFilteredSubs();
+            
+            if (subs.length === 0) {
+                dom.subsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <p class="text-secondary">Подписки не найдены. Попробуйте изменить фильтры.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            dom.subsGrid.innerHTML = subs.map(sub => {
+                const bsBadge = sub.has_bs 
+                    ? '<span class="badge badge-bs">БС</span>' 
+                    : '<span class="badge badge-cs">ЧС</span>';
+                
+                const sourceBadge = sub.source === 'github' 
+                    ? '<span class="badge badge-github">GitHub</span>' 
+                    : '<span class="badge badge-gitverse">Gitverse</span>';
+
+                let statusColor = 'var(--accent-emerald)';
+                if (sub.status === 'warning') statusColor = 'var(--accent-yellow)';
+                if (sub.status === 'error') statusColor = 'var(--accent-red)';
+
+                return `
+                    <div class="card glass-hover animate-fade-in-up">
+                        <div class="sub-card-header">
+                            <div>
+                                <div class="sub-card-title">
+                                    ${sub.name}
+                                </div>
+                                <div class="sub-card-source flex items-center gap-2 mt-1">
+                                    ${sourceBadge}
+                                    <span class="text-xs" style="color: ${statusColor}">● ${sub.status}</span>
+                                </div>
+                            </div>
+                            ${bsBadge}
+                        </div>
+                        
+                        <div class="sub-card-stats">
+                            <div class="sub-stat-item">
+                                <div class="sub-stat-value text-gradient-blue">${sub.configs_count}</div>
+                                <div class="sub-stat-label">Конфигов</div>
+                            </div>
+                            <div class="sub-stat-item">
+                                <div class="sub-stat-value" style="color: ${sub.updated_mins_ago > 300 ? 'var(--accent-red)' : 'var(--accent-emerald)'}">
+                                    ${formatTimeAgo(sub.updated_mins_ago)}
+                                </div>
+                                <div class="sub-stat-label">Обновлено</div>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-tertiary mb-4 truncate">
+                            <b class="text-secondary">Последний коммит:</b> ${sub.last_commit}
+                        </div>
+
+                        <div class="sub-card-footer">
+                            <a href="${sub.url}" target="_blank" class="btn btn-primary btn-sm">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                Источник
+                            </a>
+                            <button class="btn btn-secondary btn-sm" onclick="copySubUrl('${sub.url}')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                Копировать
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderProxies() {
+            const onlineCount = MOCK_PROXIES.filter(p => p.status === 'online').length;
+            document.getElementById('proxyCountBadge').textContent = `${onlineCount} онлайн`;
+
+            dom.proxyList.innerHTML = MOCK_PROXIES.map(proxy => {
+                const pingClass = getPingClass(proxy.ping);
+                const pingText = getPingText(proxy.ping);
+                const statusColor = proxy.status === 'online' ? 'var(--accent-emerald)' : 'var(--accent-red)';
+
+                return `
+                    <div class="card proxy-item">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">${proxy.country}</span>
+                            <div>
+                                <div class="proxy-host">${proxy.host}:${proxy.port}</div>
+                                <div class="text-xs text-tertiary mt-1" style="color: ${statusColor}">● ${proxy.status}</div>
+                            </div>
+                        </div>
+                        <div class="proxy-protocol">${proxy.protocol}</div>
+                        <div class="proxy-ping">
+                            <span class="ping-dot ${pingClass}"></span>
+                            <span>${pingText}</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="copyProxy('${proxy.host}', ${proxy.port})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Копировать
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderOSS() {
+            dom.ossGrid.innerHTML = MOCK_OSS.map(repo => {
+                return `
+                    <div class="card glass-hover animate-fade-in-up">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            </div>
+                            <h3 class="text-lg font-bold">${repo.name}</h3>
+                        </div>
+                        <p class="oss-card-desc">${repo.desc}</p>
+                        <div class="oss-card-meta">
+                            <div class="oss-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                ${formatNumber(repo.stars)}
+                            </div>
+                            <div class="oss-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><path d="M6 9v12"></path></svg>
+                                ${formatNumber(repo.forks)}
+                            </div>
+                        </div>
+                        <div class="oss-langs mb-4">
+                            ${repo.langs.map(l => `<span class="lang-tag">${l}</span>`).join('')}
+                        </div>
+                        <a href="${repo.url}" target="_blank" class="btn btn-secondary w-full">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            Открыть репозиторий
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* =========================================
+           5. EVENT HANDLERS & INITIALIZATION
+           ========================================= */
+
+        // Tab switching
+        dom.tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+                state.currentTab = targetTab;
+
+                dom.tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                dom.tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${targetTab}`) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Filters
+        dom.searchInput.addEventListener('input', (e) => {
+            state.searchQuery = e.target.value;
+            renderSubscriptions();
+        });
+
+        dom.filterSource.addEventListener('change', (e) => {
+            state.filterSource = e.target.value;
+            renderSubscriptions();
+        });
+
+        dom.filterStatus.addEventListener('change', (e) => {
+            state.filterStatus = e.target.value;
+            renderSubscriptions();
+        });
+
+        dom.filterSort.addEventListener('change', (e) => {
+            state.sortBy = e.target.value;
+            renderSubscriptions();
+        });
+
+        // Refresh button
+        dom.refreshBtn.addEventListener('click', () => {
+            dom.refreshBtn.disabled = true;
+            dom.refreshBtn.innerHTML = `
+                <svg class="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                <span>Обновление...</span>
+            `;
+            
+            setTimeout(() => {
+                renderAll();
+                showToast('Данные успешно обновлены!', 'success');
+                dom.refreshBtn.disabled = false;
+                dom.refreshBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    <span class="hidden md:inline">Обновить</span>
+                `;
+            }, 1500);
+        });
+
+        // Theme toggle (visual only for this demo)
+        dom.themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            showToast('Тема переключена (демо)', 'info');
+        });
+
+        // Global copy functions
+        window.copySubUrl = function(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Ссылка на подписку скопирована!', 'success');
+            });
+        };
+
+        window.copyProxy = function(host, port) {
+            const text = `${host}:${port}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`Прокси ${text} скопирован!`, 'success');
+            });
+        };
+
+        function renderAll() {
+            renderStats();
+            renderActivity();
+            renderSubscriptions();
+            renderProxies();
+            renderOSS();
+        }
+
+        // Initial render
+        renderAll();
+
+        /* =========================================
+           6. CANVAS BACKGROUND ANIMATION
+           ========================================= */
+        
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrame;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor((canvas.width * canvas.height) / 15000);
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        const opacity = (1 - distance / 120) * 0.15;
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            animationFrame = requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        resizeCanvas();
+        initParticles();
+        animateParticles();
+
+        // Clean up on page hide
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelAnimationFrame(animationFrame);
+            } else {
+                animateParticles();
+            }
+        });
+
+    </script>
+</body>
+</html>
