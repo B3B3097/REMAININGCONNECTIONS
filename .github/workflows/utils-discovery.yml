@@ -1,4 +1,4 @@
-name: 03 | Utility Discovery Pipeline
+name: Utility Discovery Pipeline
 
 on:
   schedule:
@@ -14,22 +14,34 @@ on:
         default: false
 
       max_repos:
-        description: "Сколько репозиториев искать за один запрос"
+        description: "Сколько репозиториев искать за запрос"
         required: false
         type: string
         default: "80"
 
       max_probe:
-        description: "Сколько уникальных утилит детально проверять"
+        description: "Сколько утилит детально проверять"
         required: false
         type: string
         default: "300"
 
       include_readme:
-        description: "Читать README для улучшения определения платформ"
+        description: "Читать README для определения платформ"
         required: false
         type: boolean
         default: true
+
+      skip_search:
+        description: "Пропустить поиск (только проверка существующих данных)"
+        required: false
+        type: boolean
+        default: false
+
+      min_stars:
+        description: "Минимум звёзд для включения в результаты"
+        required: false
+        type: string
+        default: "0"
 
 concurrency:
   group: utils-discovery
@@ -43,8 +55,7 @@ permissions:
 env:
   PYTHON_VERSION: "3.11"
   OUTPUT_DIR: "data"
-  UTILS_OUTPUT: "data/utils_found.json"
-
+  OUTPUT_FILE: "data/utils_found.json"
   GH_TOKEN: ${{ github.token }}
   GITHUB_TOKEN: ${{ github.token }}
 
@@ -52,8 +63,10 @@ env:
   MAX_PROBE: ${{ github.event.inputs.max_probe || '300' }}
   INCLUDE_README: ${{ github.event.inputs.include_readme == true && '1' || '0' }}
   DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
+  SKIP_SEARCH: ${{ github.event.inputs.skip_search == true && '1' || '0' }}
+  MIN_STARS: ${{ github.event.inputs.min_stars || '0' }}
 
-  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 NetWatchUtilsBot/1.0"
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
 
 defaults:
   run:
@@ -61,10 +74,10 @@ defaults:
 
 jobs:
   # =========================================================
-  # 1. Подготовка
+  # 1. ПОДГОТОВКА
   # =========================================================
   prepare:
-    name: Prepare utility discovery
+    name: 1 · Подготовка
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -77,21 +90,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install base dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Create working directories
+      - name: Create directories
         run: |
           mkdir -p raw
           mkdir -p candidates
           mkdir -p probed
           mkdir -p "${OUTPUT_DIR}"
+          echo "[+] Директории созданы"
 
       - name: Write run metadata
         run: |
-          python - <<'PY'
+          python <<'PY'
           import json
           import datetime
           import os
@@ -99,7 +113,7 @@ jobs:
           payload = {
               "run_id": "${{ github.run_id }}",
               "run_number": "${{ github.run_number }}",
-              "workflow": "${{ github.workflow }}",
+              "workflow": "utils-discovery",
               "repository": "${{ github.repository }}",
               "actor": "${{ github.actor }}",
               "event_name": "${{ github.event_name }}",
@@ -110,17 +124,18 @@ jobs:
               "max_probe": os.getenv("MAX_PROBE", "300"),
               "include_readme": os.getenv("INCLUDE_README", "1") == "1",
               "dry_run": os.getenv("DRY_RUN", "0") == "1",
+              "skip_search": os.getenv("SKIP_SEARCH", "0") == "1",
+              "min_stars": int(os.getenv("MIN_STARS", "0")),
           }
 
           os.makedirs("raw", exist_ok=True)
-
           with open("raw/utils_run_metadata.json", "w", encoding="utf-8") as f:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
-          print("Utility discovery metadata saved")
+          print("[+] Метаданные сохранены")
           PY
 
-      - name: Upload prepare metadata
+      - name: Upload metadata
         uses: actions/upload-artifact@v4
         with:
           name: utils-prepare-metadata
@@ -129,12 +144,13 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 2. Поиск утилит по ключевым словам
+  # 2. ПОИСК ПО КЛЮЧЕВЫМ СЛОВАМ
   # =========================================================
   search-github-keywords:
-    name: GH utility keyword search
+    name: 2 · Поиск по ключевым словам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 30
     continue-on-error: true
 
@@ -262,6 +278,27 @@ jobs:
           - slug: singbox-ui
             query: "sing-box ui OR singbox ui"
 
+          - slug: hiddify
+            query: "hiddify OR hiddify-next"
+
+          - slug: nekobox
+            query: "nekobox OR nekobox-android"
+
+          - slug: v2rayng
+            query: "v2rayng OR v2ray-ng"
+
+          - slug: clash-verge
+            query: "clash verge OR clash-verge-rev"
+
+          - slug: mihomo-party
+            query: "mihomo party OR mihomo-party"
+
+          - slug: singbox-gui
+            query: "sing-box gui OR singbox gui"
+
+          - slug: proxy-panel
+            query: "proxy panel OR vpn panel OR proxy dashboard"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -271,7 +308,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub repositories for ${{ matrix.slug }}
+      - name: Search GitHub repositories
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -284,8 +321,7 @@ jobs:
           API_OUT="raw/utils_github_keyword_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub repositories"
-          echo "[*] Query: ${QUERY}"
+          echo "[*] Поиск репозиториев: ${QUERY}"
 
           FULL_QUERY="${QUERY} fork:true archived:false"
 
@@ -293,8 +329,9 @@ jobs:
             -f q="${FULL_QUERY}" \
             -f per_page="${MAX_REPOS}" \
             -f sort=stars \
-            -f order=desc > "${API_OUT}"; then
+            -f order=desc > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск не удался, создаю пустой результат"
           fi
 
           jq -c --arg slug "$SLUG" '.items[]? | {
@@ -313,9 +350,10 @@ jobs:
             pushed_at: .pushed_at,
             archived: .archived,
             fork: .fork
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Candidates found: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено кандидатов: ${COUNT}"
           sleep $((RANDOM % 6 + 3))
 
       - name: Upload keyword artifacts
@@ -327,12 +365,13 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 3. Поиск утилит по темам
+  # 3. ПОИСК ПО ТЕМАМ
   # =========================================================
   search-github-topics:
-    name: GH utility topic search
+    name: 3 · Поиск по темам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 30
     continue-on-error: true
 
@@ -418,6 +457,12 @@ jobs:
           - slug: topic-hiddify
             query: "topic:hiddify"
 
+          - slug: topic-nekobox
+            query: "topic:nekobox"
+
+          - slug: topic-sing-box
+            query: "topic:sing-box"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -427,7 +472,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub repositories by topic ${{ matrix.slug }}
+      - name: Search by topic
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -440,7 +485,7 @@ jobs:
           API_OUT="raw/utils_github_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching topic: ${QUERY}"
+          echo "[*] Поиск по теме: ${QUERY}"
 
           FULL_QUERY="${QUERY} fork:true archived:false"
 
@@ -448,8 +493,9 @@ jobs:
             -f q="${FULL_QUERY}" \
             -f per_page="${MAX_REPOS}" \
             -f sort=stars \
-            -f order=desc > "${API_OUT}"; then
+            -f order=desc > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск не удался"
           fi
 
           jq -c --arg slug "$SLUG" '.items[]? | {
@@ -468,9 +514,10 @@ jobs:
             pushed_at: .pushed_at,
             archived: .archived,
             fork: .fork
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Topic candidates found: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено: ${COUNT}"
           sleep $((RANDOM % 6 + 3))
 
       - name: Upload topic artifacts
@@ -482,10 +529,10 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 4. Сбор всех кандидатов
+  # 4. СБОР КАНДИДАТОВ
   # =========================================================
   collect-candidates:
-    name: Collect utility candidates
+    name: 4 · Сбор кандидатов
     runs-on: ubuntu-latest
     needs:
       - search-github-keywords
@@ -510,9 +557,9 @@ jobs:
           path: candidates
           merge-multiple: true
 
-      - name: Normalize utility candidates
+      - name: Normalize candidates
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import json
           import glob
@@ -547,7 +594,6 @@ jobs:
                           if repo not in seen:
                               seen[repo] = obj
                           else:
-                              # Объединяем информацию об источниках поиска
                               old = seen[repo]
 
                               old_slugs = old.get("query_slugs", [])
@@ -560,23 +606,19 @@ jobs:
 
                               old["query_slugs"] = old_slugs
 
-                              # Обновляем звезды, если вдруг нашлись больше
                               if obj.get("stars", 0) > old.get("stars", 0):
                                   old["stars"] = obj.get("stars", 0)
 
-                              # Обновляем описание, если оно длиннее
                               if len(obj.get("description") or "") > len(old.get("description") or ""):
                                   old["description"] = obj.get("description")
 
-                              # Обновляем topics
                               old_topics = set(old.get("topics") or [])
                               new_topics = set(obj.get("topics") or [])
                               old["topics"] = list(old_topics | new_topics)
 
               except Exception as e:
-                  print(f"[!] Failed to read {file_path}: {e}")
+                  print(f"[!] Ошибка чтения {file_path}: {e}")
 
-          # Сортируем по звездам
           candidates = list(seen.values())
           candidates.sort(key=lambda x: x.get("stars", 0), reverse=True)
 
@@ -586,12 +628,11 @@ jobs:
               for item in candidates:
                   out.write(json.dumps(item, ensure_ascii=False) + "\n")
 
-          print(f"[*] Total raw utility candidates: {total}")
-          print(f"[*] Unique utility candidates: {len(candidates)}")
-          print(f"[*] Saved to {out_path}")
+          print(f"[*] Всего кандидатов: {total}")
+          print(f"[+] Уникальных: {len(candidates)}")
           PY
 
-      - name: Upload normalized candidates
+      - name: Upload candidates
         uses: actions/upload-artifact@v4
         with:
           name: utils-candidates
@@ -600,10 +641,10 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 5. Проверка репозиториев, релизов и платформ
+  # 5. ПРОВЕРКА УТИЛИТ
   # =========================================================
   probe-utilities:
-    name: Probe utility repos and releases
+    name: 5 · Проверка утилит
     runs-on: ubuntu-latest
     needs: collect-candidates
     if: always()
@@ -618,7 +659,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
@@ -642,9 +683,9 @@ jobs:
           MAX_PROBE: ${{ env.MAX_PROBE }}
           INCLUDE_README: ${{ env.INCLUDE_README }}
           USER_AGENT: ${{ env.USER_AGENT }}
-          UTILS_OUTPUT: ${{ env.UTILS_OUTPUT }}
+          MIN_STARS: ${{ env.MIN_STARS }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import re
           import json
@@ -655,10 +696,11 @@ jobs:
 
           GITHUB_API = "https://api.github.com"
           TOKEN = os.getenv("GITHUB_TOKEN", "")
-          USER_AGENT = os.getenv("USER_AGENT", "NetWatchUtilsBot/1.0")
+          USER_AGENT = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
           MAX_PROBE = int(os.getenv("MAX_PROBE", "300"))
           INCLUDE_README = os.getenv("INCLUDE_README", "1") == "1"
-          UTILS_OUTPUT = os.getenv("UTILS_OUTPUT", "data/utils_found.json")
+          MIN_STARS = int(os.getenv("MIN_STARS", "0"))
+          UTILS_OUTPUT = os.getenv("OUTPUT_FILE", "data/utils_found.json")
 
           HEADERS = {
               "Accept": "application/vnd.github+json",
@@ -672,54 +714,25 @@ jobs:
           session.headers.update(HEADERS)
 
           ANDROID_KEYS = [
-              "android",
-              ".apk",
-              ".aab",
-              "apk",
-              "play google",
-              "f-droid",
-              "fdroid",
+              "android", ".apk", ".aab", "apk", "play google",
+              "f-droid", "fdroid", "android app", "android client",
           ]
 
           IOS_KEYS = [
-              "ios",
-              "iphone",
-              "ipad",
-              ".ipa",
-              "ipa",
-              "testflight",
-              "app store",
+              "ios", "iphone", "ipad", ".ipa", "ipa",
+              "testflight", "app store", "ios app", "ios client",
           ]
 
           WINDOWS_KEYS = [
-              "windows",
-              "win64",
-              "win32",
-              "win-arm",
-              ".exe",
-              ".msi",
-              ".msix",
-              ".appx",
-              "portable.exe",
+              "windows", "win64", "win32", "win-arm", ".exe",
+              ".msi", ".msix", ".appx", "portable.exe", "windows app",
           ]
 
           LINUX_KEYS = [
-              "linux",
-              "ubuntu",
-              "debian",
-              "fedora",
-              "archlinux",
-              "arch linux",
-              "appimage",
-              ".deb",
-              ".rpm",
-              ".snap",
-              ".flatpak",
-              ".pkg.tar.zst",
-              ".tar.gz",
-              ".tar.xz",
-              ".tar.zst",
-              ".tar.bz2",
+              "linux", "ubuntu", "debian", "fedora", "archlinux",
+              "arch linux", "appimage", ".deb", ".rpm", ".snap",
+              ".flatpak", ".pkg.tar.zst", ".tar.gz", ".tar.xz",
+              ".tar.zst", ".tar.bz2", "linux app",
           ]
 
           def now_iso():
@@ -732,14 +745,11 @@ jobs:
           def parse_date(value):
               if not value:
                   return None
-
               try:
                   value = value.replace("Z", "+00:00")
                   dt = datetime.datetime.fromisoformat(value)
-
                   if dt.tzinfo is None:
                       dt = dt.replace(tzinfo=datetime.timezone.utc)
-
                   return dt
               except Exception:
                   return None
@@ -747,36 +757,29 @@ jobs:
           def days_since(dt):
               if not dt:
                   return None
-
               return int((datetime.datetime.now(datetime.timezone.utc) - dt).total_seconds() / 86400)
 
           def fetch_json(url, params=None):
               for attempt in range(3):
                   try:
                       r = session.get(url, params=params, timeout=25)
-
                       if r.status_code == 200:
                           return r.json()
-
                       if r.status_code == 404:
                           return None
-
                       if r.status_code in (403, 429):
                           retry_after = r.headers.get("Retry-After")
                           wait = int(retry_after) if retry_after and retry_after.isdigit() else 6
-                          print(f"[!] Rate limit? {r.status_code} for {url}, waiting {wait}s")
+                          print(f"[!] Rate limit: {r.status_code}, жду {wait}с")
                           time.sleep(wait)
                           continue
-
                       if 500 <= r.status_code < 600:
                           time.sleep(2 + attempt)
                           continue
-
                       return None
                   except Exception as e:
-                      print(f"[!] fetch_json error {url}: {e}")
+                      print(f"[!] Ошибка запроса {url}: {e}")
                       time.sleep(2 + attempt)
-
               return None
 
           def fetch_text(url, accept=None):
@@ -784,35 +787,26 @@ jobs:
                   headers = {}
                   if accept:
                       headers["Accept"] = accept
-
                   r = session.get(url, headers=headers, timeout=25)
-
                   if r.status_code == 200 and r.text:
                       return r.text
-
                   return None
               except Exception as e:
-                  print(f"[!] fetch_text error {url}: {e}")
+                  print(f"[!] Ошибка загрузки {url}: {e}")
                   return None
 
           def detect_from_text(text, flags):
               if not text:
                   return flags
-
               low = text.lower()
-
               if any(x in low for x in ANDROID_KEYS):
                   flags["android"] = True
-
               if any(x in low for x in IOS_KEYS):
                   flags["ios"] = True
-
               if any(x in low for x in WINDOWS_KEYS):
                   flags["windows"] = True
-
               if any(x in low for x in LINUX_KEYS):
                   flags["linux"] = True
-
               return flags
 
           def detect_from_asset_name(name):
@@ -854,53 +848,40 @@ jobs:
               for key in target:
                   if source.get(key):
                       target[key] = True
-
               return target
 
           def platform_labels(flags):
               labels = []
-
               if flags.get("android"):
                   labels.append("Android")
-
               if flags.get("ios"):
                   labels.append("iOS")
-
               if flags.get("windows"):
                   labels.append("Windows")
-
               if flags.get("linux"):
                   labels.append("Linux")
-
               return labels
 
           def make_status(release_age_days, pushed_at):
               if release_age_days is None:
                   pushed_days = days_since(parse_date(pushed_at))
-
                   if pushed_days is not None and pushed_days <= 90:
                       return "no_release_recent_repo"
-
                   return "no_release"
 
               if release_age_days <= 365:
                   return "active"
-
               if release_age_days <= 730:
                   return "stale"
-
               return "outdated"
 
           def calculate_score(stars, flags, release_age_days, has_release):
               platforms_count = sum(1 for x in flags.values() if x)
-
               score = stars
               score += platforms_count * 2500
-
               if has_release:
                   if release_age_days is not None:
                       score += max(0, 6000 - release_age_days * 8)
-
               return int(score)
 
           def load_candidates():
@@ -908,7 +889,7 @@ jobs:
               candidates = []
 
               if not os.path.exists(path):
-                  print(f"[!] Candidate file not found: {path}")
+                  print(f"[!] Файл не найден: {path}")
                   return candidates
 
               with open(path, "r", encoding="utf-8") as f:
@@ -916,7 +897,6 @@ jobs:
                       line = line.strip()
                       if not line:
                           continue
-
                       try:
                           candidates.append(json.loads(line))
                       except Exception:
@@ -925,9 +905,13 @@ jobs:
               return candidates
 
           candidates = load_candidates()
-          print(f"[*] Loaded utility candidates: {len(candidates)}")
+          print(f"[*] Загружено кандидатов: {len(candidates)}")
 
-          # Уже отсортированы по звездам, но на всякий случай повторим
+          # Фильтруем по минимальным звёздам
+          if MIN_STARS > 0:
+              candidates = [c for c in candidates if c.get("stars", 0) >= MIN_STARS]
+              print(f"[*] После фильтра по звёздам (>= {MIN_STARS}): {len(candidates)}")
+
           candidates.sort(key=lambda x: x.get("stars", 0), reverse=True)
 
           utilities = []
@@ -938,13 +922,13 @@ jobs:
               if not repo:
                   continue
 
-              print(f"[*] Probing {idx}/{min(len(candidates), MAX_PROBE)}: {repo}")
+              print(f"[*] Проверяю {idx}/{min(len(candidates), MAX_PROBE)}: {repo}")
 
               repo_api = f"{GITHUB_API}/repos/{repo}"
               repo_data = fetch_json(repo_api)
 
               if not repo_data:
-                  print(f"[!] Cannot fetch repo {repo}")
+                  print(f"[!] Не могу получить {repo}")
                   time.sleep(1)
                   continue
 
@@ -978,7 +962,6 @@ jobs:
 
               if not release:
                   releases = fetch_json(f"{repo_api}/releases", params={"per_page": 1})
-
                   if isinstance(releases, list) and releases:
                       release = releases[0]
 
@@ -1021,7 +1004,6 @@ jobs:
               # 4. README, если платформ пока нет или включено принудительное чтение
               if INCLUDE_README and (not any(flags.values()) or not has_release):
                   readme_text = fetch_text(f"{repo_api}/readme", accept="application/vnd.github.raw")
-
                   if readme_text:
                       detect_from_text(readme_text[:80000], flags)
 
@@ -1107,15 +1089,15 @@ jobs:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
           print("==================================================")
-          print(" Utility discovery finished")
+          print(" Поиск утилит завершён")
           print("==================================================")
-          print(f"Utilities: {summary['total_utilities']}")
-          print(f"With release: {summary['with_release']}")
+          print(f"Утилит: {summary['total_utilities']}")
+          print(f"С релизом: {summary['with_release']}")
           print(f"Android: {summary['android']}")
           print(f"iOS: {summary['ios']}")
           print(f"Windows: {summary['windows']}")
           print(f"Linux: {summary['linux']}")
-          print(f"Saved to {UTILS_OUTPUT}")
+          print(f"Сохранено в {UTILS_OUTPUT}")
           print("==================================================")
           PY
 
@@ -1130,10 +1112,10 @@ jobs:
           retention-days: 14
 
   # =========================================================
-  # 6. Публикация результата
+  # 6. ПУБЛИКАЦИЯ РЕЗУЛЬТАТОВ
   # =========================================================
   publish-results:
-    name: Publish utility results
+    name: 6 · Публикация результатов
     runs-on: ubuntu-latest
     needs: probe-utilities
     if: always() && needs.probe-utilities.result == 'success' && env.DRY_RUN != '1'
@@ -1164,8 +1146,8 @@ jobs:
           FOUND_FILE="$(find downloaded -type f -name 'utils_found.json' | head -n 1 || true)"
 
           if [[ -z "${FOUND_FILE}" ]]; then
-            echo "[!] utils_found.json not found in artifact"
-            echo "[!] Creating empty placeholder"
+            echo "[!] utils_found.json не найден в артефактах"
+            echo "[!] Создаю пустой placeholder"
 
             cat > data/utils_found.json <<'JSON'
           {
@@ -1191,12 +1173,13 @@ jobs:
           JSON
           else
             cp "${FOUND_FILE}" data/utils_found.json
+            echo "[+] Файл скопирован"
           fi
 
-          echo "[*] Result file:"
-          ls -lah data || true
+          echo "[*] Содержимое data/:"
+          ls -lah data/ || true
 
-      - name: Commit and push utility data
+      - name: Commit and push data
         run: |
           set -euo pipefail
 
@@ -1208,18 +1191,18 @@ jobs:
           git add data/utils_found.json || true
 
           if git diff --staged --quiet; then
-            echo "[*] No changes to commit"
+            echo "[*] Нет изменений для коммита"
           else
             git commit -m "chore(data): update utils_found.json [skip ci]"
             git push origin "${GITHUB_REF_NAME}"
-            echo "[*] Pushed updated utility data"
+            echo "[+] Данные закоммичены"
           fi
 
   # =========================================================
-  # 7. Финальный отчет
+  # 7. ФИНАЛЬНЫЙ ОТЧЁТ
   # =========================================================
   report:
-    name: Utility discovery report
+    name: 7 · Финальный отчёт
     runs-on: ubuntu-latest
     needs:
       - collect-candidates
@@ -1239,24 +1222,24 @@ jobs:
           name: utils-results
           path: utils-report-artifacts
 
-      - name: Print short report
+      - name: Print report
         run: |
           echo "=================================================="
-          echo " Utility Discovery Pipeline finished"
+          echo " Utility Discovery Pipeline завершён"
           echo "=================================================="
 
           FILE="$(find utils-report-artifacts -type f -name 'utils_found.json' | head -n 1 || true)"
 
           if [[ -z "${FILE}" ]]; then
-            echo "[!] No utility result file found."
+            echo "[!] Файл результатов не найден"
             exit 0
           fi
 
-          python - "$FILE" <<'PY'
+          python <<PY
           import json
           import sys
 
-          path = sys.argv[1]
+          path = "${FILE}"
 
           try:
               with open(path, "r", encoding="utf-8") as f:
@@ -1265,28 +1248,28 @@ jobs:
               summary = data.get("summary", {})
               utilities = data.get("utilities", [])
 
-              print(f"Generated at: {data.get('generated_at')}")
-              print(f"Utilities: {summary.get('total_utilities')}")
-              print(f"With release: {summary.get('with_release')}")
-              print(f"Without release: {summary.get('without_release')}")
+              print(f"Сгенерировано: {data.get('generated_at')}")
+              print(f"Утилит: {summary.get('total_utilities')}")
+              print(f"С релизом: {summary.get('with_release')}")
+              print(f"Без релиза: {summary.get('without_release')}")
               print(f"Android: {summary.get('android')}")
               print(f"iOS: {summary.get('ios')}")
               print(f"Windows: {summary.get('windows')}")
               print(f"Linux: {summary.get('linux')}")
-              print(f"Active: {summary.get('active')}")
-              print(f"Stale: {summary.get('stale')}")
-              print(f"Outdated: {summary.get('outdated')}")
+              print(f"Активных: {summary.get('active')}")
+              print(f"Устаревших: {summary.get('stale')}")
+              print(f"Без релиза (свежие): {summary.get('no_release_recent_repo')}")
 
-              print("\nTop 10 utilities by score:")
+              print("\nТоп-10 утилит по score:")
               for item in utilities[:10]:
                   name = item.get("name")
                   stars = item.get("stars")
                   platforms = item.get("platforms_text")
-                  release = item.get("latest_release_tag") or "no release"
-                  print(f"- {name} | stars: {stars} | platforms: {platforms} | release: {release}")
+                  release = item.get("latest_release_tag") or "нет релиза"
+                  print(f"  - {name} | ⭐ {stars} | платформы: {platforms} | релиз: {release}")
 
           except Exception as e:
-              print(f"[!] Failed to print report: {e}")
+              print(f"[!] Ошибка отчёта: {e}")
           PY
 
           echo "=================================================="
