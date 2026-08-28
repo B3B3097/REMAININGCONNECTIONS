@@ -1,8 +1,8 @@
-name: 02 | TG Proxy Discovery & Health Check
+name: TG Proxy Discovery & Health Check
 
 on:
   schedule:
-    # Каждый час в 35 минут
+    # Каждый час, в 35 минут
     - cron: "35 * * * *"
 
   workflow_dispatch:
@@ -14,40 +14,46 @@ on:
         default: false
 
       include_gitverse:
-        description: "Искать также в Gitverse"
+        description: "Искать в Gitverse"
         required: false
         type: boolean
         default: true
 
       max_search_per_query:
-        description: "Сколько результатов поиска брать на один запрос"
+        description: "Сколько результатов поиска на запрос"
         required: false
         type: string
         default: "60"
 
       max_fetch_candidates:
-        description: "Сколько файлов/репозиториев попробовать скачать и распарсить"
+        description: "Сколько файлов скачать и распарсить"
         required: false
         type: string
         default: "300"
 
       max_check_proxies:
-        description: "Сколько уникальных прокси проверять"
+        description: "Сколько прокси проверять"
         required: false
         type: string
         default: "500"
 
       check_timeout:
-        description: "Таймаут проверки одного прокси в секундах"
+        description: "Таймаут проверки (секунды)"
         required: false
         type: string
         default: "4"
 
       concurrency_limit:
-        description: "Сколько прокси одновременно проверять"
+        description: "Сколько прокси проверять одновременно"
         required: false
         type: string
         default: "40"
+
+      skip_search:
+        description: "Пропустить поиск (только проверка существующих данных)"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: tg-proxy-discovery
@@ -61,9 +67,7 @@ permissions:
 env:
   PYTHON_VERSION: "3.11"
   OUTPUT_DIR: "data"
-  TG_PROXY_OUTPUT: "data/tg_proxies_found.json"
-  GITVERSE_BASE: "https://gitverse.ru"
-
+  OUTPUT_FILE: "data/tg_proxies_found.json"
   GH_TOKEN: ${{ github.token }}
   GITHUB_TOKEN: ${{ github.token }}
 
@@ -75,8 +79,9 @@ env:
 
   DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
   INCLUDE_GITVERSE: ${{ github.event.inputs.include_gitverse == false && '0' || '1' }}
+  SKIP_SEARCH: ${{ github.event.inputs.skip_search == true && '1' || '0' }}
 
-  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 NetWatchTGProxyBot/1.0"
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
 
 defaults:
   run:
@@ -84,10 +89,10 @@ defaults:
 
 jobs:
   # =========================================================
-  # 1. Подготовка
+  # 1. ПОДГОТОВКА
   # =========================================================
   prepare:
-    name: Prepare TG proxy pipeline
+    name: 1 · Подготовка
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -100,22 +105,23 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install base dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Create working directories
+      - name: Create directories
         run: |
           mkdir -p raw
           mkdir -p candidates
           mkdir -p extracted
           mkdir -p checked
           mkdir -p "${OUTPUT_DIR}"
+          echo "[+] Директории созданы"
 
       - name: Write run metadata
         run: |
-          python - <<'PY'
+          python <<'PY'
           import json
           import datetime
           import os
@@ -123,7 +129,7 @@ jobs:
           payload = {
               "run_id": "${{ github.run_id }}",
               "run_number": "${{ github.run_number }}",
-              "workflow": "${{ github.workflow }}",
+              "workflow": "tg-proxy-discovery",
               "repository": "${{ github.repository }}",
               "actor": "${{ github.actor }}",
               "event_name": "${{ github.event_name }}",
@@ -137,17 +143,17 @@ jobs:
               "concurrency_limit": os.getenv("CONCURRENCY_LIMIT", "40"),
               "include_gitverse": os.getenv("INCLUDE_GITVERSE", "1") == "1",
               "dry_run": os.getenv("DRY_RUN", "0") == "1",
+              "skip_search": os.getenv("SKIP_SEARCH", "0") == "1",
           }
 
           os.makedirs("raw", exist_ok=True)
-
           with open("raw/tg_proxy_run_metadata.json", "w", encoding="utf-8") as f:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
-          print("TG proxy run metadata saved")
+          print("[+] Метаданные сохранены")
           PY
 
-      - name: Upload prepare metadata
+      - name: Upload metadata
         uses: actions/upload-artifact@v4
         with:
           name: tg-proxy-prepare-metadata
@@ -156,12 +162,13 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 2. Поиск GitHub репозиториев по ключевым словам
+  # 2. ПОИСК ПО КЛЮЧЕВЫМ СЛОВАМ
   # =========================================================
   search-github-keywords:
-    name: GH keyword search
+    name: 2 · Поиск по ключевым словам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 30
     continue-on-error: true
 
@@ -245,10 +252,6 @@ jobs:
             query: "mtproto relay OR mtproxy relay"
             code_query: "relay OR mtproto OR proxy"
 
-          - slug: telegram-mirror-proxy
-            query: "telegram mirror proxy OR telegram mirror"
-            code_query: "telegram OR mirror OR proxy"
-
           - slug: anti-block-tg
             query: "anti block telegram OR anti zapret telegram"
             code_query: "telegram OR proxy OR tg://proxy"
@@ -274,7 +277,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub repositories for ${{ matrix.slug }}
+      - name: Search GitHub repositories
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -287,8 +290,7 @@ jobs:
           API_OUT="raw/tg_github_repos_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub repositories"
-          echo "[*] Query: ${QUERY}"
+          echo "[*] Поиск репозиториев: ${QUERY}"
 
           FULL_QUERY="${QUERY} fork:true archived:false"
 
@@ -296,8 +298,9 @@ jobs:
             -f q="${FULL_QUERY}" \
             -f per_page="${MAX_SEARCH_PER_QUERY}" \
             -f sort=updated \
-            -f order=desc > "${API_OUT}"; then
+            -f order=desc > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск не удался, создаю пустой результат"
           fi
 
           jq -c '.items[]? | {
@@ -311,12 +314,13 @@ jobs:
             updated_at: .updated_at,
             pushed_at: .pushed_at,
             description: .description
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Repo candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено репозиториев: ${COUNT}"
           sleep $((RANDOM % 6 + 3))
 
-      - name: Search GitHub code for ${{ matrix.slug }}
+      - name: Search GitHub code
         env:
           CODE_QUERY: ${{ matrix.code_query }}
           SLUG: ${{ matrix.slug }}
@@ -329,13 +333,13 @@ jobs:
           API_OUT="raw/tg_github_code_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub code"
-          echo "[*] Code query: ${CODE_QUERY}"
+          echo "[*] Поиск кода: ${CODE_QUERY}"
 
           if ! gh api -X GET search/code \
             -f q="${CODE_QUERY}" \
-            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}"; then
+            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск кода не удался"
           fi
 
           jq -c '.items[]? | {
@@ -345,9 +349,10 @@ jobs:
             url: .repository.html_url,
             path: .path,
             score: .score
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Code candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено файлов: ${COUNT}"
           sleep $((RANDOM % 8 + 4))
 
       - name: Upload search artifacts
@@ -359,12 +364,13 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 3. Поиск GitHub по точным паттернам
+  # 3. ПОИСК ПО ТОЧНЫМ ПАТТЕРНАМ
   # =========================================================
-  search-github-exact-patterns:
-    name: GH exact pattern search
+  search-github-exact:
+    name: 3 · Поиск по точным паттернам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 30
     continue-on-error: true
 
@@ -453,7 +459,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub exact patterns for ${{ matrix.slug }}
+      - name: Search exact patterns
         env:
           CODE_QUERY: ${{ matrix.code_query }}
           SLUG: ${{ matrix.slug }}
@@ -466,13 +472,13 @@ jobs:
           API_OUT="raw/tg_github_exact_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching exact pattern"
-          echo "[*] Query: ${CODE_QUERY}"
+          echo "[*] Поиск точного паттерна: ${CODE_QUERY}"
 
           if ! gh api -X GET search/code \
             -f q="${CODE_QUERY}" \
-            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}"; then
+            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск не удался"
           fi
 
           jq -c '.items[]? | {
@@ -482,9 +488,10 @@ jobs:
             url: .repository.html_url,
             path: .path,
             score: .score
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Exact candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено: ${COUNT}"
           sleep $((RANDOM % 9 + 5))
 
       - name: Upload exact artifacts
@@ -496,12 +503,13 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 4. Поиск GitHub по именам файлов
+  # 4. ПОИСК ПО ИМЕНАМ ФАЙЛОВ
   # =========================================================
   search-github-files:
-    name: GH filename search
+    name: 4 · Поиск по именам файлов
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 30
     continue-on-error: true
 
@@ -590,7 +598,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub filenames for ${{ matrix.slug }}
+      - name: Search by filename
         env:
           CODE_QUERY: ${{ matrix.code_query }}
           SLUG: ${{ matrix.slug }}
@@ -603,12 +611,11 @@ jobs:
           API_OUT="raw/tg_github_files_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching filename pattern"
-          echo "[*] Query: ${CODE_QUERY}"
+          echo "[*] Поиск по имени файла: ${CODE_QUERY}"
 
           if ! gh api -X GET search/code \
             -f q="${CODE_QUERY}" \
-            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}"; then
+            -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
           fi
 
@@ -619,12 +626,13 @@ jobs:
             url: .repository.html_url,
             path: .path,
             score: .score
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] File candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено: ${COUNT}"
           sleep $((RANDOM % 9 + 5))
 
-      - name: Upload filename artifacts
+      - name: Upload file artifacts
         uses: actions/upload-artifact@v4
         with:
           name: tg-search-github-${{ matrix.slug }}
@@ -633,15 +641,15 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 5. Поиск Gitverse
+  # 5. ПОИСК НА GITVERSE
   # =========================================================
-  search-gitverse-keywords:
-    name: Gitverse TG proxy search
+  search-gitverse:
+    name: 5 · Поиск на Gitverse
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1' && env.INCLUDE_GITVERSE == '1'
     timeout-minutes: 25
     continue-on-error: true
-    if: env.INCLUDE_GITVERSE == '1'
 
     strategy:
       fail-fast: false
@@ -701,17 +709,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
+      - name: Install dependencies
+        run: pip install requests
 
-      - name: Search Gitverse for ${{ matrix.slug }}
+      - name: Search Gitverse
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import json
           import time
@@ -720,7 +726,7 @@ jobs:
           query = os.getenv("QUERY", "")
           slug = os.getenv("SLUG", "unknown")
           base = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
-          user_agent = os.getenv("USER_AGENT", "NetWatchTGProxyBot/1.0")
+          user_agent = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
 
           out_path = f"raw/tg_gitverse_{slug}.jsonl"
           os.makedirs("raw", exist_ok=True)
@@ -744,9 +750,8 @@ jobs:
 
           for endpoint in endpoints:
               try:
-                  print(f"[*] Trying endpoint: {endpoint}")
+                  print(f"[*] Пробую: {endpoint}")
                   r = requests.get(endpoint, params=params, headers=headers, timeout=25)
-                  print(f"[*] Status: {r.status_code}")
 
                   if r.status_code != 200:
                       continue
@@ -784,14 +789,14 @@ jobs:
                       break
 
               except Exception as e:
-                  print(f"[!] Gitverse request failed: {e}")
+                  print(f"[!] Ошибка: {e}")
                   time.sleep(2)
 
           with open(out_path, "w", encoding="utf-8") as f:
               for row in results:
                   f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
-          print(f"[*] Saved {len(results)} Gitverse TG proxy candidates to {out_path}")
+          print(f"[+] Найдено: {len(results)}")
           time.sleep(2)
           PY
 
@@ -804,16 +809,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 6. Сбор всех кандидатов
+  # 6. СБОР КАНДИДАТОВ
   # =========================================================
   collect-candidates:
-    name: Collect TG proxy candidates
+    name: 6 · Сбор кандидатов
     runs-on: ubuntu-latest
     needs:
       - search-github-keywords
-      - search-github-exact-patterns
+      - search-github-exact
       - search-github-files
-      - search-gitverse-keywords
+      - search-gitverse
     if: always()
     timeout-minutes: 20
 
@@ -836,7 +841,7 @@ jobs:
 
       - name: Normalize candidates
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import json
           import glob
@@ -895,14 +900,13 @@ jobs:
                               out.write(json.dumps(normalized, ensure_ascii=False) + "\n")
                               written += 1
                   except Exception as e:
-                      print(f"[!] Failed to read {file_path}: {e}")
+                      print(f"[!] Ошибка чтения {file_path}: {e}")
 
-          print(f"[*] Total raw TG candidates: {total}")
-          print(f"[*] Unique normalized TG candidates: {written}")
-          print(f"[*] Saved to {out_path}")
+          print(f"[*] Всего кандидатов: {total}")
+          print(f"[+] Уникальных: {written}")
           PY
 
-      - name: Upload normalized candidates
+      - name: Upload candidates
         uses: actions/upload-artifact@v4
         with:
           name: tg-candidates
@@ -911,10 +915,10 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 7. Скачивание файлов и извлечение ТГ прокси
+  # 7. ИЗВЛЕЧЕНИЕ ПРОКСИ
   # =========================================================
   fetch-and-extract:
-    name: Fetch files and extract proxies
+    name: 7 · Извлечение прокси
     runs-on: ubuntu-latest
     needs: collect-candidates
     if: always()
@@ -929,10 +933,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
+      - name: Install dependencies
+        run: pip install requests
 
       - name: Create directories
         run: |
@@ -946,14 +948,14 @@ jobs:
           name: tg-candidates
           path: raw
 
-      - name: Extract TG proxies from files
+      - name: Extract TG proxies
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          GITVERSE_BASE: ${{ env.GITVERSE_BASE }}
+          GITVERSE_BASE: "https://gitverse.ru"
           MAX_FETCH_CANDIDATES: ${{ env.MAX_FETCH_CANDIDATES }}
           USER_AGENT: ${{ env.USER_AGENT }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import re
           import json
@@ -965,7 +967,7 @@ jobs:
           GITHUB_API = "https://api.github.com"
           GITVERSE_BASE = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
           TOKEN = os.getenv("GITHUB_TOKEN", "")
-          USER_AGENT = os.getenv("USER_AGENT", "NetWatchTGProxyBot/1.0")
+          USER_AGENT = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
           MAX_FETCH_CANDIDATES = int(os.getenv("MAX_FETCH_CANDIDATES", "300"))
 
           HEADERS = {
@@ -985,32 +987,14 @@ jobs:
           )
 
           COMMON_TG_FILES = [
-              "mtproxy.txt",
-              "mtproxy-list.txt",
-              "mtproto.txt",
-              "tg-proxy.txt",
-              "tg-proxies.txt",
-              "telegram-proxy.txt",
-              "telegram-proxies.txt",
-              "proxy.txt",
-              "proxies.txt",
-              "proxy-list.txt",
-              "list.txt",
-              "tg.txt",
-              "tg.md",
-              "proxy.md",
-              "proxies.md",
-              "mtproxy.md",
-              "mtproto.md",
-              "README.md",
-              "README.RU.md",
-              "readme.md",
-              "free-tg-proxy.txt",
-              "tg-proxy.json",
-              "mtproxy.json",
-              "mtproto.json",
-              "proxy.yaml",
-              "proxies.yaml",
+              "mtproxy.txt", "mtproxy-list.txt", "mtproto.txt",
+              "tg-proxy.txt", "tg-proxies.txt", "telegram-proxy.txt",
+              "telegram-proxies.txt", "proxy.txt", "proxies.txt",
+              "proxy-list.txt", "list.txt", "tg.txt", "tg.md",
+              "proxy.md", "proxies.md", "mtproxy.md", "mtproto.md",
+              "README.md", "README.RU.md", "readme.md",
+              "free-tg-proxy.txt", "tg-proxy.json", "mtproxy.json",
+              "mtproto.json", "proxy.yaml", "proxies.yaml",
           ]
 
           branch_cache = {}
@@ -1023,26 +1007,21 @@ jobs:
               for attempt in range(3):
                   try:
                       r = session.get(url, params=params, timeout=25)
-
                       if r.status_code == 200:
                           return r.json()
-
                       if r.status_code in (403, 429):
                           retry_after = r.headers.get("Retry-After")
                           wait = int(retry_after) if retry_after and retry_after.isdigit() else 6
-                          print(f"[!] Rate limit? {r.status_code} for {url}, waiting {wait}s")
+                          print(f"[!] Rate limit: {r.status_code}, жду {wait}с")
                           time.sleep(wait)
                           continue
-
                       if 500 <= r.status_code < 600:
                           time.sleep(2 + attempt)
                           continue
-
                       return None
                   except Exception as e:
-                      print(f"[!] fetch_json error {url}: {e}")
+                      print(f"[!] Ошибка запроса {url}: {e}")
                       time.sleep(2 + attempt)
-
               return None
 
           def fetch_text(url):
@@ -1052,7 +1031,7 @@ jobs:
                       return r.text
                   return None
               except Exception as e:
-                  print(f"[!] fetch_text error {url}: {e}")
+                  print(f"[!] Ошибка загрузки {url}: {e}")
                   return None
 
           def get_github_default_branch(repo):
@@ -1233,11 +1212,10 @@ jobs:
                       except Exception:
                           continue
           else:
-              print("[!] Candidate file not found")
+              print("[!] Файл кандидатов не найден")
 
-          print(f"[*] Loaded TG candidates: {len(candidates)}")
+          print(f"[*] Загружено кандидатов: {len(candidates)}")
 
-          # Сначала файлы, потом репозитории без пути
           candidates.sort(
               key=lambda x: (
                   x.get("source") != "github",
@@ -1251,7 +1229,7 @@ jobs:
 
           for candidate in candidates:
               if processed >= MAX_FETCH_CANDIDATES:
-                  print(f"[*] Reached MAX_FETCH_CANDIDATES: {MAX_FETCH_CANDIDATES}")
+                  print(f"[*] Достигнут лимит: {MAX_FETCH_CANDIDATES}")
                   break
 
               source = candidate.get("source")
@@ -1263,7 +1241,7 @@ jobs:
                   continue
 
               processed += 1
-              print(f"[*] Processing {source}:{repo}:{path or '<no path>'}")
+              print(f"[*] Обрабатываю {source}:{repo}:{path or '<без пути>'}")
 
               try:
                   if source == "github":
@@ -1285,10 +1263,10 @@ jobs:
                       total_found += found
 
                       if found:
-                          print(f"[+] Found {found} TG proxy mentions in {raw_url}")
+                          print(f"[+] Найдено {found} прокси в {raw_url}")
 
               except Exception as e:
-                  print(f"[!] Failed processing {repo}: {e}")
+                  print(f"[!] Ошибка обработки {repo}: {e}")
 
               sleep_random(1, 2)
 
@@ -1315,10 +1293,9 @@ jobs:
           with open(out_json, "w", encoding="utf-8") as f:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
-          print(f"[*] Processed candidates: {processed}")
-          print(f"[*] Raw TG proxy mentions: {total_found}")
-          print(f"[*] Unique proxies: {len(proxy_list)}")
-          print(f"[*] Saved extracted data to {out_jsonl} and {out_json}")
+          print(f"[*] Обработано кандидатов: {processed}")
+          print(f"[*] Всего упоминаний: {total_found}")
+          print(f"[+] Уникальных прокси: {len(proxy_list)}")
           PY
 
       - name: Upload extracted proxies
@@ -1330,10 +1307,10 @@ jobs:
           retention-days: 14
 
   # =========================================================
-  # 8. Проверка ТГ прокси
+  # 8. ПРОВЕРКА ПРОКСИ
   # =========================================================
   check-proxies:
-    name: Check TG proxies
+    name: 8 · Проверка прокси
     runs-on: ubuntu-latest
     needs: fetch-and-extract
     if: always()
@@ -1367,7 +1344,7 @@ jobs:
           CHECK_TIMEOUT: ${{ env.CHECK_TIMEOUT }}
           CONCURRENCY_LIMIT: ${{ env.CONCURRENCY_LIMIT }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import asyncio
           import json
           import os
@@ -1381,7 +1358,7 @@ jobs:
 
           INPUT_JSON = "extracted/tg_proxies_extracted.json"
           OUTPUT_JSON = "checked/tg_proxies_checked.json"
-          FINAL_JSON = os.getenv("TG_PROXY_OUTPUT", "data/tg_proxies_found.json")
+          FINAL_JSON = os.getenv("OUTPUT_FILE", "data/tg_proxies_found.json")
 
           def now_iso():
               return (
@@ -1392,7 +1369,7 @@ jobs:
 
           def load_proxies():
               if not os.path.exists(INPUT_JSON):
-                  print(f"[!] Input file not found: {INPUT_JSON}")
+                  print(f"[!] Файл не найден: {INPUT_JSON}")
                   return []
 
               try:
@@ -1400,10 +1377,10 @@ jobs:
                       payload = json.load(f)
 
                   proxies = payload.get("proxies", [])
-                  print(f"[*] Loaded proxies: {len(proxies)}")
+                  print(f"[*] Загружено прокси: {len(proxies)}")
                   return proxies
               except Exception as e:
-                  print(f"[!] Failed to load proxies: {e}")
+                  print(f"[!] Ошибка загрузки: {e}")
                   return []
 
           def classify_secret(secret):
@@ -1536,7 +1513,7 @@ jobs:
                   with open(FINAL_JSON, "w", encoding="utf-8") as f:
                       json.dump(payload, f, ensure_ascii=False, indent=2)
 
-                  print("[!] No proxies to check. Wrote empty result files.")
+                  print("[!] Нет прокси для проверки. Созданы пустые файлы.")
                   return
 
               # Сортируем: у кого больше источников, те приоритетнее
@@ -1547,9 +1524,9 @@ jobs:
 
               proxies = proxies[:MAX_CHECK_PROXIES]
 
-              print(f"[*] Checking {len(proxies)} proxies")
-              print(f"[*] Timeout: {CHECK_TIMEOUT}s")
-              print(f"[*] Concurrency: {CONCURRENCY_LIMIT}")
+              print(f"[*] Проверяю {len(proxies)} прокси")
+              print(f"[*] Таймаут: {CHECK_TIMEOUT}с")
+              print(f"[*] Одновременно: {CONCURRENCY_LIMIT}")
 
               semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
 
@@ -1607,15 +1584,15 @@ jobs:
                   json.dump(payload, f, ensure_ascii=False, indent=2)
 
               print("==================================================")
-              print(" TG proxy check finished")
+              print(" Проверка ТГ прокси завершена")
               print("==================================================")
-              print(f"Checked: {len(results)}")
-              print(f"Online: {len(online)}")
-              print(f"Offline: {len(offline)}")
-              print(f"DNS failures: {len(dns_fail)}")
-              print(f"Average latency: {avg_latency}")
-              print(f"Saved: {OUTPUT_JSON}")
-              print(f"Saved: {FINAL_JSON}")
+              print(f"Проверено: {len(results)}")
+              print(f"Онлайн: {len(online)}")
+              print(f"Оффлайн: {len(offline)}")
+              print(f"DNS ошибки: {len(dns_fail)}")
+              print(f"Средний пинг: {avg_latency}")
+              print(f"Сохранено: {OUTPUT_JSON}")
+              print(f"Сохранено: {FINAL_JSON}")
               print("==================================================")
 
           asyncio.run(main())
@@ -1632,10 +1609,10 @@ jobs:
           retention-days: 14
 
   # =========================================================
-  # 9. Публикация результата
+  # 9. ПУБЛИКАЦИЯ РЕЗУЛЬТАТОВ
   # =========================================================
   publish-results:
-    name: Publish TG proxy results
+    name: 9 · Публикация результатов
     runs-on: ubuntu-latest
     needs: check-proxies
     if: always() && needs.check-proxies.result == 'success' && env.DRY_RUN != '1'
@@ -1666,8 +1643,8 @@ jobs:
           FOUND_FILE="$(find downloaded -type f -name 'tg_proxies_found.json' | head -n 1 || true)"
 
           if [[ -z "${FOUND_FILE}" ]]; then
-            echo "[!] tg_proxies_found.json not found in artifact"
-            echo "[!] Creating empty placeholder"
+            echo "[!] tg_proxies_found.json не найден в артефактах"
+            echo "[!] Создаю пустой placeholder"
 
             cat > data/tg_proxies_found.json <<'JSON'
           {
@@ -1683,12 +1660,13 @@ jobs:
           JSON
           else
             cp "${FOUND_FILE}" data/tg_proxies_found.json
+            echo "[+] Файл скопирован"
           fi
 
-          echo "[*] Result file:"
-          ls -lah data || true
+          echo "[*] Содержимое data/:"
+          ls -lah data/ || true
 
-      - name: Commit and push TG proxy data
+      - name: Commit and push data
         run: |
           set -euo pipefail
 
@@ -1700,18 +1678,18 @@ jobs:
           git add data/tg_proxies_found.json || true
 
           if git diff --staged --quiet; then
-            echo "[*] No changes to commit"
+            echo "[*] Нет изменений для коммита"
           else
             git commit -m "chore(data): update tg_proxies_found.json [skip ci]"
             git push origin "${GITHUB_REF_NAME}"
-            echo "[*] Pushed updated TG proxy data"
+            echo "[+] Данные закоммичены"
           fi
 
   # =========================================================
-  # 10. Финальный отчет
+  # 10. ФИНАЛЬНЫЙ ОТЧЁТ
   # =========================================================
   report:
-    name: TG proxy report
+    name: 10 · Финальный отчёт
     runs-on: ubuntu-latest
     needs:
       - collect-candidates
@@ -1732,20 +1710,20 @@ jobs:
           name: tg-proxies-checked
           path: tg-report-artifacts
 
-      - name: Print short report
+      - name: Print report
         run: |
           echo "=================================================="
-          echo " TG Proxy Discovery & Health Check finished"
+          echo " TG Proxy Discovery & Health Check завершён"
           echo "=================================================="
 
           FILE="$(find tg-report-artifacts -type f -name 'tg_proxies_found.json' | head -n 1 || true)"
 
           if [[ -z "${FILE}" ]]; then
-            echo "[!] No TG proxy result file found."
+            echo "[!] Файл результатов не найден"
             exit 0
           fi
 
-          python - <<'PY'
+          python <<PY
           import json
           import os
 
@@ -1755,27 +1733,27 @@ jobs:
               with open(path, "r", encoding="utf-8") as f:
                   data = json.load(f)
 
-              print(f"Generated at: {data.get('generated_at')}")
-              print(f"Checked: {data.get('checked_count')}")
-              print(f"Online: {data.get('online_count')}")
-              print(f"Offline: {data.get('offline_count')}")
-              print(f"DNS failures: {data.get('dns_fail_count')}")
-              print(f"Average latency: {data.get('avg_latency_ms')}")
+              print(f"Сгенерировано: {data.get('generated_at')}")
+              print(f"Проверено: {data.get('checked_count')}")
+              print(f"Онлайн: {data.get('online_count')}")
+              print(f"Оффлайн: {data.get('offline_count')}")
+              print(f"DNS ошибки: {data.get('dns_fail_count')}")
+              print(f"Средний пинг: {data.get('avg_latency_ms')}")
 
               proxies = data.get("proxies", [])
 
               online = [x for x in proxies if x.get("status") == "online"]
 
-              print("\nTop 10 fastest online TG proxies:")
+              print("\nТоп-10 самых быстрых онлайн прокси:")
               for proxy in online[:10]:
                   host = proxy.get("host") or proxy.get("server")
                   port = proxy.get("port")
                   ping = proxy.get("latency_ms")
                   secret_type = proxy.get("secret_type")
-                  print(f"- {host}:{port} | ping: {ping} ms | secret: {secret_type}")
+                  print(f"  - {host}:{port} | пинг: {ping} мс | секрет: {secret_type}")
 
           except Exception as e:
-              print(f"[!] Failed to print report: {e}")
+              print(f"[!] Ошибка отчёта: {e}")
           PY
 
           echo "=================================================="
