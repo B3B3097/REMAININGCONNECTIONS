@@ -1,35 +1,41 @@
-name: 01 | Subscription Discovery Pipeline
+name: Subscription Discovery Pipeline
 
 on:
   schedule:
-    # Каждый 2 часа, в 15 минут
+    # Каждые 2 часа, в 15 минут
     - cron: "15 */2 * * *"
 
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run: не коммитить результаты в репозиторий"
+        description: "Dry run: не коммитить результаты"
         required: false
         type: boolean
         default: false
 
       max_repos:
-        description: "Сколько репозиториев искать за один запрос"
+        description: "Сколько репозиториев искать за запрос"
         required: false
         type: string
         default: "80"
 
       max_probe:
-        description: "Сколько уникальных репозиториев проверять после поиска"
+        description: "Сколько кандидатов проверять"
         required: false
         type: string
         default: "220"
 
       include_gitverse:
-        description: "Искать также в Gitverse"
+        description: "Искать в Gitverse"
         required: false
         type: boolean
         default: true
+
+      skip_search:
+        description: "Пропустить поиск (только проверка существующих данных)"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: subscription-discovery
@@ -43,22 +49,17 @@ permissions:
 env:
   PYTHON_VERSION: "3.11"
   OUTPUT_DIR: "data"
-  GITVERSE_BASE: "https://gitverse.ru"
+  OUTPUT_FILE: "data/subscriptions_found.json"
   GH_TOKEN: ${{ github.token }}
   GITHUB_TOKEN: ${{ github.token }}
 
-  # Значения для ручного запуска.
-  # При schedule значения будут дефолтными.
   MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
   MAX_PROBE: ${{ github.event.inputs.max_probe || '220' }}
-
-  # Если include_gitverse == false, тогда '0', иначе '1'
   INCLUDE_GITVERSE: ${{ github.event.inputs.include_gitverse == false && '0' || '1' }}
-
-  # Если dry_run == true, тогда '1', иначе '0'
   DRY_RUN: ${{ github.event.inputs.dry_run == true && '1' || '0' }}
+  SKIP_SEARCH: ${{ github.event.inputs.skip_search == true && '1' || '0' }}
 
-  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 NetWatchBot/1.0"
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
 
 defaults:
   run:
@@ -66,10 +67,10 @@ defaults:
 
 jobs:
   # =========================================================
-  # 1. Подготовка рабочего окружения и метаданных запуска
+  # 1. ПОДГОТОВКА
   # =========================================================
   prepare:
-    name: Prepare workspace
+    name: 1 · Подготовка
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -82,20 +83,21 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install base dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests pyyaml
 
-      - name: Create working directories
+      - name: Create directories
         run: |
           mkdir -p raw
           mkdir -p candidates
           mkdir -p "${OUTPUT_DIR}"
+          echo "[+] Директории созданы"
 
       - name: Write run metadata
         run: |
-          python - <<'PY'
+          python <<'PY'
           import json
           import datetime
           import os
@@ -103,7 +105,7 @@ jobs:
           payload = {
               "run_id": "${{ github.run_id }}",
               "run_number": "${{ github.run_number }}",
-              "workflow": "${{ github.workflow }}",
+              "workflow": "subscription-discovery",
               "repository": "${{ github.repository }}",
               "actor": "${{ github.actor }}",
               "event_name": "${{ github.event_name }}",
@@ -114,16 +116,17 @@ jobs:
               "max_probe": os.getenv("MAX_PROBE", "220"),
               "include_gitverse": os.getenv("INCLUDE_GITVERSE", "1") == "1",
               "dry_run": os.getenv("DRY_RUN", "0") == "1",
+              "skip_search": os.getenv("SKIP_SEARCH", "0") == "1",
           }
 
           os.makedirs("raw", exist_ok=True)
           with open("raw/run_metadata.json", "w", encoding="utf-8") as f:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
-          print("Run metadata saved to raw/run_metadata.json")
+          print("[+] Метаданные сохранены")
           PY
 
-      - name: Upload prepare metadata
+      - name: Upload metadata
         uses: actions/upload-artifact@v4
         with:
           name: prepare-metadata
@@ -132,14 +135,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 2. Поиск GitHub репозиториев по ключевым словам
+  # 2. ПОИСК ПО КЛЮЧЕВЫМ СЛОВАМ
   # =========================================================
   search-github-keywords:
-    name: GH keyword search
+    name: 2 · Поиск по ключевым словам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 25
     continue-on-error: true
+
     strategy:
       fail-fast: false
       matrix:
@@ -233,7 +238,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub repositories for ${{ matrix.slug }}
+      - name: Search GitHub repositories
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -246,9 +251,7 @@ jobs:
           API_OUT="raw/github_repos_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub repositories"
-          echo "[*] Query: ${QUERY}"
-          echo "[*] Max repos per query: ${MAX_REPOS}"
+          echo "[*] Поиск репозиториев: ${QUERY}"
 
           FULL_QUERY="${QUERY} in:name,description,readme fork:true archived:false"
 
@@ -256,8 +259,9 @@ jobs:
             -f q="${FULL_QUERY}" \
             -f per_page="${MAX_REPOS}" \
             -f sort=updated \
-            -f order=desc > "${API_OUT}"; then
+            -f order=desc > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск не удался, создаю пустой результат"
           fi
 
           jq -c '.items[]? | {
@@ -271,12 +275,13 @@ jobs:
             updated_at: .updated_at,
             pushed_at: .pushed_at,
             description: .description
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Found repository candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено кандидатов: ${COUNT}"
           sleep $((RANDOM % 7 + 3))
 
-      - name: Search GitHub code for ${{ matrix.slug }}
+      - name: Search GitHub code
         env:
           CODE_QUERY: ${{ matrix.code_query }}
           SLUG: ${{ matrix.slug }}
@@ -289,13 +294,13 @@ jobs:
           API_OUT="raw/github_code_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub code"
-          echo "[*] Code query: ${CODE_QUERY}"
+          echo "[*] Поиск кода: ${CODE_QUERY}"
 
           if ! gh api -X GET search/code \
             -f q="${CODE_QUERY}" \
-            -f per_page=50 > "${API_OUT}"; then
+            -f per_page=50 > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
+            echo "[!] Поиск кода не удался"
           fi
 
           jq -c '.items[]? | {
@@ -305,9 +310,10 @@ jobs:
             url: .repository.html_url,
             path: .path,
             score: .score
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Found code candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено файлов: ${COUNT}"
           sleep $((RANDOM % 8 + 4))
 
       - name: Upload search artifacts
@@ -319,14 +325,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 3. Поиск GitHub по темам
+  # 3. ПОИСК ПО ТЕМАМ
   # =========================================================
   search-github-topics:
-    name: GH topic search
+    name: 3 · Поиск по темам
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 20
     continue-on-error: true
+
     strategy:
       fail-fast: false
       matrix:
@@ -400,7 +408,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub repositories by topic ${{ matrix.slug }}
+      - name: Search by topic
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -413,7 +421,7 @@ jobs:
           API_OUT="raw/github_topics_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching topic: ${QUERY}"
+          echo "[*] Поиск по теме: ${QUERY}"
 
           FULL_QUERY="${QUERY} fork:true archived:false"
 
@@ -421,7 +429,7 @@ jobs:
             -f q="${FULL_QUERY}" \
             -f per_page="${MAX_REPOS}" \
             -f sort=updated \
-            -f order=desc > "${API_OUT}"; then
+            -f order=desc > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
           fi
 
@@ -436,9 +444,10 @@ jobs:
             updated_at: .updated_at,
             pushed_at: .pushed_at,
             description: .description
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Found topic candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено: ${COUNT}"
           sleep $((RANDOM % 7 + 3))
 
       - name: Upload topic artifacts
@@ -450,14 +459,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 4. Поиск GitHub по именам файлов подписок
+  # 4. ПОИСК ПО ИМЕНАМ ФАЙЛОВ
   # =========================================================
   search-github-files:
-    name: GH filename search
+    name: 4 · Поиск по именам файлов
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1'
     timeout-minutes: 25
     continue-on-error: true
+
     strategy:
       fail-fast: false
       matrix:
@@ -519,7 +530,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq curl
 
-      - name: Search GitHub code filenames for ${{ matrix.slug }}
+      - name: Search by filename
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
@@ -532,12 +543,11 @@ jobs:
           API_OUT="raw/github_files_api_${SLUG}.json"
           : > "${OUT}"
 
-          echo "[*] Searching GitHub code by filename"
-          echo "[*] Query: ${QUERY}"
+          echo "[*] Поиск по имени файла: ${QUERY}"
 
           if ! gh api -X GET search/code \
             -f q="${QUERY}" \
-            -f per_page=50 > "${API_OUT}"; then
+            -f per_page=50 > "${API_OUT}" 2>/dev/null; then
             echo '{"items":[]}' > "${API_OUT}"
           fi
 
@@ -548,12 +558,13 @@ jobs:
             url: .repository.html_url,
             path: .path,
             score: .score
-          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" || true
+          } | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
 
-          echo "[*] Found file candidates: $(wc -l < "${OUT}")"
+          COUNT=$(wc -l < "${OUT}" || echo 0)
+          echo "[+] Найдено: ${COUNT}"
           sleep $((RANDOM % 9 + 5))
 
-      - name: Upload filename artifacts
+      - name: Upload file artifacts
         uses: actions/upload-artifact@v4
         with:
           name: search-github-${{ matrix.slug }}
@@ -562,15 +573,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 5. Поиск Gitverse
+  # 5. ПОИСК НА GITVERSE
   # =========================================================
-  search-gitverse-keywords:
-    name: Gitverse keyword search
+  search-gitverse:
+    name: 5 · Поиск на Gitverse
     runs-on: ubuntu-latest
     needs: prepare
+    if: env.SKIP_SEARCH != '1' && env.INCLUDE_GITVERSE == '1'
     timeout-minutes: 20
     continue-on-error: true
-    if: env.INCLUDE_GITVERSE == '1'
+
     strategy:
       fail-fast: false
       matrix:
@@ -638,17 +650,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
+      - name: Install dependencies
+        run: pip install requests
 
-      - name: Search Gitverse for ${{ matrix.slug }}
+      - name: Search Gitverse
         env:
           QUERY: ${{ matrix.query }}
           SLUG: ${{ matrix.slug }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import json
           import time
@@ -657,7 +667,7 @@ jobs:
           query = os.getenv("QUERY", "")
           slug = os.getenv("SLUG", "unknown")
           base = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
-          user_agent = os.getenv("USER_AGENT", "NetWatchBot/1.0")
+          user_agent = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
 
           out_path = f"raw/gitverse_{slug}.jsonl"
           os.makedirs("raw", exist_ok=True)
@@ -669,8 +679,6 @@ jobs:
 
           results = []
 
-          # Пробуем Gitea-совместимый API.
-          # Если Gitverse использует другой API, этот блок надо будет адаптировать.
           endpoints = [
               f"{base}/api/v1/repos/search",
               f"{base}/api/v1/repositories/search",
@@ -683,10 +691,8 @@ jobs:
 
           for endpoint in endpoints:
               try:
-                  print(f"[*] Trying endpoint: {endpoint}")
+                  print(f"[*] Пробую: {endpoint}")
                   r = requests.get(endpoint, params=params, headers=headers, timeout=25)
-
-                  print(f"[*] Status: {r.status_code}")
 
                   if r.status_code != 200:
                       continue
@@ -724,16 +730,14 @@ jobs:
                       break
 
               except Exception as e:
-                  print(f"[!] Gitverse request failed: {e}")
+                  print(f"[!] Ошибка: {e}")
                   time.sleep(2)
 
-          # Если нет нормального API, можно позже добавить парсинг HTML.
-          # Пока сохраняем то, что нашли, даже если пусто.
           with open(out_path, "w", encoding="utf-8") as f:
               for row in results:
                   f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
-          print(f"[*] Saved {len(results)} Gitverse candidates to {out_path}")
+          print(f"[+] Найдено: {len(results)}")
           time.sleep(2)
           PY
 
@@ -746,16 +750,16 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 6. Сбор всех кандидатов
+  # 6. СБОР КАНДИДАТОВ
   # =========================================================
   collect-candidates:
-    name: Collect candidates
+    name: 6 · Сбор кандидатов
     runs-on: ubuntu-latest
     needs:
       - search-github-keywords
       - search-github-topics
       - search-github-files
-      - search-gitverse-keywords
+      - search-gitverse
     if: always()
     timeout-minutes: 15
 
@@ -763,12 +767,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create candidates directory
+      - name: Create directories
         run: |
           mkdir -p candidates
           mkdir -p raw
 
-      - name: Download all search artifacts
+      - name: Download search artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
@@ -776,20 +780,19 @@ jobs:
           path: candidates
           merge-multiple: true
 
-      - name: Download prepare metadata
+      - name: Download metadata
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: prepare-metadata
           path: raw
 
-      - name: Normalize candidates into one JSONL
+      - name: Normalize candidates
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import json
           import glob
-          from pathlib import Path
 
           candidates_dir = "candidates"
           raw_dir = "raw"
@@ -810,7 +813,6 @@ jobs:
           for pattern in patterns:
               files.extend(glob.glob(pattern, recursive=True))
 
-          # Исключаем итоговый файл, если он вдруг уже есть
           files = [f for f in files if os.path.basename(f) != "all_candidates.jsonl"]
 
           with open(out_path, "w", encoding="utf-8") as out:
@@ -859,14 +861,13 @@ jobs:
                               out.write(json.dumps(normalized, ensure_ascii=False) + "\n")
                               written += 1
                   except Exception as e:
-                      print(f"[!] Failed to read {file_path}: {e}")
+                      print(f"[!] Ошибка чтения {file_path}: {e}")
 
-          print(f"[*] Total raw candidates: {total}")
-          print(f"[*] Unique normalized candidates: {written}")
-          print(f"[*] Saved to {out_path}")
+          print(f"[*] Всего кандидатов: {total}")
+          print(f"[+] Уникальных: {written}")
           PY
 
-      - name: Upload normalized candidates
+      - name: Upload candidates
         uses: actions/upload-artifact@v4
         with:
           name: all-candidates
@@ -875,10 +876,10 @@ jobs:
           retention-days: 7
 
   # =========================================================
-  # 7. Проверка найденных репозиториев и файлов подписок
+  # 7. ПРОВЕРКА КАНДИДАТОВ
   # =========================================================
   probe-candidates:
-    name: Probe candidates
+    name: 7 · Проверка кандидатов
     runs-on: ubuntu-latest
     needs: collect-candidates
     if: always()
@@ -893,7 +894,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests pyyaml
@@ -904,21 +905,21 @@ jobs:
           mkdir -p raw
           mkdir -p "${OUTPUT_DIR}"
 
-      - name: Download normalized candidates
+      - name: Download candidates
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: all-candidates
           path: raw
 
-      - name: Probe repositories and subscription files
+      - name: Probe repositories
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          GITVERSE_BASE: ${{ env.GITVERSE_BASE }}
+          GITVERSE_BASE: "https://gitverse.ru"
           MAX_PROBE: ${{ env.MAX_PROBE }}
           USER_AGENT: ${{ env.USER_AGENT }}
         run: |
-          python - <<'PY'
+          python <<'PY'
           import os
           import re
           import json
@@ -930,7 +931,7 @@ jobs:
           GITHUB_API = "https://api.github.com"
           GITVERSE_BASE = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
           TOKEN = os.getenv("GITHUB_TOKEN", "")
-          USER_AGENT = os.getenv("USER_AGENT", "NetWatchBot/1.0")
+          USER_AGENT = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
           MAX_PROBE = int(os.getenv("MAX_PROBE", "220"))
           OUTPUT_DIR = os.getenv("OUTPUT_DIR", "data")
 
@@ -943,32 +944,12 @@ jobs:
               HEADERS["Authorization"] = f"Bearer {TOKEN}"
 
           COMMON_PATHS = [
-              "sub.txt",
-              "subscribe.txt",
-              "subscription.txt",
-              "subscriptions.txt",
-              "v2ray.txt",
-              "xray.txt",
-              "nodes.txt",
-              "proxy.txt",
-              "proxies.txt",
-              "list.txt",
-              "clash.yaml",
-              "clash.yml",
-              "config.yaml",
-              "config.yml",
-              "sub.yaml",
-              "sub.yml",
-              "subscription.yaml",
-              "subscription.yml",
-              "proxies.yaml",
-              "proxies.yml",
-              "mihomo.yaml",
-              "mihomo.yml",
-              "sing-box.json",
-              "singbox.json",
-              "wireguard.conf",
-              "wg.conf",
+              "sub.txt", "subscribe.txt", "subscription.txt", "subscriptions.txt",
+              "v2ray.txt", "xray.txt", "nodes.txt", "proxy.txt", "proxies.txt",
+              "list.txt", "clash.yaml", "clash.yml", "config.yaml", "config.yml",
+              "sub.yaml", "sub.yml", "subscription.yaml", "subscription.yml",
+              "proxies.yaml", "proxies.yml", "mihomo.yaml", "mihomo.yml",
+              "sing-box.json", "singbox.json", "wireguard.conf", "wg.conf",
           ]
 
           PROTO_RE = re.compile(
@@ -977,18 +958,9 @@ jobs:
           )
 
           BS_MARKERS = [
-              "whitelist",
-              "white_list",
-              "white list",
-              "белый список",
-              "белые списки",
-              "белый-список",
-              "bs: true",
-              "bs=true",
-              '"bs": true',
-              "'bs': true",
-              "bypass_list",
-              "bypass-list",
+              "whitelist", "white_list", "white list", "белый список", "белые списки",
+              "белый-список", "bs: true", "bs=true", '"bs": true', "'bs': true",
+              "bypass_list", "bypass-list",
           ]
 
           session = requests.Session()
@@ -1015,33 +987,25 @@ jobs:
               delta = now_utc() - dt
               return int(delta.total_seconds() / 60)
 
-          def sleep_random(min_seconds=1, max_seconds=3):
-              time.sleep(min_seconds + (time.time() % (max_seconds - min_seconds)))
-
           def fetch_json(url, params=None):
               for attempt in range(3):
                   try:
                       r = session.get(url, params=params, timeout=25)
-
                       if r.status_code == 200:
                           return r.json()
-
                       if r.status_code in (403, 429):
                           retry_after = r.headers.get("Retry-After")
                           wait = int(retry_after) if retry_after and retry_after.isdigit() else 6
-                          print(f"[!] Rate limit? {r.status_code} for {url}, waiting {wait}s")
+                          print(f"[!] Rate limit: {r.status_code}, жду {wait}с")
                           time.sleep(wait)
                           continue
-
                       if 500 <= r.status_code < 600:
                           time.sleep(2 + attempt)
                           continue
-
                       return None
                   except Exception as e:
-                      print(f"[!] fetch_json error {url}: {e}")
+                      print(f"[!] Ошибка запроса {url}: {e}")
                       time.sleep(2 + attempt)
-
               return None
 
           def fetch_text(url):
@@ -1052,7 +1016,7 @@ jobs:
                           return r.text
                       return None
                   except Exception as e:
-                      print(f"[!] fetch_text error {url}: {e}")
+                      print(f"[!] Ошибка загрузки {url}: {e}")
                       time.sleep(1 + attempt)
               return None
 
@@ -1065,56 +1029,30 @@ jobs:
           def count_text_configs(text):
               if not text:
                   return 0
-
-              lines = []
-              for line in text.splitlines():
-                  s = line.strip()
-                  if not s:
-                      continue
-                  if s.startswith("#"):
-                      continue
-                  if s.startswith("//"):
-                      continue
-                  lines.append(s)
-
+              lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
               if not lines:
                   return 0
-
               proto_lines = [x for x in lines if PROTO_RE.match(x)]
-
-              # Если есть явные протокольные ссылки, считаем их.
               if len(proto_lines) >= max(1, int(len(lines) * 0.25)):
                   return len(proto_lines)
-
-              # Иначе считаем все осмысленные строки.
               return len(lines)
 
           def count_yaml_configs(text):
               if not text:
                   return 0
-
               try:
                   doc = yaml.safe_load(text)
-
                   if isinstance(doc, dict):
                       if isinstance(doc.get("proxies"), list):
                           return len(doc["proxies"])
-
                       if isinstance(doc.get("proxy-providers"), dict):
                           return len(doc["proxy-providers"])
-
                       if isinstance(doc.get("nodes"), list):
                           return len(doc["nodes"])
-
-                      if isinstance(doc.get("subnets"), list):
-                          return len(doc["subnets"])
-
                   if isinstance(doc, list):
                       return len(doc)
-
               except Exception:
                   pass
-
               return count_text_configs(text)
 
           def count_by_path(text, path):
@@ -1124,18 +1062,16 @@ jobs:
               return count_text_configs(text)
 
           def make_name(repo):
-              if not repo:
-                  return "Unknown"
-              return repo.split("/")[-1]
+              return repo.split("/")[-1] if repo else "Unknown"
 
           def probe_github_repo(repo, candidate_path=None):
-              print(f"[*] Probing GitHub repo: {repo}")
+              print(f"[*] Проверяю: {repo}")
 
               api_repo = f"{GITHUB_API}/repos/{repo}"
               repo_data = fetch_json(api_repo)
 
               if not repo_data:
-                  print(f"[!] Cannot fetch repo {repo}")
+                  print(f"[!] Не могу получить {repo}")
                   return None
 
               default_branch = repo_data.get("default_branch", "main")
@@ -1156,10 +1092,8 @@ jobs:
               paths = []
               if candidate_path:
                   paths.append(candidate_path)
-
               paths.extend(COMMON_PATHS)
 
-              # Убираем дубли, сохраняем порядок
               seen = set()
               unique_paths = []
               for p in paths:
@@ -1191,14 +1125,13 @@ jobs:
                       content_sample = text[:800]
                       break
 
-                  # Если файл есть, но конфигов 0, все равно запомним как слабый кандидат
                   if not found_url:
                       found_url = raw_url
                       found_path = path
                       content_sample = text[:800]
                       has_bs = bs
 
-                  sleep_random(1, 2)
+                  time.sleep(1 + (time.time() % 2))
 
               status = "active"
               if configs_count <= 0:
@@ -1222,7 +1155,7 @@ jobs:
               }
 
           def probe_gitverse_repo(repo, candidate_path=None):
-              print(f"[*] Probing Gitverse repo: {repo}")
+              print(f"[*] Проверяю Gitverse: {repo}")
 
               api_repo = f"{GITVERSE_BASE}/api/v1/repos/{repo}"
               repo_data = fetch_json(api_repo)
@@ -1301,7 +1234,7 @@ jobs:
                       if found_url and configs_count > 0:
                           break
 
-                      sleep_random(1, 2)
+                      time.sleep(1 + (time.time() % 2))
 
               status = "active"
               if configs_count <= 0:
@@ -1329,7 +1262,7 @@ jobs:
               path = "raw/all_candidates.jsonl"
 
               if not os.path.exists(path):
-                  print(f"[!] Candidate file not found: {path}")
+                  print(f"[!] Файл не найден: {path}")
                   return candidates
 
               with open(path, "r", encoding="utf-8") as f:
@@ -1345,9 +1278,8 @@ jobs:
               return candidates
 
           candidates = load_candidates()
-          print(f"[*] Loaded candidates: {len(candidates)}")
+          print(f"[*] Загружено кандидатов: {len(candidates)}")
 
-          # Сначала кандидаты с более высоким score и с найденными путями файлов
           candidates.sort(
               key=lambda x: (
                   x.get("source") != "github",
@@ -1361,7 +1293,7 @@ jobs:
 
           for candidate in candidates:
               if len(results) >= MAX_PROBE:
-                  print(f"[*] Reached MAX_PROBE limit: {MAX_PROBE}")
+                  print(f"[*] Достигнут лимит: {MAX_PROBE}")
                   break
 
               repo = candidate.get("repo")
@@ -1389,9 +1321,9 @@ jobs:
                       results.append(item)
 
               except Exception as e:
-                  print(f"[!] Probe failed for {repo_key}: {e}")
+                  print(f"[!] Ошибка проверки {repo_key}: {e}")
 
-              sleep_random(1, 3)
+              time.sleep(1 + (time.time() % 3))
 
           output = {
               "generated_at": now_utc().isoformat().replace("+00:00", "Z"),
@@ -1407,7 +1339,7 @@ jobs:
           with open(out_file, "w", encoding="utf-8") as f:
               json.dump(output, f, ensure_ascii=False, indent=2)
 
-          print(f"[*] Saved {len(results)} probed subscriptions to {out_file}")
+          print(f"[+] Сохранено {len(results)} подписок в {out_file}")
           PY
 
       - name: Upload probe results
@@ -1419,10 +1351,10 @@ jobs:
           retention-days: 14
 
   # =========================================================
-  # 8. Публикация результата в репозиторий
+  # 8. ПУБЛИКАЦИЯ РЕЗУЛЬТАТОВ
   # =========================================================
   publish-results:
-    name: Publish results
+    name: 8 · Публикация результатов
     runs-on: ubuntu-latest
     needs: probe-candidates
     if: always() && needs.probe-candidates.result == 'success' && env.DRY_RUN != '1'
@@ -1453,8 +1385,8 @@ jobs:
           FOUND_FILE="$(find downloaded -type f -name 'subscriptions_found.json' | head -n 1 || true)"
 
           if [[ -z "${FOUND_FILE}" ]]; then
-            echo "[!] subscriptions_found.json not found in artifact"
-            echo "[!] Creating empty placeholder"
+            echo "[!] subscriptions_found.json не найден в артефактах"
+            echo "[!] Создаю пустой placeholder"
 
             cat > data/subscriptions_found.json <<'JSON'
           {
@@ -1467,10 +1399,11 @@ jobs:
           JSON
           else
             cp "${FOUND_FILE}" data/subscriptions_found.json
+            echo "[+] Файл скопирован"
           fi
 
-          echo "[*] Result file:"
-          ls -lah data || true
+          echo "[*] Содержимое data/:"
+          ls -lah data/ || true
 
       - name: Commit and push data
         run: |
@@ -1479,24 +1412,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Подтягиваем изменения, чтобы уменьшить конфликты
           git pull --rebase origin "${GITHUB_REF_NAME}" || true
 
           git add data/subscriptions_found.json || true
 
           if git diff --staged --quiet; then
-            echo "[*] No changes to commit"
+            echo "[*] Нет изменений для коммита"
           else
             git commit -m "chore(data): update subscriptions_found.json [skip ci]"
             git push origin "${GITHUB_REF_NAME}"
-            echo "[*] Pushed updated subscription data"
+            echo "[+] Данные закоммичены"
           fi
 
   # =========================================================
-  # 9. Финальный отчет
+  # 9. ФИНАЛЬНЫЙ ОТЧЁТ
   # =========================================================
   report:
-    name: Final report
+    name: 9 · Финальный отчёт
     runs-on: ubuntu-latest
     needs:
       - collect-candidates
@@ -1509,27 +1441,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download probe results for report
+      - name: Download results for report
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: probe-results
           path: report-artifacts
 
-      - name: Print short report
+      - name: Print report
         run: |
           echo "=================================================="
-          echo " Subscription Discovery Pipeline finished"
+          echo " Subscription Discovery Pipeline завершён"
           echo "=================================================="
 
           FILE="$(find report-artifacts -type f -name 'subscriptions_found.json' | head -n 1 || true)"
 
           if [[ -z "${FILE}" ]]; then
-            echo "[!] No probe result file found."
+            echo "[!] Файл результатов не найден"
             exit 0
           fi
 
-          python - <<'PY'
+          python <<PY
           import json
 
           path = "${FILE}"
@@ -1538,9 +1470,9 @@ jobs:
               with open(path, "r", encoding="utf-8") as f:
                   data = json.load(f)
 
-              print(f"Generated at: {data.get('generated_at')}")
-              print(f"Candidates found: {data.get('candidates_found')}")
-              print(f"Probed subscriptions: {data.get('probed_count')}")
+              print(f"Сгенерировано: {data.get('generated_at')}")
+              print(f"Кандидатов найдено: {data.get('candidates_found')}")
+              print(f"Подписок проверено: {data.get('probed_count')}")
 
               subs = data.get("subscriptions", [])
 
@@ -1549,10 +1481,10 @@ jobs:
               stale = sum(1 for x in subs if x.get("status") == "stale")
               bs = sum(1 for x in subs if x.get("has_bs"))
 
-              print(f"Active: {active}")
-              print(f"Unknown: {unknown}")
-              print(f"Stale: {stale}")
-              print(f"With BS marker: {bs}")
+              print(f"Активных: {active}")
+              print(f"Неизвестных: {unknown}")
+              print(f"Устаревших: {stale}")
+              print(f"С маркером БС: {bs}")
 
               top = sorted(
                   subs,
@@ -1562,17 +1494,17 @@ jobs:
                   )
               )[:10]
 
-              print("\nTop 10 subscriptions by configs:")
+              print("\nТоп-10 подписок по конфигам:")
               for item in top:
                   name = item.get('name', 'unknown')
                   source = item.get('source', 'unknown')
                   count = item.get('configs_count', 0)
                   updated = item.get('updated_mins_ago')
-                  updated_text = f"{updated} min ago" if updated is not None else "unknown"
-                  print(f"- {name} | {source} | configs: {count} | updated: {updated_text}")
+                  updated_text = f"{updated} мин назад" if updated is not None else "неизвестно"
+                  print(f"  - {name} | {source} | конфигов: {count} | обновлено: {updated_text}")
 
           except Exception as e:
-              print(f"[!] Failed to print report: {e}")
+              print(f"[!] Ошибка отчёта: {e}")
           PY
 
           echo "=================================================="
