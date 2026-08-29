@@ -1,0 +1,75 @@
+name: Export Code & Validate YAML (Commit to Repo)
+
+on:
+  workflow_dispatch: # Ручной запуск из вкладки Actions
+  schedule:
+    - cron: '0 0 * * *' # Опционально: раз в день автоматически
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Разрешение на запись в репозиторий
+    steps:
+      - name: Checkout репозитория
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Сборка всего кода в TXT
+        run: |
+          > codebase.txt
+          find . -type f \
+            -not -path "*/.git/*" \
+            -not -name "codebase.txt" \
+            -not -name "yaml_errors.txt" \
+            -not -name "*.png" -not -name "*.jpg" -not -name "*.ico" \
+            -not -name "*.woff2" -not -name "*.ttf" -not -name "*.zip" \
+            -not -name "*.pyc" -not -path "*/__pycache__/*" | while read -r file; do
+            echo "=== $file ===" >> codebase.txt
+            cat "$file" >> codebase.txt 2>/dev/null || echo "[BINARY/UNREADABLE]" >> codebase.txt
+            echo "" >> codebase.txt
+          done
+
+      - name: Проверка YAML и сохранение ошибок в файл
+        run: |
+          python3 -m pip install yamllint
+          python3 << 'EOF'
+          import os, subprocess
+
+          yaml_files = [
+              os.path.join(root, f) 
+              for root, dirs, files in os.walk('.') 
+              if '.git' not in root 
+              for f in files if f.endswith(('.yml', '.yaml'))
+          ]
+          
+          with open('yaml_errors.txt', 'w', encoding='utf-8') as out_file:
+              if not yaml_files:
+                  out_file.write("YAML файлы не найдены.\n")
+              else:
+                  for yf in yaml_files:
+                      out_file.write(f"\n--- Файл: {yf} ---\n")
+                      res = subprocess.run(['yamllint', '-f', 'parsable', yf], capture_output=True, text=True)
+                      
+                      errors = [line for line in (res.stdout + res.stderr).split('\n') if line.strip() and 'error' in line.lower()]
+                      
+                      if errors:
+                          out_file.write("Последние 3 ошибки:\n")
+                          for err in errors[-3:]:
+                              out_file.write(f"  {err}\n")
+                      else:
+                          out_file.write("  Ошибок не найдено ✅\n")
+          EOF
+
+      - name: Коммит и пуш изменений в репозиторий
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add codebase.txt yaml_errors.txt
+          if git diff --staged --quiet; then
+            echo "Нет изменений для коммита."
+          else
+            git commit -m "chore: обновить codebase.txt и yaml_errors.txt [skip ci]"
+            git push
+          fi
