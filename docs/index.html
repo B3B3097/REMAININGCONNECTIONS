@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dashboard подписок, ТГ прокси и Open Source утилит. Остаться на связи.">
+    <meta name="description" content="Dashboard ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂº, ÃÂ¢ÃÂ ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸, Open Source ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂ ÃÂ¸ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂ° ÃÂÃÂºÃÂ¾ÃÂÃÂ¾ÃÂÃÂÃÂ¸ ÃÂ¸ÃÂ½ÃÂÃÂµÃÂÃÂ½ÃÂµÃÂÃÂ°. ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ ÃÂ½ÃÂ° ÃÂÃÂ²ÃÂÃÂ·ÃÂ¸.">
     <meta name="google" content="notranslate">
-    <title>🛜 Остаться на связи | Dashboard</title>
+    <title>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ ÃÂ½ÃÂ° ÃÂÃÂ²ÃÂÃÂ·ÃÂ¸ | Dashboard + Speed Test</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,13 +142,18 @@
             cursor: pointer;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .btn-primary {
             background: var(--blue);
             color: white;
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.22);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: #2563eb;
             transform: translateY(-1px);
         }
@@ -159,7 +164,7 @@
             color: var(--text);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.09);
             border-color: var(--border-hover);
         }
@@ -178,59 +183,15 @@
             white-space: nowrap;
         }
 
-        .badge-bs {
-            color: #34d399;
-            background: rgba(16, 185, 129, 0.12);
-            border-color: rgba(16, 185, 129, 0.25);
-        }
-
-        .badge-cs {
-            color: #f87171;
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.25);
-        }
-
-        .badge-github {
-            color: #e5e7eb;
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.14);
-        }
-
-        .badge-gitverse {
-            color: #c4b5fd;
-            background: rgba(139, 92, 246, 0.12);
-            border-color: rgba(139, 92, 246, 0.24);
-        }
-
-        .badge-success {
-            color: #34d399;
-            background: rgba(16, 185, 129, 0.12);
-            border-color: rgba(16, 185, 129, 0.24);
-        }
-
-        .badge-warning {
-            color: #fbbf24;
-            background: rgba(245, 158, 11, 0.12);
-            border-color: rgba(245, 158, 11, 0.24);
-        }
-
-        .badge-danger {
-            color: #f87171;
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.24);
-        }
-
-        .badge-neutral {
-            color: #d1d5db;
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .badge-platform {
-            color: #93c5fd;
-            background: rgba(59, 130, 246, 0.12);
-            border-color: rgba(59, 130, 246, 0.22);
-        }
+        .badge-bs { color: #34d399; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.25); }
+        .badge-cs { color: #f87171; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.25); }
+        .badge-github { color: #e5e7eb; background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.14); }
+        .badge-gitverse { color: #c4b5fd; background: rgba(139, 92, 246, 0.12); border-color: rgba(139, 92, 246, 0.24); }
+        .badge-success { color: #34d399; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.24); }
+        .badge-warning { color: #fbbf24; background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.24); }
+        .badge-danger { color: #f87171; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.24); }
+        .badge-neutral { color: #d1d5db; background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.12); }
+        .badge-platform { color: #93c5fd; background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.22); }
 
         .stat-value {
             font-size: 32px;
@@ -238,13 +199,8 @@
             font-weight: 900;
         }
 
-        .text-muted {
-            color: var(--muted);
-        }
-
-        .text-faint {
-            color: var(--faint);
-        }
+        .text-muted { color: var(--muted); }
+        .text-faint { color: var(--faint); }
 
         .truncate {
             overflow: hidden;
@@ -259,20 +215,9 @@
             display: inline-block;
         }
 
-        .ping-good {
-            background: #34d399;
-            box-shadow: 0 0 12px rgba(52, 211, 153, 0.65);
-        }
-
-        .ping-medium {
-            background: #fbbf24;
-            box-shadow: 0 0 12px rgba(251, 191, 36, 0.65);
-        }
-
-        .ping-bad {
-            background: #f87171;
-            box-shadow: 0 0 12px rgba(248, 113, 113, 0.65);
-        }
+        .ping-good { background: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.65); }
+        .ping-medium { background: #fbbf24; box-shadow: 0 0 12px rgba(251, 191, 36, 0.65); }
+        .ping-bad { background: #f87171; box-shadow: 0 0 12px rgba(248, 113, 113, 0.65); }
 
         .toast-container {
             position: fixed;
@@ -296,33 +241,127 @@
         }
 
         @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        ::-webkit-scrollbar {
-            width: 9px;
-            height: 9px;
+        /* ============ SPEED TEST ============ */
+        .gauge {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
         }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
+        .gauge svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 999px;
+        .gauge-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.07);
+            stroke-width: 14;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .gauge-progress {
+            fill: none;
+            stroke: url(#gaugeGrad);
+            stroke-width: 14;
+            stroke-linecap: round;
+            transition: stroke-dashoffset .25s ease;
         }
+
+        .gauge-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .gauge-value {
+            font-size: 40px;
+            font-weight: 900;
+            line-height: 1;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .gauge-unit {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gauge-label {
+            font-size: 11px;
+            color: var(--faint);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .speed-phase {
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 14px;
+            min-height: 20px;
+        }
+
+        .speed-log {
+            max-height: 240px;
+            overflow-y: auto;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+        }
+
+        .speed-log-line {
+            padding: 6px 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .speed-log-line:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .speed-stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .speed-stat-value {
+            font-size: 26px;
+            font-weight: 900;
+            font-family: "JetBrains Mono", monospace;
+            line-height: 1;
+        }
+
+        .speed-stat-label {
+            font-size: 11px;
+            color: var(--faint);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 
@@ -342,7 +381,7 @@
                 </div>
                 <div>
                     <div class="font-black text-lg leading-none">NetWatch</div>
-                    <div class="text-xs text-faint">подписки · прокси · утилиты</div>
+                    <div class="text-xs text-faint">ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ¸ ÃÂ· ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸ ÃÂ· ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂÃÂ ÃÂ· speed test</div>
                 </div>
             </a>
 
@@ -357,7 +396,7 @@
                         <polyline points="1 20 1 14 7 14"></polyline>
                         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
-                    Обновить
+                    ÃÂÃÂ±ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸ÃÂÃÂ
                 </button>
             </div>
         </div>
@@ -367,12 +406,12 @@
     <section class="pt-16 pb-8">
         <div class="container-page text-center">
             <a href="https://t.me/REMAININGCONNECTIONS" target="_blank" class="inline-block">
-                <h1 class="hero-title">ОСТАТЬСЯ НА СВЯЗИ 🛜</h1>
+                <h1 class="hero-title">ÃÂÃÂ¡ÃÂ¢ÃÂÃÂ¢ÃÂ¬ÃÂ¡ÃÂ¯ ÃÂÃÂ ÃÂ¡ÃÂÃÂ¯ÃÂÃÂ</h1>
             </a>
 
             <p class="text-muted max-w-2xl mx-auto mt-5 text-sm md:text-base leading-7">
-                Дашборд мониторинга подписок, Telegram-прокси и Open Source утилит.
-                Все данные можно загружать из автоматически сгенерированных JSON-файлов.
+                ÃÂÃÂ°ÃÂÃÂ±ÃÂ¾ÃÂÃÂ´ ÃÂ¼ÃÂ¾ÃÂ½ÃÂ¸ÃÂÃÂ¾ÃÂÃÂ¸ÃÂ½ÃÂ³ÃÂ° ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂº, Telegram-ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸, Open Source ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂ ÃÂ¸ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂ° ÃÂÃÂºÃÂ¾ÃÂÃÂ¾ÃÂÃÂÃÂ¸ ÃÂ¸ÃÂ½ÃÂÃÂµÃÂÃÂ½ÃÂµÃÂÃÂ°.
+                ÃÂÃÂÃÂµ ÃÂ´ÃÂ°ÃÂ½ÃÂ½ÃÂÃÂµ ÃÂ·ÃÂ°ÃÂ³ÃÂÃÂÃÂ¶ÃÂ°ÃÂÃÂÃÂÃÂ ÃÂ¸ÃÂ· ÃÂ°ÃÂ²ÃÂÃÂ¾ÃÂ¼ÃÂ°ÃÂÃÂ¸ÃÂÃÂµÃÂÃÂºÃÂ¸ ÃÂÃÂ³ÃÂµÃÂ½ÃÂµÃÂÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ½ÃÃÂÃÂ°ÃÂ¹ÃÂ»ÃÂ¾ÃÂ².
             </p>
         </div>
     </section>
@@ -384,33 +423,37 @@
             <div class="glass rounded-[22px] p-2 mb-6 overflow-x-auto">
                 <div class="flex gap-2 min-w-max">
                     <button class="tab-btn active rounded-2xl px-5 py-3 font-bold text-sm" data-tab="dashboard">
-                        Дашборд
+                        ÃÂÃÂ°ÃÂÃÂ±ÃÂ¾ÃÂÃÂ´
                     </button>
 
                     <button class="tab-btn rounded-2xl px-5 py-3 font-bold text-sm" data-tab="subscriptions">
-                        Подписки ЧС/БС
+                        ÃÂÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ¸ ÃÂ§ÃÂ¡/ÃÂÃÂ¡
                     </button>
 
                     <button class="tab-btn rounded-2xl px-5 py-3 font-bold text-sm" data-tab="proxies">
-                        ТГ Прокси
+                        ÃÂ¢ÃÂ ÃÂÃÂÃÂ¾ÃÂºÃÂÃÂ¸
                     </button>
 
                     <button class="tab-btn rounded-2xl px-5 py-3 font-bold text-sm" data-tab="utilities">
                         Open Source
                     </button>
+
+                    <button class="tab-btn rounded-2xl px-5 py-3 font-bold text-sm" data-tab="speedtest">
+                        Ã¢ÂÂ¡ Speed Test
+                    </button>
                 </div>
             </div>
 
             <!-- FILTERS -->
-            <div class="glass rounded-[22px] p-4 mb-8">
+            <div id="filtersBar" class="glass rounded-[22px] p-4 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
                     <div class="md:col-span-4">
-                        <input id="searchInput" type="text" class="input-field" placeholder="🔍 Поиск: имя, репозиторий, хост, описание...">
+                        <input id="searchInput" type="text" class="input-field" placeholder="ÃÂÃÂ¾ÃÂ¸ÃÂÃÂº: ÃÂ¸ÃÂ¼ÃÂ, ÃÂÃÂµÃÂ¿ÃÂ¾ÃÂ·ÃÂ¸ÃÂÃÂ¾ÃÂÃÂ¸ÃÂ¹, ÃÃÂ, ÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ°ÃÂ½ÃÂ¸ÃÂµ...">
                     </div>
 
                     <div class="md:col-span-2">
                         <select id="sourceFilter" class="input-field">
-                            <option value="all">Источник: все</option>
+                            <option value="all">ÃÂÃÂÃÂÃÂ¾ÃÂÃÂ½ÃÂ¸ÃÂº: ÃÂ²ÃÂÃÂµ</option>
                             <option value="github">GitHub</option>
                             <option value="gitverse">Gitverse</option>
                         </select>
@@ -418,9 +461,9 @@
 
                     <div class="md:col-span-2">
                         <select id="statusFilter" class="input-field">
-                            <option value="all">Статус: все</option>
-                            <option value="bs">Есть БС</option>
-                            <option value="cs">Нет БС / ЧС</option>
+                            <option value="all">ÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂ: ÃÂ²ÃÂÃÂµ</option>
+                            <option value="bs">ÃÂÃÂÃÂÃÂ ÃÂÃÂ¡</option>
+                            <option value="cs">ÃÂÃÂµÃÂ ÃÂÃÂ¡ / ÃÂ§ÃÂ¡</option>
                             <option value="active">Active</option>
                             <option value="stale">Stale</option>
                             <option value="unknown">Unknown</option>
@@ -431,19 +474,17 @@
 
                     <div class="md:col-span-2">
                         <select id="sortFilter" class="input-field">
-                            <option value="updated">Сначала новые</option>
-                            <option value="configs">Больше конфигов</option>
-                            <option value="name">По имени</option>
-                            <option value="stars">Больше звёзд</option>
-                            <option value="ping">Лучший пинг</option>
+                            <option value="updated">ÃÂ¡ÃÂ½ÃÂ°ÃÂÃÂ°ÃÂ»ÃÂ° ÃÂ½ÃÂ¾ÃÂ²ÃÂÃÂµ</option>
+                            <option value="configs">ÃÂÃÂ¾ÃÂ»ÃÂÃÂÃÂµ ÃÂºÃÂ¾ÃÂ½ÃÂÃÂ¸ÃÂ³ÃÂ¾ÃÂ²</option>
+                            <option value="name">ÃÂÃÂ¾ ÃÂ¸ÃÂ¼ÃÂµÃÂ½ÃÂ¸</option>
+                            <option value="stars">ÃÂÃÂ¾ÃÂ»ÃÂÃÂÃÂµ ÃÂ·ÃÂ²ÃÂÃÂ·ÃÂ´</option>
+                            <option value="ping">ÃÂÃÂÃÂÃÂÃÂ¸ÃÂ¹ ÃÂ¿ÃÂ¸ÃÂ½ÃÂ³</option>
                         </select>
                     </div>
 
                     <div class="md:col-span-2">
                         <div id="dataInfo" class="h-full flex items-center justify-center rounded-[14px] border border-white/10 bg-white/5 px-3 py-2 text-xs text-muted">
-                            Загрузка данных...
-                        </div>
-                    </div>
+                            ÃÂÃÂ°ÃÂ³ÃÂÃÂÃÂ·ÃÂºÃÂ° ÃÂ´ÃÂ°ÃÂ½ÃÂ½ÃÂÃdiv>
                 </div>
             </div>
 
@@ -451,44 +492,44 @@
             <section id="tab-dashboard" class="tab-content">
                 <div class="grid grid-cols-2 xl:grid-cols-6 gap-4">
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">Подписки</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ¸</div>
                         <div id="statTotalSubs" class="stat-value mt-3">0</div>
                     </div>
 
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">Конфиги</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂ¾ÃÂ½ÃÂÃÂ¸ÃÂ³ÃÂ¸</div>
                         <div id="statTotalConfigs" class="stat-value mt-3">0</div>
                     </div>
 
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">Активные</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂºÃÂÃÂ¸ÃÂ²ÃÂ½ÃÂÃÂµ</div>
                         <div id="statActiveSubs" class="stat-value mt-3 text-emerald-300">0</div>
                     </div>
 
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">БС</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂ¡</div>
                         <div id="statBsSubs" class="stat-value mt-3 text-blue-300">0</div>
                     </div>
 
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ТГ прокси</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂ¢ÃÂ ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸</div>
                         <div id="statOnlineProxies" class="stat-value mt-3 text-purple-300">0</div>
                     </div>
 
                     <div class="card p-5">
-                        <div class="text-xs text-faint font-bold uppercase tracking-widest">Утилиты</div>
+                        <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂ£ÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂÃÂ</div>
                         <div id="statUtilities" class="stat-value mt-3 text-amber-300">0</div>
                     </div>
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-6 mt-6">
                     <div class="card p-5">
-                        <h3 class="font-black text-lg mb-4">Активность</h3>
+                        <h3 class="font-black text-lg mb-4">ÃÂÃÂºÃÂÃÂ¸ÃÂ²ÃÂ½ÃÂ¾ÃÂÃÂÃÂ</h3>
                         <div id="activityFeed" class="space-y-3"></div>
                     </div>
 
                     <div class="card p-5">
-                        <h3 class="font-black text-lg mb-4">Самые свежие подписки</h3>
+                        <h3 class="font-black text-lg mb-4">ÃÂ¡ÃÂ°ÃÂ¼ÃÂÃÂµ ÃÂÃÂ²ÃÂµÃÂ¶ÃÂ¸ÃÂµ ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ¸</h3>
                         <div id="topSubsPreview" class="space-y-3"></div>
                     </div>
                 </div>
@@ -502,7 +543,7 @@
 
                 <div id="subsLoadMoreWrap" class="mt-8 text-center hidden">
                     <button id="subsLoadMoreBtn" class="btn btn-secondary">
-                        Показать ещё
+                        ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂÃÂ ÃÂµÃÂÃÂ
                     </button>
                     <div id="subsVisibleInfo" class="text-xs text-faint mt-3"></div>
                 </div>
@@ -516,7 +557,7 @@
 
                 <div id="proxiesLoadMoreWrap" class="mt-8 text-center hidden">
                     <button id="proxiesLoadMoreBtn" class="btn btn-secondary">
-                        Показать ещё
+                        ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂÃÂ ÃÂµÃÂÃÂ
                     </button>
                     <div id="proxiesVisibleInfo" class="text-xs text-faint mt-3"></div>
                 </div>
@@ -530,9 +571,92 @@
 
                 <div id="utilsLoadMoreWrap" class="mt-8 text-center hidden">
                     <button id="utilsLoadMoreBtn" class="btn btn-secondary">
-                        Показать ещё
+                        ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂÃÂ ÃÂµÃÂÃÂ
                     </button>
                     <div id="utilsVisibleInfo" class="text-xs text-faint mt-3"></div>
+                </div>
+            </section>
+
+            <!-- TAB: SPEED TEST -->
+            <section id="tab-speedtest" class="tab-content hidden">
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- Gauge -->
+                    <div class="card p-6 lg:col-span-2">
+                        <div class="flex flex-col items-center">
+                            <div class="gauge">
+                                <svg viewBox="0 0 220 220">
+                                    <defs>
+                                        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#60a5fa"/>
+                                            <stop offset="50%" stop-color="#a78bfa"/>
+                                            <stop offset="100%" stop-color="#34d399"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <circle class="gauge-track" cx="110" cy="110" r="96"/>
+                                    <circle id="gaugeProgress" class="gauge-progress" cx="110" cy="110" r="96"
+                                            stroke-dasharray="603" stroke-dashoffset="603"/>
+                                </svg>
+                                <div class="gauge-center">
+                                    <div id="gaugeValue" class="gauge-value">0.00</div>
+                                    <div class="gauge-unit">Mbps</div>
+                                    <div id="gaugeLabel" class="gauge-label">ÃÂ³ÃÂ¾ÃÂÃÂ¾ÃÂ²</div>
+                                </div>
+                            </div>
+
+                            <div id="speedPhase" class="speed-phase">ÃÂÃÂ°ÃÂ¶ÃÂ¼ÃÂ¸ÃÂÃÂµ ÃÂ«ÃÂÃÂ°ÃÂÃÂ°ÃÂÃÂ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂ» ÃÂ´ÃÂ»ÃÂ ÃÂ¿ÃÂÃÂ¾ÃÂ²ÃÂµÃÂÃÂºÃÂ¸ ÃÂÃÂ¾ÃÂµÃÂ´ÃÂ¸ÃÂ½ÃÂµÃÂ½ÃÂ¸ÃÂ</div>
+
+                            <div class="mt-6 flex gap-3">
+                                <button id="speedStartBtn" class="btn btn-primary px-8 py-3 text-base">
+                                    ÃÂÃÂ°ÃÂÃÂ°ÃÂÃÂ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂ
+                                </button>
+                                <button id="speedStopBtn" class="btn btn-secondary px-6 py-3 text-base hidden">
+                                    ÃÂ¡ÃÂÃÂ¾ÃÂ¿
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div class="card p-6">
+                        <h3 class="font-black text-lg mb-4">ÃÂ ÃÂµÃÂ·ÃÂÃÂ»ÃÂÃÂÃÂ°ÃÂÃÂ</h3>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="speed-stat-card">
+                                <div id="resultPing" class="speed-stat-value text-blue-300">Ã¢ÂÂ</div>
+                                <div class="speed-stat-label">ÃÂÃÂ¸ÃÂ½ÃÂ³ ms</div>
+                            </div>
+                            <div class="speed-stat-card">
+                                <div id="resultJitter" class="speed-stat-value text-purple-300">Ã¢ÂÂ</div>
+                                <div class="speed-stat-label">ÃÂÃÂ¶ÃÂ¸ÃÂÃÂÃÂµÃÂ ms</div>
+                            </div>
+                            <div class="speed-stat-card">
+                                <div id="resultDownload" class="speed-stat-value text-emerald-300">Ã¢ÂÂ</div>
+                                <div class="speed-stat-label">ÃÂ¡ÃÂºÃÂ°ÃÂÃÂ¸ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂµ Mbps</div>
+                            </div>
+                            <div class="speed-stat-card">
+                                <div id="resultUpload" class="speed-stat-value text-amber-300">Ã¢ÂÂ</div>
+                                <div class="speed-stat-label">ÃÂÃÂ°ÃÂ³ÃÂÃÂÃÂ·ÃÂºÃÂ° Mbps</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 text-xs text-faint leading-6">
+                            ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ²ÃÂÃÂ¿ÃÂ¾ÃÂ»ÃÂ½ÃÂÃÂµÃÂÃÂÃÂ ÃÂ¿ÃÂÃÂÃÂ¼ÃÂ¾ ÃÂ² ÃÂ±ÃÂÃÂ°ÃÂÃÂ·ÃÂµÃÂÃÂµ ÃÂ±ÃÂµÃÂ· ÃÂÃÂµÃÂÃÂ²ÃÂµÃÂÃÂ°.
+                            ÃÂÃÂÃÂ¿ÃÂ¾ÃÂ»ÃÂÃÂ·ÃÂÃÂÃÂÃÂÃÂ ÃÂ¿ÃÂÃÂ±ÃÂ»ÃÂ¸ÃÂÃÂ½ÃÂÃÂµ CDN-ÃÂÃÂ°ÃÂ¹ÃÂ»ÃÂ ÃÂ¸ ÃÂ³ÃÂµÃÂ½ÃÂµÃÂÃÂ¸ÃÂÃÂÃÂµÃÂ¼ÃÂÃÂ¹ payload.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log -->
+                <div class="card p-5 mt-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-black text-lg">ÃÂÃÂ¾ÃÂ³ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂ¾ÃÂ²</h3>
+                        <button id="speedClearLogBtn" class="btn btn-secondary text-xs px-3 py-2">ÃÂÃÂÃÂ¸ÃÂÃÂÃÂ¸ÃÂÃÂ</button>
+                    </div>
+                    <div id="speedLog" class="speed-log space-y-1">
+                        <div class="speed-log-line text-faint">
+                            <span>ÃÂÃÂ¾ÃÂ³ ÃÂ¿ÃÂÃÂÃÂ. ÃÂÃÂ°ÃÂ¿ÃÂÃÂÃÂÃÂ¸ÃÂÃÂµ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂ.</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -547,7 +671,7 @@
                 </a>
             </div>
             <div>
-                Остаться на связи — это не выбор, это необходимость.
+                ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ ÃÂ½ÃÂ° ÃÂÃÂ²ÃÂÃÂ·ÃÂ¸ Ã¢ÂÂ ÃÂÃÂÃÂ¾ ÃÂ½ÃÂµ ÃÂ²ÃÂÃÂ±ÃÂ¾ÃÂ, ÃÂÃÂÃÂ¾ ÃÂ½ÃÂµÃÂ¾ÃÂ±ÃÃÂ¸ÃÂ¼ÃÂ¾ÃÂÃÂÃÂ.
             </div>
         </div>
     </footer>
@@ -586,7 +710,9 @@
                     utilities: 0
                 },
 
-                loading: false
+                loading: false,
+                speedRunning: false,
+                speedAbort: false
             };
 
             // =========================================================
@@ -598,6 +724,7 @@
             const els = {
                 refreshBtn: $("refreshBtn"),
                 dataInfo: $("dataInfo"),
+                filtersBar: $("filtersBar"),
 
                 searchInput: $("searchInput"),
                 sourceFilter: $("sourceFilter"),
@@ -635,8 +762,24 @@
                 utilsLoadMoreBtn: $("utilsLoadMoreBtn"),
                 utilsVisibleInfo: $("utilsVisibleInfo"),
 
-                toastContainer: $("toastContainer")
+                toastContainer: $("toastContainer"),
+
+                // Speed test
+                gaugeValue: $("gaugeValue"),
+                gaugeLabel: $("gaugeLabel"),
+                gaugeProgress: $("gaugeProgress"),
+                speedPhase: $("speedPhase"),
+                speedStartBtn: $("speedStartBtn"),
+                speedStopBtn: $("speedStopBtn"),
+                speedClearLogBtn: $("speedClearLogBtn"),
+                speedLog: $("speedLog"),
+                resultPing: $("resultPing"),
+                resultJitter: $("resultJitter"),
+                resultDownload: $("resultDownload"),
+                resultUpload: $("resultUpload")
             };
+
+            const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 96;
 
             // =========================================================
             // MOCK FALLBACK
@@ -689,7 +832,7 @@
                     full_name: "example/example-client",
                     url: "#",
                     stars: 1200,
-                    description: "Пример клиента для прокси.",
+                    description: "Example proxy client.",
                     platforms: ["Android", "Windows"],
                     latest_release_tag: "1.0.0",
                     release_age_days: 10,
@@ -736,22 +879,22 @@
                 }
 
                 if (m < 1) {
-                    return "сейчас";
+                    return "ÃÂÃÂµÃÂ¹ÃÂÃÂ°ÃÂ";
                 }
 
                 if (m < 60) {
-                    return `${Math.floor(m)} мин`;
+                    return `${Math.floor(m)} ÃÂ¼ÃÂ¸ÃÂ½`;
                 }
 
                 if (m < 1440) {
-                    return `${Math.floor(m / 60)} ч`;
+                    return `${Math.floor(m / 60)} ÃÂ`;
                 }
 
                 if (m < 525600) {
-                    return `${Math.floor(m / 1440)} дн`;
+                    return `${Math.floor(m / 1440)} ÃÂ´ÃÂ½`;
                 }
 
-                return `${Math.floor(m / 525600)} г`;
+                return `${Math.floor(m / 525600)} ÃÂ³`;
             }
 
             function showToast(message, type = "info") {
@@ -777,9 +920,9 @@
             async function copyText(text, message) {
                 try {
                     await navigator.clipboard.writeText(text);
-                    showToast(message || "Скопировано", "success");
+                    showToast(message || "ÃÂ¡ÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ¾", "success");
                 } catch (e) {
-                    showToast("Не удалось скопировать", "error");
+                    showToast("ÃÂÃÂµ ÃÂÃÂ´ÃÂ°ÃÂ»ÃÂ¾ÃÂÃÂ ÃÂÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂÃÂ", "error");
                 }
             }
 
@@ -796,7 +939,7 @@
                     return;
                 }
 
-                await copyText(value, target.dataset.copyMessage || "Скопировано");
+                await copyText(value, target.dataset.copyMessage || "ÃÂ¡ÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ¾");
             });
 
             // =========================================================
@@ -930,7 +1073,7 @@
                 if (cleanupPayload) {
                     activity.push({
                         time: cleanupPayload.cleaned_at || cleanupPayload.generated_at || "",
-                        text: `Очистка подписок: удалено ${cleanupPayload.removed ?? cleanupPayload.dead ?? 0}, осталось ${cleanupPayload.total_after ?? cleanupPayload.alive ?? 0}.`,
+                        text: `ÃÂÃÂÃÂ¸ÃÂÃÂÃÂºÃÂ° ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂº: ÃÂÃÂ´ÃÂ°ÃÂ»ÃÂµÃÂ½ÃÂ¾ ${cleanupPayload.removed ?? cleanupPayload.dead ?? 0}, ÃÂ¾ÃÂÃÂÃÂ°ÃÂ»ÃÂ¾ÃÂÃÂ ${cleanupPayload.total_after ?? cleanupPayload.alive ?? 0}.`,
                         type: "success"
                     });
                 }
@@ -938,7 +1081,7 @@
                 if (subsPayload && subsPayload.generated_at) {
                     activity.push({
                         time: subsPayload.generated_at,
-                        text: `Данные подписок обновлены парсером.`,
+                        text: `ÃÂÃÂ°ÃÂ½ÃÂ½ÃÂÃÂµ ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂº ÃÂ¾ÃÂ±ÃÂ½ÃÂ¾ÃÂ²ÃÂ»ÃÂµÃÂ½ÃÂ ÃÂ¿ÃÂ°ÃÂÃÂÃÂµÃÂÃÂ¾ÃÂ¼.`,
                         type: "info"
                     });
                 }
@@ -946,7 +1089,7 @@
                 if (proxiesPayload && proxiesPayload.generated_at) {
                     activity.push({
                         time: proxiesPayload.generated_at,
-                        text: `Проверка ТГ прокси завершена: онлайн ${proxiesPayload.online_count ?? 0} из ${proxiesPayload.checked_count ?? 0}.`,
+                        text: `ÃÂÃÂÃÂ¾ÃÂ²ÃÂµÃÂÃÂºÃÂ° ÃÂ¢ÃÂ ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸ ÃÂ·ÃÂ°ÃÂ²ÃÂµÃÂÃÂÃÂµÃÂ½ÃÂ°: ÃÂ¾ÃÂ½ÃÂ»ÃÂ°ÃÂ¹ÃÂ½ ${proxiesPayload.online_count ?? 0} ÃÂ¸ÃÂ· ${proxiesPayload.checked_count ?? 0}.`,
                         type: "info"
                     });
                 }
@@ -954,7 +1097,7 @@
                 if (utilsPayload && utilsPayload.generated_at) {
                     activity.push({
                         time: utilsPayload.generated_at,
-                        text: `База утилит обновлена: найдено ${utilsPayload.summary?.total_utilities ?? utilsPayload.utilities?.length ?? 0}.`,
+                        text: `ÃÂÃÂ°ÃÂ·ÃÂ° ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂ ÃÂ¾ÃÂ±ÃÂ½ÃÂ¾ÃÂ²ÃÂ»ÃÂµÃÂ½ÃÂ°: ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ¾ ${utilsPayload.summary?.total_utilities ?? utilsPayload.utilities?.length ?? 0}.`,
                         type: "info"
                     });
                 }
@@ -962,7 +1105,7 @@
                 if (!activity.length) {
                     activity.push({
                         time: new Date().toISOString(),
-                        text: "Данные не найдены, используются демо-данные.",
+                        text: "ÃÂÃÂ°ÃÂ½ÃÂ½ÃÂÃÂµ ÃÂ½ÃÂµ ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ, ÃÂ¸ÃÂÃÂ¿ÃÂ¾ÃÂ»ÃÂÃÂ·ÃÂÃÂÃÂÃÂÃÂ ÃÂ´ÃÂµÃÂ¼ÃÂ¾-ÃÂ´ÃÂ°ÃÂ½ÃÂ½ÃÂÃÂµ.",
                         type: "warning"
                     });
                 }
@@ -1142,7 +1285,7 @@
                             </div>
                         </div>
                     `;
-                }).join("") || `<div class="text-sm text-faint">Нет активности.</div>`;
+                }).join("") || `<div class="text-sm text-faint">ÃÂÃÂµÃÂ ÃÂ°ÃÂºÃÂÃÂ¸ÃÂ²ÃÂ½ÃÂ¾ÃÂÃÂÃÂ¸.</div>`;
 
                 // Top fresh subscriptions
                 const top = [...state.subscriptions]
@@ -1155,21 +1298,21 @@
 
                 els.topSubsPreview.innerHTML = top.map(item => {
                     const bs = item.has_bs
-                        ? `<span class="badge badge-bs">БС</span>`
-                        : `<span class="badge badge-cs">ЧС</span>`;
+                        ? `<span class="badge badge-bs">ÃÂÃÂ¡</span>`
+                        : `<span class="badge badge-cs">ÃÂ§ÃÂ¡</span>`;
 
                     return `
                         <div class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                             <div class="min-w-0">
                                 <div class="font-bold truncate">${escapeHtml(item.name)}</div>
                                 <div class="text-xs text-faint mt-1">
-                                    ${escapeHtml(item.source_label)} · конфигов: ${formatNumber(item.configs_count)} · ${formatMinutes(item.updated_mins_ago)}
+                                    ${escapeHtml(item.source_label)} ÃÂ· ÃÂºÃÂ¾ÃÂ½ÃÂÃÂ¸ÃÂ³ÃÂ¾ÃÂ²: ${formatNumber(item.configs_count)} ÃÂ· ${formatMinutes(item.updated_mins_ago)}
                                 </div>
                             </div>
                             ${bs}
                         </div>
                     `;
-                }).join("") || `<div class="text-sm text-faint">Подписки не найдены.</div>`;
+                }).join("") || `<div class="text-sm text-faint">ÃÂÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ¸ ÃÂ½ÃÂµ ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ.</div>`;
             }
 
             // =========================================================
@@ -1182,8 +1325,8 @@
                     : `<span class="badge badge-github">GitHub</span>`;
 
                 const bsBadge = item.has_bs
-                    ? `<span class="badge badge-bs">БС</span>`
-                    : `<span class="badge badge-cs">ЧС</span>`;
+                    ? `<span class="badge badge-bs">ÃÂÃÂ¡</span>`
+                    : `<span class="badge badge-cs">ÃÂ§ÃÂ¡</span>`;
 
                 const statusColor = item.status === "active"
                     ? "text-emerald-300"
@@ -1216,12 +1359,12 @@
 
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
-                                <div class="text-xs text-faint font-bold uppercase tracking-widest">Конфигов</div>
+                                <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂ¾ÃÂ½ÃÂÃÂ¸ÃÂ³ÃÂ¾ÃÂ²</div>
                                 <div class="text-2xl font-black mt-1">${formatNumber(item.configs_count)}</div>
                             </div>
 
                             <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
-                                <div class="text-xs text-faint font-bold uppercase tracking-widest">Обновлено</div>
+                                <div class="text-xs text-faint font-bold uppercase tracking-widest">ÃÂÃÂ±ÃÂ½ÃÂ¾ÃÂ²ÃÂ»ÃÂµÃÂ½ÃÂ¾</div>
                                 <div class="text-2xl font-black mt-1 ${updatedColor}">
                                     ${formatMinutes(item.updated_mins_ago)}
                                 </div>
@@ -1229,20 +1372,20 @@
                         </div>
 
                         <div class="text-xs text-faint mt-4 truncate">
-                            Последний коммит: ${escapeHtml(item.last_commit_message || "n/a")}
+                            ÃÂÃÂ¾ÃÂÃÂ»ÃÂµÃÂ´ÃÂ½ÃÂ¸ÃÂ¹ ÃÂºÃÂ¾ÃÂ¼ÃÂ¼ÃÂ¸ÃÂ: ${escapeHtml(item.last_commit_message || "n/a")}
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 mt-5">
                             <a href="${escapeHtml(item.url || "#")}" target="_blank" class="btn btn-primary w-full">
-                                Источник
+                                ÃÂÃÂÃÂÃÂ¾ÃÂÃÂ½ÃÂ¸ÃÂº
                             </a>
 
                             <button
                                 class="btn btn-secondary w-full"
                                 data-copy="${escapeHtml(item.subscription_url || item.url || "")}"
-                                data-copy-message="Ссылка на подписку скопирована"
+                                data-copy-message="ÃÂ¡ÃÂÃÂÃÂ»ÃÂºÃÂ° ÃÂ½ÃÂ° ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂºÃÂ ÃÂÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ°"
                             >
-                                Копировать
+                                ÃÂÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂÃÂ
                             </button>
                         </div>
                     </article>
@@ -1265,13 +1408,13 @@
 
                 const shown = Math.min(state.subsVisible, items.length);
 
-                els.subsInfo.textContent = `Всего подписок в базе: ${items.length}. Показано: ${shown}.`;
-                els.subsVisibleInfo.textContent = `Показано ${shown} из ${items.length}`;
+                els.subsInfo.textContent = `ÃÂÃÂÃÂµÃÂ³ÃÂ¾ ÃÂ¿ÃÂ¾ÃÂ´ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂº ÃÂ² ÃÂ±ÃÂ°ÃÂ·ÃÂµ: ${items.length}. ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾: ${shown}.`;
+                els.subsVisibleInfo.textContent = `ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾ ${shown} ÃÂ¸ÃÂ· ${items.length}`;
 
                 if (items.length === 0) {
                     els.subsGrid.innerHTML = `
                         <div class="col-span-full text-center py-20 text-faint">
-                            Ничего не найдено. Попробуй изменить фильтры.
+                            ÃÂÃÂ¸ÃÂÃÂµÃÂ³ÃÂ¾ ÃÂ½ÃÂµ ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ¾. ÃÂÃÂ¾ÃÂ¿ÃÂÃÂ¾ÃÂ±ÃÂÃÂ¹ ÃÂ¸ÃÂ·ÃÂ¼ÃÂµÃÂ½ÃÂ¸ÃÂÃÂ ÃÂÃÂ¸ÃÂ»ÃÂÃÂÃÂÃÂ.
                         </div>
                     `;
                 }
@@ -1320,7 +1463,7 @@
                                 <div class="flex items-center gap-2 mt-3 text-sm text-muted">
                                     <span class="ping-dot ${pingClass}"></span>
                                     <span class="font-mono">${pingText}</span>
-                                    <span class="text-faint">· secret: ${escapeHtml(item.secret ? item.secret.slice(0, 12) + "..." : "n/a")}</span>
+                                    <span class="text-faint">ÃÂ· secret: ${escapeHtml(item.secret ? item.secret.slice(0, 12) + "..." : "n/a")}</span>
                                 </div>
                             </div>
 
@@ -1336,7 +1479,7 @@
                                 <button
                                     class="btn btn-secondary"
                                     data-copy="${escapeHtml(copyValue)}"
-                                    data-copy-message="Прокси скопирован"
+                                    data-copy-message="ÃÂÃÂÃÂ¾ÃÂºÃÂÃÂ¸ ÃÂÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½"
                                 >
                                     Copy
                                 </button>
@@ -1363,13 +1506,13 @@
                 const shown = Math.min(state.proxiesVisible, items.length);
                 const online = items.filter(item => item.status === "online").length;
 
-                els.proxiesInfo.textContent = `Всего прокси: ${items.length}. Онлайн: ${online}. Показано: ${shown}.`;
-                els.proxiesVisibleInfo.textContent = `Показано ${shown} из ${items.length}`;
+                els.proxiesInfo.textContent = `ÃÂÃÂÃÂµÃÂ³ÃÂ¾ ÃÂ¿ÃÂÃÂ¾ÃÂºÃÂÃÂ¸: ${items.length}. ÃÂÃÂ½ÃÂ»ÃÂ°ÃÂ¹ÃÂ½: ${online}. ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾: ${shown}.`;
+                els.proxiesVisibleInfo.textContent = `ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾ ${shown} ÃÂ¸ÃÂ· ${items.length}`;
 
                 if (items.length === 0) {
                     els.proxiesList.innerHTML = `
                         <div class="text-center py-20 text-faint">
-                            Прокси не найдены.
+                            ÃÂÃÂÃÂ¾ÃÂºÃÂÃÂ¸ ÃÂ½ÃÂµ ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ.
                         </div>
                     `;
                 }
@@ -1392,7 +1535,7 @@
 
                 const releaseAge = item.release_age_days === null || item.release_age_days === undefined
                     ? ""
-                    : ` · ${formatMinutes(item.release_age_days * 1440)}`;
+                    : ` ÃÂ· ${formatMinutes(item.release_age_days * 1440)}`;
 
                 const statusBadge = item.status === "active"
                     ? `<span class="badge badge-success">${escapeHtml(item.status)}</span>`
@@ -1415,13 +1558,13 @@
 
                             <div class="text-right shrink-0">
                                 <div class="font-black text-amber-300 text-xl leading-none">
-                                    ★ ${formatNumber(item.stars)}
+                                    Ã¢ÂÂ ${formatNumber(item.stars)}
                                 </div>
                             </div>
                         </div>
 
                         <p class="text-sm text-muted mt-4 leading-6 line-clamp-3">
-                            ${escapeHtml(item.description || "Описание отсутствует.")}
+                            ${escapeHtml(item.description || "ÃÂÃÂ¿ÃÂ¸ÃÂÃÂ°ÃÂ½ÃÂ¸ÃÂµ ÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²ÃÂÃÂµÃÂ.")}
                         </p>
 
                         <div class="flex flex-wrap gap-2 mt-4">
@@ -1442,9 +1585,9 @@
                             <button
                                 class="btn btn-secondary w-full"
                                 data-copy="${escapeHtml(item.url || "")}"
-                                data-copy-message="Ссылка на утилиту скопирована"
+                                data-copy-message="ÃÂ¡ÃÂÃÂÃÂ»ÃÂºÃÂ° ÃÂ½ÃÂ° ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂÃÂ ÃÂÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ°"
                             >
-                                Копировать
+                                ÃÂÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂÃÂ
                             </button>
                         </div>
                     </article>
@@ -1467,13 +1610,13 @@
 
                 const shown = Math.min(state.utilsVisible, items.length);
 
-                els.utilsInfo.textContent = `Всего утилит: ${items.length}. Показано: ${shown}.`;
-                els.utilsVisibleInfo.textContent = `Показано ${shown} из ${items.length}`;
+                els.utilsInfo.textContent = `ÃÂÃÂÃÂµÃÂ³ÃÂ¾ ÃÂÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂ: ${items.length}. ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾: ${shown}.`;
+                els.utilsVisibleInfo.textContent = `ÃÂÃÂ¾ÃÂºÃÂ°ÃÂ·ÃÂ°ÃÂ½ÃÂ¾ ${shown} ÃÂ¸ÃÂ· ${items.length}`;
 
                 if (items.length === 0) {
                     els.utilsGrid.innerHTML = `
                         <div class="col-span-full text-center py-20 text-faint">
-                            Утилиты не найдены.
+                            ÃÂ£ÃÂÃÂ¸ÃÂ»ÃÂ¸ÃÂÃÂ ÃÂ½ÃÂµ ÃÂ½ÃÂ°ÃÂ¹ÃÂ´ÃÂµÃÂ½ÃÂ.
                         </div>
                     `;
                 }
@@ -1515,10 +1658,8 @@
             async function loadData() {
                 state.loading = true;
                 els.refreshBtn.disabled = true;
-                els.refreshBtn.textContent = "Загрузка...";
-                els.dataInfo.textContent = "Загрузка данных...";
-
-                const [subsPayload, proxiesPayload, utilsPayload, cleanupPayload] = await Promise.all([
+                els.refreshBtn.textContent = "ÃÂÃÂ°ÃÂ³ÃÂÃÂÃÂ·ÃÂºÃÂ°...";
+                els.dataInfo.textContent = "ÃÂÃÂ°ÃÂ³ÃÂÃÂÃÂ·ÃÂºÃÂ° ÃÂ´ÃÂ°ÃÂ½ÃÂ½ÃÂÃPayload, proxiesPayload, utilsPayload, cleanupPayload] = await Promise.all([
                     fetchFirstAvailable([
                         "data/subscriptions_found.json",
                         "data/found.json",
@@ -1562,8 +1703,8 @@
                 }
 
                 els.dataInfo.textContent = parts.length
-                    ? `Загружено: ${parts.join(" · ")}`
-                    : "Демо-данные";
+                    ? `ÃÂÃÂ°ÃÂ³ÃÂÃÂÃÂ¶ÃÂµÃÂ½ÃÂ¾: ${parts.join(" ÃÂ· ")}`
+                    : "ÃÂÃÂµÃÂ¼ÃÂ¾-ÃÂ´ÃÂ°ÃÂ½ÃÂ½ÃÂÃÂµ";
 
                 renderAll(true);
 
@@ -1575,8 +1716,276 @@
                         <polyline points="1 20 1 14 7 14"></polyline>
                         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
-                    Обновить
+                    ÃÂÃÂ±ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸ÃÂÃÂ
                 `;
+            }
+
+            // =========================================================
+            // SPEED TEST
+            // =========================================================
+
+            const SPEED = {
+                // ÃÂÃÂÃÂ±ÃÂ»ÃÂ¸ÃÂÃÂ½ÃÂÃÂµ CDN-ÃÂÃÂ°ÃÂ¹ÃÂ»ÃÂ ÃÂ´ÃÂ»ÃÂ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂ° ÃÂ±ÃÂµÃÂ· CORS-ÃÂ¿ÃÂÃÂ¾ÃÂ±ÃÂ»ÃÂµÃÂ¼.
+                // Cloudflare speed test endpoints (public, CORS-enabled)
+                downloadUrls: [
+                    "https://speed.cloudflare.com/__down?bytes=",
+                    "https://speed.hetzner.de/100MB.bin",
+                    "https://speedtest-sgp1.digitalocean.com/100mb.bin"
+                ],
+                uploadUrl: "https://speed.cloudflare.com/__up",
+                pingUrl: "https://speed.cloudflare.com/__down?bytes=0",
+                maxDownloadBytes: 25 * 1024 * 1024, // 25 MB
+                maxUploadBytes: 10 * 1024 * 1024,    // 10 MB
+                pingSamples: 8,
+                downloadDurationMs: 12000,
+                uploadDurationMs: 10000
+            };
+
+            function setGauge(mbps, label) {
+                const v = Math.max(0, Number(mbps) || 0);
+                els.gaugeValue.textContent = v.toFixed(2);
+
+                // ÃÂ¨ÃÂºÃÂ°ÃÂ»ÃÂ°: 0..100 Mbps ÃÂ½ÃÂ° ÃÂ¿ÃÂ¾ÃÂ»ÃÂÃÂºÃÂÃÂÃÂ³ÃÂµ, ÃÂ±ÃÂ¾ÃÂ»ÃÂÃÂÃÂµ Ã¢ÂÂ ÃÂ¾ÃÂ³ÃÂÃÂ°ÃÂ½ÃÂ¸ÃÂÃÂ¸ÃÂ¼ ÃÂ²ÃÂ¸ÃÂ·ÃÂÃÂ°ÃÂ»ÃÂÃÂ½ÃÂ¾
+                const visual = Math.min(v, 150) / 150;
+                const offset = GAUGE_CIRCUMFERENCE * (1 - visual);
+                els.gaugeProgress.style.strokeDashoffset = offset;
+
+                if (label) {
+                    els.gaugeLabel.textContent = label;
+                }
+            }
+
+            function speedLog(text, value = "") {
+                const line = document.createElement("div");
+                line.className = "speed-log-line";
+                line.innerHTML = `<span>${escapeHtml(text)}</span><span class="text-faint">${escapeHtml(value)}</span>`;
+
+                // ÃÂ£ÃÂ´ÃÂ°ÃÂ»ÃÂÃÂµÃÂ¼ ÃÂ¿ÃÂ»ÃÂµÃÂÃÂ ÃÂ¿ÃÂÃÂ¸ ÃÂ¿ÃÂµÃÂÃÂ²ÃÂ¾ÃÂ¼ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂÃÂµ
+                if (els.speedLog.querySelector(".text-faint:only-child") || els.speedLog.children.length === 1) {
+                    const first = els.speedLog.firstElementChild;
+                    if (first && first.textContent.includes("ÃÂÃÂ¾ÃÂ³ ÃÂ¿ÃÂÃÂÃÂ")) {
+                        first.remove();
+                    }
+                }
+
+                els.speedLog.appendChild(line);
+                els.speedLog.scrollTop = els.speedLog.scrollHeight;
+            }
+
+            function clearSpeedLog() {
+                els.speedLog.innerHTML = `<div class="speed-log-line text-faint"><span>ÃÂÃÂ¾ÃÂ³ ÃÂ¿ÃÂÃÂÃÂ. ÃÂÃÂ°ÃÂ¿ÃÂÃÂÃÂÃÂ¸ÃÂÃÂµ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂ.</span></div>`;
+            }
+
+            function formatMbps(bytesPerSec) {
+                const mbps = (bytesPerSec * 8) / 1_000_000;
+                return mbps;
+            }
+
+            async function measurePing() {
+                els.speedPhase.textContent = "ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ¿ÃÂ¸ÃÂ½ÃÂ³ÃÂ°...";
+                setGauge(0, "ping");
+
+                const samples = [];
+
+                for (let i = 0; i < SPEED.pingSamples; i++) {
+                    if (state.speedAbort) return null;
+
+                    const t0 = performance.now();
+                    try {
+                        await fetch(SPEED.pingUrl + "&_=" + Date.now() + "-" + i, {
+                            cache: "no-store",
+                            mode: "cors"
+                        });
+                        const t1 = performance.now();
+                        const rtt = t1 - t0;
+                        samples.push(rtt);
+                        setGauge(rtt, "ping");
+                        speedLog(`ping #${i + 1}`, `${rtt.toFixed(1)} ms`);
+                    } catch (e) {
+                        speedLog(`ping #${i + 1}`, "error");
+                    }
+                }
+
+                if (!samples.length) {
+                    return { ping: null, jitter: null };
+                }
+
+                samples.sort((a, b) => a - b);
+                // ÃÂ¾ÃÂÃÂºÃÂ¸ÃÂ½ÃÂÃÂÃÂ min ÃÂ¸ max ÃÂµÃÂÃÂ»ÃÂ¸ ÃÂ±ÃÂ¾ÃÂ»ÃÂÃÂÃÂµ 4 ÃÂÃÂµÃÂ¼ÃÂ¿ÃÂ»ÃÂ¾ÃÂ²
+                const trimmed = samples.length > 4 ? samples.slice(1, -1) : samples;
+                const ping = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+
+                let jitter = 0;
+                for (let i = 1; i < samples.length; i++) {
+                    jitter += Math.abs(samples[i] - samples[i - 1]);
+                }
+                jitter = samples.length > 1 ? jitter / (samples.length - 1) : 0;
+
+                return { ping, jitter };
+            }
+
+            async function measureDownload() {
+                els.speedPhase.textContent = "ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂÃÂºÃÂ°ÃÂÃÂ¸ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂ...";
+                setGauge(0, "download");
+
+                const url = SPEED.downloadUrls[0];
+                const start = performance.now();
+                let received = 0;
+                let lastReport = start;
+                let lastReceived = 0;
+
+                try {
+                    const response = await fetch(url + SPEED.maxDownloadBytes + "&_=" + Date.now(), {
+                        cache: "no-store",
+                        mode: "cors"
+                    });
+
+                    if (!response.ok && !response.body) {
+                        throw new Error("download failed");
+                    }
+
+                    const reader = response.body.getReader();
+
+                    while (true) {
+                        if (state.speedAbort) break;
+
+                        const { done, value } = await reader.read();
+
+                        if (done) break;
+
+                        if (value) {
+                            received += value.length;
+                        }
+
+                        const now = performance.now();
+                        const elapsed = now - start;
+
+                        if (now - lastReport > 200) {
+                            const instantBytesPerSec = (received - lastReceived) / ((now - lastReport) / 1000);
+                            const instMbps = formatMbps(instantBytesPerSec);
+                            setGauge(instMbps, "download");
+                            speedLog(`download ${Math.round(received / 1024)} KB`, `${instMbps.toFixed(2)} Mbps`);
+                            lastReport = now;
+                            lastReceived = received;
+                        }
+
+                        if (elapsed > SPEED.downloadDurationMs) {
+                            break;
+                        }
+                    }
+
+                    try { await reader.cancel(); } catch (e) {}
+
+                    const totalElapsed = (performance.now() - start) / 1000;
+                    const avgBps = received / totalElapsed;
+                    return formatMbps(avgBps);
+                } catch (e) {
+                    speedLog("download", "error: " + (e.message || ""));
+                    return null;
+                }
+            }
+
+            async function measureUpload() {
+                els.speedPhase.textContent = "ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ·ÃÂ°ÃÂ³ÃÂÃÂÃÂ·ÃÂºÃÂ¸...";
+                setGauge(0, "upload");
+
+                // ÃÂ³ÃÂµÃÂ½ÃÂµÃÂÃÂ¸ÃÂÃÂÃÂµÃÂ¼ payload
+                const chunkSize = 256 * 1024;
+                const chunk = new Uint8Array(chunkSize);
+                // ÃÂ·ÃÂ°ÃÂ¿ÃÂ¾ÃÂ»ÃÂ½ÃÂ¸ÃÂ¼ ÃÂÃÂ»ÃÂÃÂÃÂ°ÃÂ¹ÃÂ½ÃÂÃÂ¼ÃÂ¸ ÃÂ·ÃÂ½ÃÂ°ÃÂÃÂµÃÂ½ÃÂ¸ÃÂÃÂ¼ÃÂ¸
+                crypto.getRandomValues(chunk);
+
+                const totalChunks = Math.floor(SPEED.maxUploadBytes / chunkSize);
+                const payload = new Blob([chunk]);
+
+                // ÃÂ¡ÃÂºÃÂ¾ÃÂ½ÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂµÃÂ¼ ÃÂ±ÃÂ¾ÃÂ»ÃÂÃÂÃÂ¾ÃÂ¹ payload ÃÂºÃÂ¾ÃÂ¿ÃÂ¸ÃÂÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂµÃÂ¼ chunk
+                const parts = [];
+                for (let i = 0; i < totalChunks; i++) {
+                    parts.push(chunk);
+                }
+                const bigPayload = new Blob(parts);
+
+                const start = performance.now();
+                let lastReport = start;
+
+                try {
+                    const response = await fetch(SPEED.uploadUrl, {
+                        method: "POST",
+                        body: bigPayload,
+                        mode: "cors",
+                        cache: "no-store"
+                    });
+
+                    const elapsed = (performance.now() - start) / 1000;
+                    const bytes = bigPayload.size;
+
+                    if (!response.ok && response.status !== 0) {
+                        // ÃÂ½ÃÂµÃÂºÃÂ¾ÃÂÃÂ¾ÃÂÃÂÃÂµ endpoints ÃÂ²ÃÂ¾ÃÂ·ÃÂ²ÃÂÃÂ°ÃÂÃÂ°ÃÂÃÂ 4xx, ÃÂ½ÃÂ¾ ÃÂ·ÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ²ÃÂÃÂµ ÃÂÃÂ°ÃÂ²ÃÂ½ÃÂ¾ ÃÂºÃÂ¾ÃÂÃÂÃÂµÃÂºÃÂÃÂµÃÂ½
+                        speedLog(`upload ${Math.round(bytes / 1024)} KB`, `HTTP ${response.status}`);
+                    }
+
+                    const mbps = formatMbps(bytes / elapsed);
+                    setGauge(mbps, "upload");
+                    speedLog(`upload ${Math.round(bytes / 1024)} KB`, `${mbps.toFixed(2)} Mbps`);
+                    return mbps;
+                } catch (e) {
+                    speedLog("upload", "error: " + (e.message || ""));
+                    return null;
+                }
+            }
+
+            async function runSpeedTest() {
+                if (state.speedRunning) return;
+
+                state.speedRunning = true;
+                state.speedAbort = false;
+                els.speedStartBtn.classList.add("hidden");
+                els.speedStopBtn.classList.remove("hidden");
+                els.speedStartBtn.disabled = true;
+
+                els.resultPing.textContent = "Ã¢ÂÂ";
+                els.resultJitter.textContent = "Ã¢ÂÂ";
+                els.resultDownload.textContent = "Ã¢ÂÂ";
+                els.resultUpload.textContent = "Ã¢ÂÂ";
+
+                speedLog("=== ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ½ÃÂ°ÃÂÃÂ°ÃÂ ===", new Date().toLocaleTimeString());
+
+                // 1. Ping + Jitter
+                const pingResult = await measurePing();
+                if (pingResult) {
+                    els.resultPing.textContent = pingResult.ping != null ? pingResult.ping.toFixed(1) : "Ã¢ÂÂ";
+                    els.resultJitter.textContent = pingResult.jitter != null ? pingResult.jitter.toFixed(1) : "Ã¢ÂÂ";
+                    speedLog("ÃÂÃÂ¸ÃÂ½ÃÂ³", pingResult.ping != null ? `${pingResult.ping.toFixed(1)} ms` : "n/a");
+                    speedLog("ÃÂÃÂ¶ÃÂ¸ÃÂÃÂÃÂµÃÂ", pingResult.jitter != null ? `${pingResult.jitter.toFixed(1)} ms` : "n/a");
+                }
+
+                // 2. Download
+                const dl = await measureDownload();
+                els.resultDownload.textContent = dl != null ? dl.toFixed(2) : "Ã¢ÂÂ";
+
+                // 3. Upload
+                const ul = await measureUpload();
+                els.resultUpload.textContent = ul != null ? ul.toFixed(2) : "Ã¢ÂÂ";
+
+                // ÃÂ¤ÃÂ¸ÃÂ½ÃÂ°ÃÂ»
+                const finalVal = dl != null ? dl : 0;
+                setGauge(finalVal, "ÃÂ³ÃÂ¾ÃÂÃÂ¾ÃÂ²");
+                els.speedPhase.textContent = "ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ·ÃÂ°ÃÂ²ÃÂµÃÂÃÂÃÂµÃÂ½";
+
+                speedLog("=== ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ·ÃÂ°ÃÂ²ÃÂµÃÂÃÂÃÂµÃÂ½ ===", "");
+
+                state.speedRunning = false;
+                els.speedStartBtn.classList.remove("hidden");
+                els.speedStopBtn.classList.add("hidden");
+                els.speedStartBtn.disabled = false;
+
+                showToast("ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂÃÂºÃÂ¾ÃÂÃÂ¾ÃÂÃÂÃÂ¸ ÃÂ·ÃÂ°ÃÂ²ÃÂµÃÂÃÂÃÂµÃÂ½", "success");
+            }
+
+            function stopSpeedTest() {
+                state.speedAbort = true;
+                els.speedPhase.textContent = "ÃÂÃÂÃÂÃÂ°ÃÂ½ÃÂ¾ÃÂ²ÃÂºÃÂ°...";
+                speedLog("ÃÂÃÂ°ÃÂ¼ÃÂµÃÂ ÃÂ¿ÃÂÃÂµÃÂÃÂ²ÃÂ°ÃÂ½ ÃÂ¿ÃÂ¾ÃÂ»ÃÂÃÂ·ÃÂ¾ÃÂ²ÃÂ°ÃÂÃÂµÃÂ»ÃÂµÃÂ¼", "");
             }
 
             // =========================================================
@@ -1599,6 +2008,9 @@
                     if (target) {
                         target.classList.remove("hidden");
                     }
+
+                    // ÃÂ¡ÃÂºÃÂÃÂÃÂÃÂ ÃÂÃÂ¸ÃÂ»ÃÂÃÂÃÂÃÂ ÃÂ½ÃÂ° ÃÂ²ÃÂºÃÂ»ÃÂ°ÃÂ´ÃÂºÃÂµ Speed Test
+                    els.filtersBar.classList.toggle("hidden", state.tab === "speedtest");
 
                     renderCurrentTab(true);
                 });
@@ -1644,6 +2056,10 @@
                 renderUtilities(false);
             });
 
+            els.speedStartBtn.addEventListener("click", runSpeedTest);
+            els.speedStopBtn.addEventListener("click", stopSpeedTest);
+            els.speedClearLogBtn.addEventListener("click", clearSpeedLog);
+
             window.addEventListener("scroll", () => {
                 if (state.loading) {
                     return;
@@ -1667,6 +2083,12 @@
                     renderUtilities(false);
                 }
             });
+
+            // ÃÂ¥ÃÂµÃÂ-ÃÂ½ÃÂ°ÃÂ²ÃÂ¸ÃÂ³ÃÂ°ÃÂÃÂ¸ÃÂ: #tab-speedtest
+            if (location.hash === "#tab-speedtest") {
+                const btn = document.querySelector('.tab-btn[data-tab="speedtest"]');
+                if (btn) btn.click();
+            }
 
             // =========================================================
             // INIT
