@@ -88,6 +88,12 @@ jobs:
           mkdir -p raw candidates extracted checked "${OUTPUT_DIR}"
           echo "[+] Directories created"
       - name: Write run metadata
+        env:
+          MAX_SEARCH_PER_QUERY: ${{ github.event.inputs.max_search_per_query || '60' }}
+          MAX_FETCH_CANDIDATES: ${{ github.event.inputs.max_fetch_candidates || '300' }}
+          MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
+          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
+          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
         run: |
           python <<'PY'
           import json, datetime, os
@@ -115,12 +121,6 @@ jobs:
               json.dump(payload, f, ensure_ascii=False, indent=2)
           print("[+] Metadata saved")
           PY
-        env:
-          MAX_SEARCH_PER_QUERY: ${{ github.event.inputs.max_search_per_query || '60' }}
-          MAX_FETCH_CANDIDATES: ${{ github.event.inputs.max_fetch_candidates || '300' }}
-          MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
-          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
-          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
       - name: Upload metadata
         uses: actions/upload-artifact@v4
         with:
@@ -697,7 +697,8 @@ jobs:
               proxies = proxies[:MAX_CHECK]
               print(f"[*] Checking {len(proxies)} proxies")
               sem = asyncio.Semaphore(CONC)
-              results = await asyncio.gather(*[check_one(p, sem) for p in sem and proxies])
+              tasks = [check_one(p, sem) for p in proxies]
+              results = await asyncio.gather(*tasks)
               for idx, item in enumerate(results, 1):
                   item["id"] = idx
               online = [x for x in results if x["status"]=="online"]
