@@ -4,16 +4,15 @@
 """
 generate_found.py
 
-Генератор массивного found.json / subscriptions_found.json для дашборда.
+ÐÐµÐ½ÐµÑÐ°ÑÐ¾Ñ Ð¼Ð°ÑÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ found.json / subscriptions_found.json Ð´Ð»Ñ Ð´Ð°ÑÐ±Ð¾ÑÐ´Ð°.
 
-Примеры запуска:
+ÐÑÐ¸Ð¼ÐµÑÑ Ð·Ð°Ð¿ÑÑÐºÐ°:
 
     python scripts/generate_found.py --count 300
     python scripts/generate_found.py --count 800 --output data/subscriptions_found.json
     python scripts/generate_found.py --count 1200 --output docs/data.json
 
-Файл специально делает много реалистичных полей:
-- source: github / gitverse
+Ð¤Ð°Ð¹Ð» ÑÐ¿ÐµÑÐ¸Ð°Ð»ÑÐ½Ð¾ Ð´ÐµÐ»Ð°ÐµÑ Ð¼Ð½Ð¾Ð³Ð¾ ÑÐµÐ°Ð»Ð¸ÑÑ / gitverse
 - updated_mins_ago
 - configs_count
 - has_bs
@@ -33,7 +32,7 @@ import random
 
 
 # =========================================================
-# 1. Константы для генерации
+# 1. ÐÐ¾Ð½ÑÑÐ°Ð½ÑÑ Ð´Ð»Ñ Ð³ÐµÐ½ÐµÑÐ°ÑÐ¸Ð¸
 # =========================================================
 
 GITHUB_ORGS = [
@@ -180,15 +179,15 @@ COMMIT_MESSAGES = [
 BS_KEYWORDS = [
     "whitelist",
     "white_list",
-    "белый список",
-    "белые списки",
+    "Ð±ÐµÐ»ÑÐ¹ ÑÐ¿Ð¸ÑÐ¾Ðº",
+    "Ð±ÐµÐ»ÑÐµ ÑÐ¿Ð¸ÑÐºÐ¸",
     "bs",
     "bypass",
 ]
 
 
 # =========================================================
-# 2. Утилиты
+# 2. Ð£ÑÐ¸Ð»Ð¸ÑÑ
 # =========================================================
 
 def iso_now():
@@ -223,7 +222,7 @@ def slugify(value):
 
 
 # =========================================================
-# 3. Генерация контента
+# 3. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ ÐºÐ¾Ð½ÑÐµÐ½ÑÐ°
 # =========================================================
 
 def make_content_sample(protocol, path, region):
@@ -261,9 +260,8 @@ def make_content_sample(protocol, path, region):
         )
 
     if protocol == "vmess":
-        return f"vmess://eyJ2IjoiMiIsInBzIjoibm9kZS17node_name}",
-        # Оставим простой читаемый вариант, чтобы не ломать восприятие:
-        return f"vmess://{node_name}@{ip}:{port}?network=tcp&security=tls"
+        # ÐÑÐ¾ÑÑÐ¾Ð¹ ÑÐ¸ÑÐ°ÐµÐ¼ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ ÑÑÑÐ»ÐºÐ¸ vmess
+        return f"vmess://{node_name}@{ip}:{port}?network=tcp&security=tls#{node_name}"
 
     if protocol == "shadowsocks":
         return f"ss://cmM0LW1kNTpwYXNzd29yZA==@{ip}:{port}#{node_name}"
@@ -281,11 +279,11 @@ def make_content_sample(protocol, path, region):
 
 
 # =========================================================
-# 4. Генерация одной подписки
+# 4. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ Ð¾Ð´Ð½Ð¾Ð¹ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐºÐ¸
 # =========================================================
 
 def generate_subscription(idx):
-    # Источники: примерно каждый 7-й будет Gitverse
+    # ÐÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸: Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ ÐºÐ°Ð¶Ð´ÑÐ¹ 7-Ð¹ Ð±ÑÐ´ÐµÑ Gitverse
     source = "gitverse" if idx % 7 == 0 else "github"
 
     protocol = random.choice(PROTOCOLS)
@@ -298,7 +296,7 @@ def generate_subscription(idx):
 
     branch = random.choice(["main", "master"])
 
-    # Обновление: свежие / средние / старые
+    # ÐÐ±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ: ÑÐ²ÐµÐ¶Ð¸Ðµ / ÑÑÐµÐ´Ð½Ð¸Ðµ / ÑÑÐ°ÑÑÐµ
     r = random.random()
     if r < 0.52:
         updated_mins_ago = random.randint(1, 240)
@@ -307,11 +305,11 @@ def generate_subscription(idx):
     else:
         updated_mins_ago = random.randint(4321, 120000)
 
-    # Есть ли конфиги
+    # ÐÑÑÑ Ð»Ð¸ ÐºÐ¾Ð½ÑÐ¸Ð³Ð¸
     has_configs = random.random() > 0.075
     configs_count = 0 if not has_configs else random.randint(6, 9800)
 
-    # Путь к файлу подписки
+    # ÐÑÑÑ Ðº ÑÐ°Ð¹Ð»Ñ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐºÐ¸
     has_path = random.random() > 0.08
     config_path = random.choice(CONFIG_PATHS) if has_path else None
 
@@ -334,7 +332,7 @@ def generate_subscription(idx):
     if has_configs:
         has_bs = random.random() < 0.44
 
-    # Статус
+    # Ð¡ÑÐ°ÑÑÑ
     if configs_count <= 0:
         status = "unknown"
     elif updated_mins_ago > 20160:
@@ -366,7 +364,7 @@ def generate_subscription(idx):
         "updated_iso": iso_minutes_ago(updated_mins_ago),
         "configs_count": configs_count,
         "has_bs": has_bs,
-        "bs_label": "БС" if has_bs else "ЧС",
+        "bs_label": "ÐÐ¡" if has_bs else "Ð§Ð¡",
         "status": status,
         "health_score": random.randint(10, 100) if has_configs else 0,
         "last_commit_message": random.choice(COMMIT_MESSAGES),
@@ -382,7 +380,7 @@ def generate_subscription(idx):
 
 
 # =========================================================
-# 5. Генерация итогового found.json
+# 5. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ Ð¸ÑÐ¾Ð³Ð¾Ð²Ð¾Ð³Ð¾ found.json
 # =========================================================
 
 def generate_payload(count):
@@ -469,28 +467,28 @@ def generate_payload(count):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Генератор массивного found.json для дашборда подписок."
+        description="ÐÐµÐ½ÐµÑÐ°ÑÐ¾Ñ Ð¼Ð°ÑÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ found.json Ð´Ð»Ñ Ð´Ð°ÑÐ±Ð¾ÑÐ´Ð° Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ¾Ðº."
     )
 
     parser.add_argument(
         "--count",
         type=int,
         default=300,
-        help="Сколько подписок сгенерировать (по умолчанию 300)",
+        help="Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ¾Ðº ÑÐ³ÐµÐ½ÐµÑÐ¸ÑÐ¾Ð²Ð°ÑÑ (Ð¿Ð¾ ÑÐ¼Ð¾Ð»ÑÐ°Ð½Ð¸Ñ 300)",
     )
 
     parser.add_argument(
         "--output",
         type=str,
         default="data/found.json",
-        help="Куда сохранить файл (по умолчанию data/found.json)",
+        helpÐ¾Ð»ÑÐ°Ð½Ð¸Ñ data/found.json)",
     )
 
     parser.add_argument(
         "--seed",
         type=int,
         default=1337,
-        help="Seed для рандома, чтобы данные были воспроизводимыми",
+        help="Seed Ð´Ð»Ñ ÑÐ°Ð½Ð´Ð¾Ð¼Ð°, ÑÑÐ¾Ð±Ñ Ð´Ð°Ð½Ð½ÑÐµ Ð±ÑÐ»Ð¸ Ð²Ð¾ÑÐ¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸Ð¼ÑÐ¼Ð¸",
     )
 
     args = parser.parse_args()
@@ -511,11 +509,11 @@ def main():
     file_size = os.path.getsize(output_path)
 
     print("==================================================")
-    print(" found.json успешно сгенерирован")
+    print(" found.json ÑÑÐ¿ÐµÑÐ½Ð¾ ÑÐ³ÐµÐ½ÐµÑÐ¸ÑÐ¾Ð²Ð°Ð½")
     print("==================================================")
-    print(f"Файл: {output_path}")
-    print(f"Подписок: {args.count}")
-    print(f"Размер: {file_size / 1024:.2f} KB")
+    print(f"Ð¤Ð°Ð¹Ð»: {output_path}")
+    print(f"ÐÐ¾Ð´Ð¿Ð¸ÑÐ¾Ðº: {args.count}")
+    print(f"Ð Ð°Ð·Ð¼ÐµÑ: {file_size / 1024:.2f} KB")
     print("==================================================")
 
 
