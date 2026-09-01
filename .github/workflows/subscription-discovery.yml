@@ -2,7 +2,7 @@ name: Subscription Discovery Pipeline
 
 on:
   schedule:
-    - cron: "15 */2 * * *"
+    - cron: "15 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
