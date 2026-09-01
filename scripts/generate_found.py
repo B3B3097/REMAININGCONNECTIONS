@@ -4,15 +4,16 @@
 """
 generate_found.py
 
-ÐÐµÐ½ÐµÑÐ°ÑÐ¾Ñ Ð¼Ð°ÑÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ found.json / subscriptions_found.json Ð´Ð»Ñ Ð´Ð°ÑÐ±Ð¾ÑÐ´Ð°.
+Generator of a large found.json / subscriptions_found.json for the dashboard.
 
-ÐÑÐ¸Ð¼ÐµÑÑ Ð·Ð°Ð¿ÑÑÐºÐ°:
+Examples:
 
     python scripts/generate_found.py --count 300
     python scripts/generate_found.py --count 800 --output data/subscriptions_found.json
     python scripts/generate_found.py --count 1200 --output docs/data.json
 
-Ð¤Ð°Ð¹Ð» ÑÐ¿ÐµÑÐ¸Ð°Ð»ÑÐ½Ð¾ Ð´ÐµÐ»Ð°ÐµÑ Ð¼Ð½Ð¾Ð³Ð¾ ÑÐµÐ°Ð»Ð¸ÑÑ / gitverse
+Fields produced:
+- source: github / gitverse
 - updated_mins_ago
 - configs_count
 - has_bs
@@ -32,7 +33,7 @@ import random
 
 
 # =========================================================
-# 1. ÐÐ¾Ð½ÑÑÐ°Ð½ÑÑ Ð´Ð»Ñ Ð³ÐµÐ½ÐµÑÐ°ÑÐ¸Ð¸
+# 1. Constants
 # =========================================================
 
 GITHUB_ORGS = [
@@ -80,114 +81,43 @@ PROTOCOLS = [
 ]
 
 REGIONS = [
-    "nl",
-    "de",
-    "fr",
-    "fi",
-    "se",
-    "pl",
-    "lt",
-    "lv",
-    "ee",
-    "ro",
-    "bg",
-    "es",
-    "it",
-    "ch",
-    "uk",
-    "us",
-    "ca",
-    "sg",
-    "jp",
-    "kr",
+    "nl", "de", "fr", "fi", "se", "pl", "lt", "lv", "ee", "ro",
+    "bg", "es", "it", "ch", "uk", "us", "ca", "sg", "jp", "kr",
 ]
 
 NAME_CORES = [
-    "alpha",
-    "beta",
-    "gamma",
-    "delta",
-    "omega",
-    "nova",
-    "zen",
-    "core",
-    "hub",
-    "mirror",
-    "relay",
-    "gateway",
-    "stream",
-    "turbo",
-    "secure",
-    "ghost",
-    "shadow",
-    "wave",
-    "pulse",
-    "vector",
-    "orbit",
-    "quantum",
-    "fusion",
-    "matrix",
-    "phoenix",
+    "alpha", "beta", "gamma", "delta", "omega", "nova", "zen", "core",
+    "hub", "mirror", "relay", "gateway", "stream", "turbo", "secure",
+    "ghost", "shadow", "wave", "pulse", "vector", "orbit", "quantum",
+    "fusion", "matrix", "phoenix",
 ]
 
 CONFIG_PATHS = [
-    "sub.txt",
-    "subscribe.txt",
-    "subscription.txt",
-    "subscriptions.txt",
-    "v2ray.txt",
-    "xray.txt",
-    "nodes.txt",
-    "proxy.txt",
-    "proxies.txt",
-    "list.txt",
-    "clash.yaml",
-    "clash.yml",
-    "config.yaml",
-    "config.yml",
-    "sub.yaml",
-    "subscription.yaml",
-    "proxies.yaml",
-    "mihomo.yaml",
-    "sing-box.json",
-    "wireguard.conf",
+    "sub.txt", "subscribe.txt", "subscription.txt", "subscriptions.txt",
+    "v2ray.txt", "xray.txt", "nodes.txt", "proxy.txt", "proxies.txt",
+    "list.txt", "clash.yaml", "clash.yml", "config.yaml", "config.yml",
+    "sub.yaml", "subscription.yaml", "proxies.yaml", "mihomo.yaml",
+    "sing-box.json", "wireguard.conf",
 ]
 
 COMMIT_MESSAGES = [
-    "auto: update nodes",
-    "chore: daily refresh",
-    "fix: remove dead endpoints",
-    "feat: add new region",
-    "perf: optimize proxy list",
-    "update: refresh subscription",
-    "merge: pull new configs",
-    "sync: mirror from source",
-    "cleanup: remove duplicates",
-    "hotfix: replace blocked ip",
-    "ci: automatic rebuild",
-    "add: new protocol entries",
-    "rotate: keys and endpoints",
-    "revalidate: check bs/cs status",
-    "patch: improve connectivity",
-    "deploy: publish latest list",
-    "scan: validate active nodes",
-    "renew: expired certificates",
-    "backup: snapshot subscription",
-    "restore: working endpoints",
+    "auto: update nodes", "chore: daily refresh", "fix: remove dead endpoints",
+    "feat: add new region", "perf: optimize proxy list", "update: refresh subscription",
+    "merge: pull new configs", "sync: mirror from source", "cleanup: remove duplicates",
+    "hotfix: replace blocked ip", "ci: automatic rebuild", "add: new protocol entries",
+    "rotate: keys and endpoints", "revalidate: check bs/cs status",
+    "patch: improve connectivity", "deploy: publish latest list",
+    "scan: validate active nodes", "renew: expired certificates",
+    "backup: snapshot subscription", "restore: working endpoints",
 ]
 
 BS_KEYWORDS = [
-    "whitelist",
-    "white_list",
-    "Ð±ÐµÐ»ÑÐ¹ ÑÐ¿Ð¸ÑÐ¾Ðº",
-    "Ð±ÐµÐ»ÑÐµ ÑÐ¿Ð¸ÑÐºÐ¸",
-    "bs",
-    "bypass",
+    "whitelist", "white_list", "bypass", "bs",
 ]
 
 
 # =========================================================
-# 2. Ð£ÑÐ¸Ð»Ð¸ÑÑ
+# 2. Utilities
 # =========================================================
 
 def iso_now():
@@ -222,7 +152,7 @@ def slugify(value):
 
 
 # =========================================================
-# 3. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ ÐºÐ¾Ð½ÑÐµÐ½ÑÐ°
+# 3. Content generation
 # =========================================================
 
 def make_content_sample(protocol, path, region):
@@ -260,7 +190,7 @@ def make_content_sample(protocol, path, region):
         )
 
     if protocol == "vmess":
-        # ÐÑÐ¾ÑÑÐ¾Ð¹ ÑÐ¸ÑÐ°ÐµÐ¼ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ ÑÑÑÐ»ÐºÐ¸ vmess
+        # Simple readable vmess link variant
         return f"vmess://{node_name}@{ip}:{port}?network=tcp&security=tls#{node_name}"
 
     if protocol == "shadowsocks":
@@ -279,11 +209,11 @@ def make_content_sample(protocol, path, region):
 
 
 # =========================================================
-# 4. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ Ð¾Ð´Ð½Ð¾Ð¹ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐºÐ¸
+# 4. Single subscription generation
 # =========================================================
 
 def generate_subscription(idx):
-    # ÐÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸: Ð¿ÑÐ¸Ð¼ÐµÑÐ½Ð¾ ÐºÐ°Ð¶Ð´ÑÐ¹ 7-Ð¹ Ð±ÑÐ´ÐµÑ Gitverse
+    # Sources: roughly every 7th will be Gitverse
     source = "gitverse" if idx % 7 == 0 else "github"
 
     protocol = random.choice(PROTOCOLS)
@@ -296,7 +226,7 @@ def generate_subscription(idx):
 
     branch = random.choice(["main", "master"])
 
-    # ÐÐ±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ: ÑÐ²ÐµÐ¶Ð¸Ðµ / ÑÑÐµÐ´Ð½Ð¸Ðµ / ÑÑÐ°ÑÑÐµ
+    # Update time: fresh / medium / old
     r = random.random()
     if r < 0.52:
         updated_mins_ago = random.randint(1, 240)
@@ -305,11 +235,11 @@ def generate_subscription(idx):
     else:
         updated_mins_ago = random.randint(4321, 120000)
 
-    # ÐÑÑÑ Ð»Ð¸ ÐºÐ¾Ð½ÑÐ¸Ð³Ð¸
+    # Has configs
     has_configs = random.random() > 0.075
     configs_count = 0 if not has_configs else random.randint(6, 9800)
 
-    # ÐÑÑÑ Ðº ÑÐ°Ð¹Ð»Ñ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐºÐ¸
+    # Path to subscription file
     has_path = random.random() > 0.08
     config_path = random.choice(CONFIG_PATHS) if has_path else None
 
@@ -332,7 +262,7 @@ def generate_subscription(idx):
     if has_configs:
         has_bs = random.random() < 0.44
 
-    # Ð¡ÑÐ°ÑÑÑ
+    # Status
     if configs_count <= 0:
         status = "unknown"
     elif updated_mins_ago > 20160:
@@ -364,7 +294,7 @@ def generate_subscription(idx):
         "updated_iso": iso_minutes_ago(updated_mins_ago),
         "configs_count": configs_count,
         "has_bs": has_bs,
-        "bs_label": "ÐÐ¡" if has_bs else "Ð§Ð¡",
+        "bs_label": "BS" if has_bs else "CS",
         "status": status,
         "health_score": random.randint(10, 100) if has_configs else 0,
         "last_commit_message": random.choice(COMMIT_MESSAGES),
@@ -380,7 +310,7 @@ def generate_subscription(idx):
 
 
 # =========================================================
-# 5. ÐÐµÐ½ÐµÑÐ°ÑÐ¸Ñ Ð¸ÑÐ¾Ð³Ð¾Ð²Ð¾Ð³Ð¾ found.json
+# 5. Final payload generation
 # =========================================================
 
 def generate_payload(count):
@@ -467,28 +397,28 @@ def generate_payload(count):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="ÐÐµÐ½ÐµÑÐ°ÑÐ¾Ñ Ð¼Ð°ÑÑÐ¸Ð²Ð½Ð¾Ð³Ð¾ found.json Ð´Ð»Ñ Ð´Ð°ÑÐ±Ð¾ÑÐ´Ð° Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ¾Ðº."
+        description="Generator of a large found.json for the subscriptions dashboard."
     )
 
     parser.add_argument(
         "--count",
         type=int,
         default=300,
-        help="Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ¾Ðº ÑÐ³ÐµÐ½ÐµÑÐ¸ÑÐ¾Ð²Ð°ÑÑ (Ð¿Ð¾ ÑÐ¼Ð¾Ð»ÑÐ°Ð½Ð¸Ñ 300)",
+        help="How many subscriptions to generate (default 300)",
     )
 
     parser.add_argument(
         "--output",
         type=str,
         default="data/found.json",
-        helpÐ¾Ð»ÑÐ°Ð½Ð¸Ñ data/found.json)",
+        help="Where to save the file (default data/found.json)",
     )
 
     parser.add_argument(
         "--seed",
         type=int,
         default=1337,
-        help="Seed Ð´Ð»Ñ ÑÐ°Ð½Ð´Ð¾Ð¼Ð°, ÑÑÐ¾Ð±Ñ Ð´Ð°Ð½Ð½ÑÐµ Ð±ÑÐ»Ð¸ Ð²Ð¾ÑÐ¿ÑÐ¾Ð¸Ð·Ð²Ð¾Ð´Ð¸Ð¼ÑÐ¼Ð¸",
+        help="Seed for random to make data reproducible",
     )
 
     args = parser.parse_args()
@@ -509,11 +439,11 @@ def main():
     file_size = os.path.getsize(output_path)
 
     print("==================================================")
-    print(" found.json ÑÑÐ¿ÐµÑÐ½Ð¾ ÑÐ³ÐµÐ½ÐµÑÐ¸ÑÐ¾Ð²Ð°Ð½")
+    print(" found.json successfully generated")
     print("==================================================")
-    print(f"Ð¤Ð°Ð¹Ð»: {output_path}")
-    print(f"ÐÐ¾Ð´Ð¿Ð¸ÑÐ¾Ðº: {args.count}")
-    print(f"Ð Ð°Ð·Ð¼ÐµÑ: {file_size / 1024:.2f} KB")
+    print(f"File: {output_path}")
+    print(f"Subscriptions: {args.count}")
+    print(f"Size: {file_size / 1024:.2f} KB")
     print("==================================================")
 
 
