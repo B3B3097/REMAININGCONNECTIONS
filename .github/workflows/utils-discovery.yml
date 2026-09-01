@@ -2,7 +2,7 @@ name: Utility Discovery Pipeline
 
 on:
   schedule:
-    - cron: "20 */6 * * *"
+    - cron: "20 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
