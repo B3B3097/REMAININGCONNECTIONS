@@ -804,11 +804,8 @@ jobs:
             exit 0
           fi
           python <<PY
-          import json, os
-          path = os.environ.get("FILE","")
-          if not path:
-              print("[!] No file")
-              exit(0)
+          import json
+          path = "${FILE}"
           try:
               with open(path,"r",encoding="utf-8") as f:
                   data = json.load(f)
