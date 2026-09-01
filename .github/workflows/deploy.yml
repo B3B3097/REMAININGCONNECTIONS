@@ -39,6 +39,19 @@ jobs:
           mkdir -p "${DOCS_DIR}" "${DATA_DIR}"
           echo "[+] Directories ready"
 
+      - name: Copy data into docs (so it is served by Pages)
+        run: |
+          set -euo pipefail
+          mkdir -p "${DOCS_DIR}/data"
+          # Copy all JSON files from root data/ into docs/data/
+          if compgen -G "${DATA_DIR}/*.json" > /dev/null; then
+            cp ${DATA_DIR}/*.json "${DOCS_DIR}/data/"
+            echo "[+] Copied JSON data files to ${DOCS_DIR}/data/:"
+            ls -la "${DOCS_DIR}/data/"
+          else
+            echo "[!] No JSON files found in ${DATA_DIR}/ — site will use demo data"
+          fi
+
       - name: Validate JSON data integrity
         run: |
           set -euo pipefail
@@ -46,15 +59,13 @@ jobs:
             sudo apt-get update -y && sudo apt-get install -y jq
           fi
           echo "[*] Checking JSON files..."
-          found=0
-          find ${DATA_DIR} -name "*.json" -type f 2>/dev/null | while read -r file; do
+          find ${DOCS_DIR}/data -name "*.json" -type f 2>/dev/null | while read -r file; do
             if ! jq empty "$file" >/dev/null 2>&1; then
               echo "[ERROR] Malformed JSON: $file"
               exit 1
             fi
             echo "[OK] $file"
-            found=1
-          done
+          done || true
           echo "[+] JSON validation complete"
 
       - name: Setup Pages
