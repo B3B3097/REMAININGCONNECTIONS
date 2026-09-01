@@ -2,7 +2,7 @@ name: Search Query Generator
 
 on:
   schedule:
-    - cron: "40 */6 * * *"
+    - cron: "40 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
