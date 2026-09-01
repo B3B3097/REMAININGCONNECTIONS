@@ -2,7 +2,7 @@
 
 # REMAININGCONNECTIONS
 
-### remain-connected â it is not a choice, it is a necessity
+### Stay connected - it is not a choice, it is a necessity
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-LIVE-success?style=for-the-badge&logo=github)](https://b3b3097.github.io/REMAININGCONNECTIONS/)
 [![Telegram](https://img.shields.io/badge/Telegram-@REMAININGCONNECTIONS-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/REMAININGCONNECTIONS)
@@ -10,11 +10,11 @@
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](https://github.com/B3B3097/REMAININGCONNECTIONS)
 [![Speed Test](https://img.shields.io/badge/Speed_Test-built_in-9333ea?style=for-the-badge)](https://b3b3097.github.io/REMAININGCONNECTIONS/)
 
-**Subscriptions Â· TG Proxies Â· Open Source utilities Â· Speed Test Â· Auto-update 24/7**
+**Subscriptions | TG Proxies | Open Source utilities | Speed Test | Auto-update 24/7**
 
-[Dashboard](https://b3b3097.github.io/REMAININGCONNECTIONS/) Â·
-[Speed Test](https://b3b3097.github.io/REMAININGCONNECTIONS/#tab-speedtest) Â·
-[Bypass blocks](https://translate.google.com/translate?sl=en&tl=ru&u=https://b3b3097.github.io/REMAININGCONNECTIONS/) Â·
+[Dashboard](https://b3b3097.github.io/REMAININGCONNECTIONS/) |
+[Speed Test](https://b3b3097.github.io/REMAININGCONNECTIONS/#tab-speedtest) |
+[Bypass blocks](https://translate.google.com/translate?sl=en&tl=ru&u=https://b3b3097.github.io/REMAININGCONNECTIONS/) |
 [Telegram](https://t.me/REMAININGCONNECTIONS)
 
 </div>
@@ -31,7 +31,7 @@ It works autonomously, without human intervention:
 - **Collects** working Telegram MTProto proxies
 - **Detects** verified Open Source utilities and clients for all platforms
 - **Validates** freshness: last commit, number of configs, BS/CS status, ping
-- **Measures** internet speed right in the browser â download, upload, ping, jitter
+- **Measures** internet speed right in the browser - download, upload, ping, jitter
 - **Displays** everything on a live dashboard with filters, search and sorting
 
 ---
@@ -40,11 +40,11 @@ It works autonomously, without human intervention:
 
 The built-in internet speed test runs entirely in the browser, with no server-side component:
 
-- **Ping (RTT)** â via `fetch` to a small file, multiple samples
-- **Jitter** â ping variation between requests
-- **Download** â through a large payload fetch, Mbit/s calculation
-- **Upload** â via `POST` with a generated payload
-- **Progress** â animated speedometers and a live measurement log
+- **Ping (RTT)** - via `fetch` to a small file, multiple samples
+- **Jitter** - ping variation between requests
+- **Download** - through a large payload fetch, Mbit/s calculation
+- **Upload** - via `POST` with a generated payload
+- **Progress** - animated speedometers and a live measurement log
 
 Open the **Speed Test** tab on the dashboard and press **Start**.
 
@@ -52,7 +52,7 @@ Open the **Speed Test** tab on the dashboard and press **Start**.
 
 ## About the developer
 
-The project is built by a **single person** â a solo developer.
+The project is built by a **single person** - a solo developer.
 
 All code, parsers, dashboard, automation and design are done manually, without a team or budget.
 
@@ -85,11 +85,11 @@ GitHub / Gitverse / Telegram
 
 ```
 REMAININGCONNECTIONS/
-âââ docs/
-â   âââ index.html        <- dashboard + Speed Test
-âââ data/                 <- parser data (JSON)
-âââ scripts/              <- Python generators
-âââ .github/workflows/    <- automation (Actions)
+|-- docs/
+|   |-- index.html        <- dashboard + Speed Test
+|-- data/                 <- parser data (JSON)
+|-- scripts/              <- Python generators
+|-- .github/workflows/    <- automation (Actions)
 ```
 
 ---
@@ -139,6 +139,6 @@ REMAININGCONNECTIONS/
 
 <div align="center">
 
-**remain-connected â it is not a choice, it is a necessity.**
+**Stay connected - it is not a choice, it is a necessity.**
 
 </div>
