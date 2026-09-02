@@ -838,7 +838,7 @@
                             last_commit_message: item.last_commit_message || item.last_commit || ""
                         };
                     })
-                    .filter(item => item.configs_count > 0 && item.subscription_url && item.subscription_url !== "#");
+                    // Показываем все подписки без фильтрации
             }
 
             function normalizeProxies(payload) {
