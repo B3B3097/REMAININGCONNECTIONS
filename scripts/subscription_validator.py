@@ -34,7 +34,7 @@ URI_RE = re.compile(
     r"(?im)^\s*((?:" + "|".join(re.escape(item) for item in URI_PROTOCOLS) + r")://[^\s#]+(?:#[^\r\n]*)?)\s*$"
 )
 BASE64_CANDIDATE_RE = re.compile(r"^[A-Za-z0-9+/_=\-\s]{32,}$")
-MAX_TEXT_BYTES = 2_000_000
+MAX_TEXT_BYTES = 10_000_000  # Увеличен до 10 МБ
 
 
 def _decode_base64_subscription(text: str) -> str | None:
