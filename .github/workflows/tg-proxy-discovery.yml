@@ -1,821 +1,127 @@
-name: TG Proxy Discovery & Health Check
-
-on:
-  schedule:
-    - cron: "35 * * * *"
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Dry run: не коммитить результаты"
-        required: false
-        type: boolean
-        default: false
-      include_gitverse:
-        description: "Искать в Gitverse"
-        required: false
-        type: boolean
-        default: true
-      max_search_per_query:
-        description: "Сколько результатов поиска на запрос"
-        required: false
-        type: string
-        default: "60"
-      max_fetch_candidates:
-        description: "Сколько файлов скачать и распарсить"
-        required: false
-        type: string
-        default: "300"
-      max_check_proxies:
-        description: "Сколько прокси проверять"
-        required: false
-        type: string
-        default: "500"
-      check_timeout:
-        description: "Таймаут проверки (секунды)"
-        required: false
-        type: string
-        default: "4"
-      concurrency_limit:
-        description: "Сколько прокси проверять одновременно"
-        required: false
-        type: string
-        default: "40"
-      skip_search:
-        description: "Пропустить поиск (только проверка существующих данных)"
-        required: false
-        type: boolean
-        default: false
-
-concurrency:
-  group: tg-proxy-discovery
-  cancel-in-progress: false
-
-permissions:
-  contents: write
-  actions: read
-  checks: write
-
-env:
-  PYTHON_VERSION: "3.11"
-  OUTPUT_DIR: "data"
-  OUTPUT_FILE: "data/tg_proxies_found.json"
-  GH_TOKEN: ${{ github.token }}
-  GITHUB_TOKEN: ${{ github.token }}
-  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
-
-defaults:
-  run:
-    shell: bash
-
-jobs:
-  prepare:
-    name: 1 - Prepare
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-      - name: Create directories
-        run: |
-          mkdir -p raw candidates extracted checked "${OUTPUT_DIR}"
-          echo "[+] Directories created"
-      - name: Write run metadata
-        env:
-          MAX_SEARCH_PER_QUERY: ${{ github.event.inputs.max_search_per_query || '60' }}
-          MAX_FETCH_CANDIDATES: ${{ github.event.inputs.max_fetch_candidates || '300' }}
-          MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
-          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
-          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
-        run: |
-          python <<'PY'
-          import json, datetime, os
-          payload = {
-              "run_id": "${{ github.run_id }}",
-              "run_number": "${{ github.run_number }}",
-              "workflow": "tg-proxy-discovery",
-              "repository": "${{ github.repository }}",
-              "actor": "${{ github.actor }}",
-              "event_name": "${{ github.event_name }}",
-              "ref": "${{ github.ref }}",
-              "sha": "${{ github.sha }}",
-              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
-              "max_search_per_query": os.getenv("MAX_SEARCH_PER_QUERY", "60"),
-              "max_fetch_candidates": os.getenv("MAX_FETCH_CANDIDATES", "300"),
-              "max_check_proxies": os.getenv("MAX_CHECK_PROXIES", "500"),
-              "check_timeout": os.getenv("CHECK_TIMEOUT", "4"),
-              "concurrency_limit": os.getenv("CONCURRENCY_LIMIT", "40"),
-              "include_gitverse": "${{ github.event.inputs.include_gitverse }}" != "false",
-              "dry_run": "${{ github.event.inputs.dry_run }}" == "true",
-              "skip_search": "${{ github.event.inputs.skip_search }}" == "true",
-          }
-          os.makedirs("raw", exist_ok=True)
-          with open("raw/tg_proxy_run_metadata.json", "w", encoding="utf-8") as f:
-              json.dump(payload, f, ensure_ascii=False, indent=2)
-          print("[+] Metadata saved")
-          PY
-      - name: Upload metadata
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-proxy-prepare-metadata
-          path: raw/tg_proxy_run_metadata.json
-          if-no-files-found: error
-          retention-days: 7
-
-  search-github-keywords:
-    name: 2 - Search GitHub keywords
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true }}
-    timeout-minutes: 30
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: mtproto
-            query: "mtproto OR mtproxy"
-          - slug: telegram-proxy
-            query: "telegram proxy OR telegram-proxy"
-          - slug: tg-proxy
-            query: "tg proxy OR tg-proxy"
-          - slug: tme-proxy
-            query: "t.me proxy OR tme proxy"
-          - slug: mtproto-secret
-            query: "mtproto secret OR mtproxy secret"
-          - slug: dd-secret
-            query: "dd secret OR dd mtproxy"
-          - slug: mtproto-list
-            query: "mtproto list OR mtproxy list"
-          - slug: tg-proxy-list
-            query: "tg proxy list OR telegram proxy list"
-          - slug: free-tg-proxy
-            query: "free tg proxy OR free telegram proxy"
-          - slug: mtproxy-config
-            query: "mtproxy config OR mtproto config"
-          - slug: ru-tg-proxy
-            query: "телеграм прокси или прокси телеграм"
-          - slug: ru-tg-mtproto
-            query: "мтпрокси или мтпрото"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install utilities
-        run: sudo apt-get update -y && sudo apt-get install -y jq
-      - name: Search repos
-        env:
-          QUERY: ${{ matrix.query }}
-          SLUG: ${{ matrix.slug }}
-          MAX_SEARCH_PER_QUERY: ${{ github.event.inputs.max_search_per_query || '60' }}
-        run: |
-          set -euo pipefail
-          mkdir -p raw
-          OUT="raw/tg_github_repos_${SLUG}.jsonl"
-          API_OUT="raw/tg_github_repos_api_${SLUG}.json"
-          : > "${OUT}"
-          FULL_QUERY="${QUERY} fork:true archived:false"
-          if ! gh api -X GET search/repositories -f q="${FULL_QUERY}" -f per_page="${MAX_SEARCH_PER_QUERY}" -f sort=updated -f order=desc > "${API_OUT}" 2>/dev/null; then
-            echo '{"items":[]}' > "${API_OUT}"
-          fi
-          jq -c '.items[]? | {source:"github",kind:"repo",repo:.full_name,url:.html_url,path:null,score:.score,stars:.stargazers_count,updated_at:.updated_at,pushed_at:.pushed_at,description:.description} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
-          echo "[+] Found: $(wc -l < "${OUT}")"
-          sleep $((RANDOM % 6 + 3))
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-search-github-keyword-${{ matrix.slug }}
-          path: raw/tg_github_repos_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  search-github-exact:
-    name: 3 - Search GitHub exact patterns
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true }}
-    timeout-minutes: 30
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: exact-tg-proxy
-            code_query: "tg://proxy"
-          - slug: exact-tme-proxy
-            code_query: "t.me/proxy"
-          - slug: exact-tg-proxy-server
-            code_query: "tg://proxy?server"
-          - slug: exact-tme-proxy-server
-            code_query: "t.me/proxy?server"
-          - slug: exact-mtproxy-secret
-            code_query: "mtproxy secret"
-          - slug: exact-mtproto-secret
-            code_query: "mtproto secret"
-          - slug: exact-dd-secret
-            code_query: "dd secret"
-          - slug: exact-ee-secret
-            code_query: "ee secret"
-          - slug: exact-proxy-server
-            code_query: "proxy?server"
-          - slug: exact-mtproto-proxy
-            code_query: "mtproto proxy"
-          - slug: exact-mtproxy-proxy
-            code_query: "mtproxy proxy"
-          - slug: exact-tg-proxy-list
-            code_query: "tg proxy list"
-          - slug: exact-mtproxy-list
-            code_query: "mtproxy list"
-          - slug: exact-proxy-for-telegram
-            code_query: "proxy for telegram"
-          - slug: exact-tg-free-proxy
-            code_query: "free tg proxy"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install utilities
-        run: sudo apt-get update -y && sudo apt-get install -y jq
-      - name: Search exact patterns
-        env:
-          CODE_QUERY: ${{ matrix.code_query }}
-          SLUG: ${{ matrix.slug }}
-          MAX_SEARCH_PER_QUERY: ${{ github.event.inputs.max_search_per_query || '60' }}
-        run: |
-          set -euo pipefail
-          mkdir -p raw
-          OUT="raw/tg_github_exact_${SLUG}.jsonl"
-          API_OUT="raw/tg_github_exact_api_${SLUG}.json"
-          : > "${OUT}"
-          if ! gh api -X GET search/code -f q="${CODE_QUERY}" -f per_page="${MAX_SEARCH_PER_QUERY}" > "${API_OUT}" 2>/dev/null; then
-            echo '{"items":[]}' > "${API_OUT}"
-          fi
-          jq -c '.items[]? | {source:"github",kind:"exact",repo:.repository.full_name,url:.repository.html_url,path:.path,score:.score} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
-          echo "[+] Found: $(wc -l < "${OUT}")"
-          sleep $((RANDOM % 9 + 5))
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-search-github-${{ matrix.slug }}
-          path: raw/tg_github_exact_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  search-gitverse:
-    name: 4 - Search Gitverse
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true && github.event.inputs.include_gitverse != false }}
-    timeout-minutes: 25
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: gv-mtproto
-            query: "mtproto"
-          - slug: gv-mtproxy
-            query: "mtproxy"
-          - slug: gv-telegram-proxy
-            query: "telegram proxy"
-          - slug: gv-tg-proxy
-            query: "tg proxy"
-          - slug: gv-mtproto-secret
-            query: "mtproto secret"
-          - slug: gv-proxy-list
-            query: "proxy list"
-          - slug: gv-ru-tg-proxy
-            query: "телеграм прокси"
-          - slug: gv-ru-mtproxy
-            query: "мтпрокси"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: pip install requests
-      - name: Search Gitverse
-        env:
-          QUERY: ${{ matrix.query }}
-          SLUG: ${{ matrix.slug }}
-        run: |
-          python <<'PY'
-          import os, json, time, requests
-          query = os.getenv("QUERY", "")
-          slug = os.getenv("SLUG", "unknown")
-          base = "https://gitverse.ru"
-          ua = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
-          out_path = f"raw/tg_gitverse_{slug}.jsonl"
-          os.makedirs("raw", exist_ok=True)
-          headers = {"User-Agent": ua, "Accept": "application/json"}
-          results = []
-          for endpoint in [f"{base}/api/v1/repos/search", f"{base}/api/v1/repositories/search"]:
-              try:
-                  r = requests.get(endpoint, params={"q": query, "limit": 50}, headers=headers, timeout=25)
-                  if r.status_code != 200:
-                      continue
-                  data = r.json()
-                  items = data.get("data", []) or data.get("items", []) or data.get("repos", []) if isinstance(data, dict) else data
-                  for item in items:
-                      full_name = item.get("full_name") or item.get("name")
-                      html_url = item.get("html_url") or item.get("url")
-                      if not full_name:
-                          continue
-                      if html_url and not html_url.startswith("http"):
-                          html_url = f"{base}/{full_name}"
-                      results.append({"source":"gitverse","kind":"repo","repo":full_name,"url":html_url,"path":None,"score":1.0,"updated_at":item.get("updated_at"),"description":item.get("description")})
-                  if results:
-                      break
-              except Exception as e:
-                  print(f"[!] Error: {e}")
-                  time.sleep(2)
-          with open(out_path, "w", encoding="utf-8") as f:
-              for row in results:
-                  f.write(json.dumps(row, ensure_ascii=False) + "\n")
-          print(f"[+] Found: {len(results)}")
-          time.sleep(2)
-          PY
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-search-gitverse-${{ matrix.slug }}
-          path: raw/tg_gitverse_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  collect-candidates:
-    name: 5 - Collect candidates
-    runs-on: ubuntu-latest
-    needs: [search-github-keywords, search-github-exact, search-gitverse]
-    if: ${{ always() }}
-    timeout-minutes: 20
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Create directories
-        run: mkdir -p raw candidates
-      - name: Download search artifacts
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          pattern: tg-search-*
-          path: candidates
-          merge-multiple: true
-      - name: Normalize candidates
-        run: |
-          python <<'PY'
-          import os, json, glob
-          files = glob.glob("candidates/**/*.jsonl", recursive=True) + glob.glob("raw/**/*.jsonl", recursive=True)
-          out_path = "raw/tg_candidates.jsonl"
-          seen = set()
-          total = 0
-          written = 0
-          with open(out_path, "w", encoding="utf-8") as out:
-              for fp in sorted(files):
-                  try:
-                      with open(fp, "r", encoding="utf-8") as f:
-                          for line in f:
-                              line = line.strip()
-                              if not line: continue
-                              total += 1
-                              try: obj = json.loads(line)
-                              except: continue
-                              repo = obj.get("repo"); source = obj.get("source")
-                              if not repo or not source: continue
-                              path = obj.get("path") or ""
-                              key = f"{source}::{repo.lower()}::{path.lower()}"
-                              if key in seen: continue
-                              seen.add(key)
-                              out.write(json.dumps({"source":source,"kind":obj.get("kind","repo"),"repo":repo,"url":obj.get("url"),"path":path or None,"score":obj.get("score",0),"stars":obj.get("stars"),"updated_at":obj.get("updated_at"),"description":obj.get("description")}, ensure_ascii=False) + "\n")
-                              written += 1
-                  except Exception as e:
-                      print(f"[!] Error reading {fp}: {e}")
-          print(f"[*] Total: {total}")
-          print(f"[+] Unique: {written}")
-          PY
-      - name: Upload candidates
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-candidates
-          path: raw/tg_candidates.jsonl
-          if-no-files-found: warn
-          retention-days: 7
-
-  fetch-and-extract:
-    name: 6 - Extract proxies
-    runs-on: ubuntu-latest
-    needs: collect-candidates
-    if: ${{ always() }}
-    timeout-minutes: 60
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: pip install requests
-      - name: Create directories
-        run: mkdir -p raw extracted
-      - name: Download candidates
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: tg-candidates
-          path: raw
-      - name: Extract TG proxies
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GITVERSE_BASE: "https://gitverse.ru"
-          MAX_FETCH_CANDIDATES: ${{ github.event.inputs.max_fetch_candidates || '300' }}
-        run: |
-          python <<'PY'
-          import os, re, json, time, random, requests
-          from urllib.parse import urlparse, parse_qs
-          GITHUB_API = "https://api.github.com"
-          GITVERSE_BASE = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
-          TOKEN = os.getenv("GITHUB_TOKEN", "")
-          UA = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
-          MAX_FETCH = int(os.getenv("MAX_FETCH_CANDIDATES", "300"))
-          HEADERS = {"Accept":"application/vnd.github+json","User-Agent":UA}
-          if TOKEN:
-              HEADERS["Authorization"] = f"Bearer {TOKEN}"
-          session = requests.Session()
-          session.headers.update(HEADERS)
-          TG_PROXY_RE = re.compile(r"(?:tg://proxy|https?://t\.me/proxy)\?[^\s\)\]\"'<>]+", re.IGNORECASE)
-          COMMON_TG_FILES = ["mtproxy.txt","mtproxy-list.txt","mtproto.txt","tg-proxy.txt","tg-proxies.txt","telegram-proxy.txt","telegram-proxies.txt","proxy.txt","proxies.txt","proxy-list.txt","list.txt","tg.txt","tg.md","proxy.md","proxies.md","mtproxy.md","mtproto.md","README.md","free-tg-proxy.txt","tg-proxy.json","mtproxy.json","mtproto.json","proxy.yaml","proxies.yaml"]
-          branch_cache = {}
-          proxies = {}
-          def sleep_random(a=1, b=3):
-              time.sleep(a + random.random() * (b - a))
-          def fetch_json(url, params=None):
-              for attempt in range(3):
-                  try:
-                      r = session.get(url, params=params, timeout=25)
-                      if r.status_code == 200: return r.json()
-                      if r.status_code in (403,429):
-                          ra = r.headers.get("Retry-After")
-                          wait = int(ra) if ra and ra.isdigit() else 6
-                          time.sleep(wait); continue
-                      if 500 <= r.status_code < 600:
-                          time.sleep(2+attempt); continue
-                      return None
-                  except Exception:
-                      time.sleep(2+attempt)
-              return None
-          def fetch_text(url):
-              try:
-                  r = session.get(url, timeout=25)
-                  if r.status_code == 200 and r.text and len(r.text.strip()) > 0:
-                      return r.text
-                  return None
-              except Exception:
-                  return None
-          def get_github_branch(repo):
-              if repo in branch_cache: return branch_cache[repo]
-              d = fetch_json(f"{GITHUB_API}/repos/{repo}")
-              b = d.get("default_branch") if d else None
-              if not b: b = "main"
-              branch_cache[repo] = b
-              return b
-          def get_gitverse_branch(repo):
-              if repo in branch_cache: return branch_cache[repo]
-              d = fetch_json(f"{GITVERSE_BASE}/api/v1/repos/{repo}")
-              b = d.get("default_branch") if d else None
-              if not b: b = "main"
-              branch_cache[repo] = b
-              return b
-          def parse_tg_url(url):
-              try:
-                  parsed = urlparse(url)
-                  params = parse_qs(parsed.query)
-                  server = params.get("server", [None])[0]
-                  port = params.get("port", [None])[0]
-                  secret = params.get("secret", [None])[0]
-                  if not server or not port or not secret: return None
-                  port = int(port)
-                  if port <= 0 or port > 65535: return None
-                  if not re.fullmatch(r"[a-zA-Z0-9.-]{3,255}", server): return None
-                  secret = secret.strip()
-                  if not re.fullmatch(r"[0-9a-fA-F]{32,128}", secret): return None
-                  return {"server":server,"port":port,"secret":secret}
-              except Exception:
-                  return None
-          def extract_from_text(text, source, repo, path, curl):
-              if not text: return 0
-              found = 0
-              for match in TG_PROXY_RE.findall(text):
-                  parsed = parse_tg_url(match)
-                  if not parsed: continue
-                  key = f"{parsed['server']}:{parsed['port']}:{parsed['secret']}"
-                  tg_url = f"tg://proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
-                  tme_url = f"https://t.me/proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
-                  sref = {"source":source,"repo":repo,"path":path,"url":curl}
-                  if key not in proxies:
-                      proxies[key] = {"server":parsed["server"],"port":parsed["port"],"secret":parsed["secret"],"protocol":"mtproto","tg_url":tg_url,"tme_url":tme_url,"sources":[sref]}
-                  else:
-                      if len(proxies[key]["sources"]) < 8:
-                          proxies[key]["sources"].append(sref)
-                  found += 1
-              return found
-          def fetch_github_paths(repo, path=None):
-              branch = get_github_branch(repo)
-              paths = [path] if path else COMMON_TG_FILES
-              for p in paths[:20]:
-                  raw = f"https://raw.githubusercontent.com/{repo}/{branch}/{p}"
-                  text = fetch_text(raw)
-                  if text:
-                      yield p, raw, text
-                  sleep_random(0.5, 1.5)
-          def fetch_gitverse_paths(repo, path=None):
-              branch = get_gitverse_branch(repo)
-              paths = [path] if path else COMMON_TG_FILES
-              for b in [branch, "main", "master"]:
-                  for p in paths[:12]:
-                      for raw in [f"{GITVERSE_BASE}/{repo}/raw/branch/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{p}"]:
-                          text = fetch_text(raw)
-                          if text:
-                              yield p, raw, text
-                              break
-                      sleep_random(0.5, 1.5)
-          cands = []
-          if os.path.exists("raw/tg_candidates.jsonl"):
-              with open("raw/tg_candidates.jsonl","r",encoding="utf-8") as f:
-                  for line in f:
-                      line=line.strip()
-                      if not line: continue
-                      try: cands.append(json.loads(line))
-                      except: continue
-          print(f"[*] Candidates: {len(cands)}")
-          cands.sort(key=lambda x: (x.get("source")!="github", x.get("path") is None, -(x.get("score") or 0)))
-          processed = 0
-          total_found = 0
-          for c in cands:
-              if processed >= MAX_FETCH: break
-              source = c.get("source"); repo = c.get("repo"); path = c.get("path"); curl = c.get("url")
-              if not source or not repo: continue
-              processed += 1
-              print(f"[*] {source}:{repo}:{path or '<no path>'}")
-              try:
-                  if source == "github":
-                      it = fetch_github_paths(repo, path)
-                  elif source == "gitverse":
-                      it = fetch_gitverse_paths(repo, path)
-                  else:
-                      it = []
-                  for fp, raw, text in it:
-                      found = extract_from_text(text, source, repo, fp, raw)
-                      total_found += found
-                      if found:
-                          print(f"[+] {found} proxies in {raw}")
-              except Exception as e:
-                  print(f"[!] Error {repo}: {e}")
-              sleep_random(1, 2)
-          os.makedirs("extracted", exist_ok=True)
-          proxy_list = list(proxies.values())
-          with open("extracted/tg_proxies_extracted.jsonl", "w", encoding="utf-8") as f:
-              for item in proxy_list:
-                  f.write(json.dumps(item, ensure_ascii=False) + "\n")
-          payload = {"extracted_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "generator":"tg-proxy-discovery.yml", "processed_candidates": processed, "unique_proxies": len(proxy_list), "raw_mentions_found": total_found, "proxies": proxy_list}
-          with open("extracted/tg_proxies_extracted.json", "w", encoding="utf-8") as f:
-              json.dump(payload, f, ensure_ascii=False, indent=2)
-          print(f"[*] Processed: {processed}")
-          print(f"[*] Mentions: {total_found}")
-          print(f"[+] Unique proxies: {len(proxy_list)}")
-          PY
-      - name: Upload extracted proxies
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-proxies-extracted
-          path: extracted/tg_proxies_extracted.*
-          if-no-files-found: warn
-          retention-days: 14
-
-  check-proxies:
-    name: 7 - Check proxies
-    runs-on: ubuntu-latest
-    needs: fetch-and-extract
-    if: ${{ always() }}
-    timeout-minutes: 60
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Create directories
-        run: mkdir -p extracted checked "${OUTPUT_DIR}"
-      - name: Download extracted proxies
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: tg-proxies-extracted
-          path: extracted
-      - name: Run proxy health checks
-        env:
-          MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
-          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
-          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
-        run: |
-          python <<'PY'
-          import asyncio, json, os, time, datetime, socket
-          MAX_CHECK = int(os.getenv("MAX_CHECK_PROXIES", "500"))
-          TIMEOUT = float(os.getenv("CHECK_TIMEOUT", "4"))
-          CONC = int(os.getenv("CONCURRENCY_LIMIT", "40"))
-          INPUT = "extracted/tg_proxies_extracted.json"
-          OUTPUT = "checked/tg_proxies_checked.json"
-          FINAL = os.getenv("OUTPUT_FILE", "data/tg_proxies_found.json")
-          def now_iso():
-              return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00","Z")
-          def load_proxies():
-              if not os.path.exists(INPUT): return []
-              try:
-                  with open(INPUT, "r", encoding="utf-8") as f:
-                      return json.load(f).get("proxies", [])
-              except: return []
-          def classify_secret(secret):
-              if not secret: return "unknown"
-              s = secret.lower()
-              if s.startswith("dd"): return "fake_tls_or_padding"
-              if s.startswith("ee"): return "media_or_special"
-              if len(s) == 32 or len(s) == 64: return "hex"
-              return "other"
-          async def check_one(proxy, sem):
-              async with sem:
-                  server = proxy.get("server"); port = proxy.get("port"); secret = proxy.get("secret")
-                  result = {"id":None,"host":server,"server":server,"port":port,"secret":secret,"protocol":"MTProto","tg_url":proxy.get("tg_url"),"tme_url":proxy.get("tme_url"),"sources":proxy.get("sources",[]),"secret_type":classify_secret(secret),"checked_at":now_iso(),"dns_ok":False,"tcp_open":False,"latency_ms":None,"ping":None,"status":"offline","country":None,"errors":[]}
-                  if not server or not port:
-                      result["errors"].append("invalid_server_or_port"); return result
-                  try:
-                      port = int(port); result["port"] = port
-                  except:
-                      result["errors"].append("invalid_port"); return result
-                  try:
-                      infos = await asyncio.get_running_loop().getaddrinfo(server, port, proto=socket.IPPROTO_TCP)
-                      if not infos:
-                          result["errors"].append("dns_no_records"); return result
-                      result["dns_ok"] = True
-                  except Exception as e:
-                      result["errors"].append(f"dns_error:{e.__class__.__name__}"); return result
-                  for attempt in range(2):
-                      start = time.perf_counter()
-                      try:
-                          reader, writer = await asyncio.wait_for(asyncio.open_connection(server, port), timeout=TIMEOUT)
-                          latency = round((time.perf_counter() - start) * 1000, 2)
-                          result["tcp_open"] = True; result["latency_ms"] = latency; result["ping"] = latency; result["status"] = "online"
-                          try:
-                              writer.close(); await writer.wait_closed()
-                          except: pass
-                          break
-                      except asyncio.TimeoutError:
-                          result["errors"].append(f"tcp_timeout_attempt_{attempt+1}")
-                      except Exception as e:
-                          result["errors"].append(f"tcp_error:{e.__class__.__name__}")
-                      await asyncio.sleep(0.25)
-                  return result
-          async def main():
-              proxies = load_proxies()
-              if not proxies:
-                  payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","checked_count":0,"online_count":0,"offline_count":0,"dns_fail_count":0,"avg_latency_ms":None,"proxies":[]}
-                  os.makedirs("checked", exist_ok=True)
-                  os.makedirs(os.path.dirname(FINAL), exist_ok=True)
-                  with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
-                  with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
-                  print("[!] No proxies to check")
-                  return
-              proxies.sort(key=lambda x: len(x.get("sources", [])), reverse=True)
-              proxies = proxies[:MAX_CHECK]
-              print(f"[*] Checking {len(proxies)} proxies")
-              sem = asyncio.Semaphore(CONC)
-              tasks = [check_one(p, sem) for p in proxies]
-              results = await asyncio.gather(*tasks)
-              for idx, item in enumerate(results, 1):
-                  item["id"] = idx
-              online = [x for x in results if x["status"]=="online"]
-              offline = [x for x in results if x["status"]!="online"]
-              dns_fail = [x for x in results if not x["dns_ok"]]
-              avg = None
-              if online:
-                  lat = [x["latency_ms"] for x in online if x.get("latency_ms") is not None]
-                  if lat: avg = round(sum(lat)/len(lat), 2)
-              results.sort(key=lambda x: (x["status"]!="online", x["latency_ms"] if x.get("latency_ms") is not None else 999999, -len(x.get("sources",[]))))
-              payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","telegram_channel":"https://t.me/REMAININGCONNECTIONS","checked_count":len(results),"online_count":len(online),"offline_count":len(offline),"dns_fail_count":len(dns_fail),"avg_latency_ms":avg,"check_timeout_seconds":TIMEOUT,"concurrency_limit":CONC,"proxies":results}
-              os.makedirs("checked", exist_ok=True)
-              os.makedirs(os.path.dirname(FINAL), exist_ok=True)
-              with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
-              with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
-              print(f"Checked: {len(results)}")
-              print(f"Online: {len(online)}")
-              print(f"Offline: {len(offline)}")
-              print(f"DNS fail: {len(dns_fail)}")
-              print(f"Avg latency: {avg}")
-          asyncio.run(main())
-          PY
-      - name: Upload checked proxies
-        uses: actions/upload-artifact@v4
-        with:
-          name: tg-proxies-checked
-          path: |
-            checked/tg_proxies_checked.json
-            data/tg_proxies_found.json
-          if-no-files-found: warn
-          retention-days: 14
-
-  publish-results:
-    name: 8 - Publish results
-    runs-on: ubuntu-latest
-    needs: check-proxies
-    if: ${{ always() && needs.check-proxies.result == 'success' && github.event.inputs.dry_run != true }}
-    timeout-minutes: 15
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Create directories
-        run: mkdir -p data downloaded
-      - name: Download checked proxies
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: tg-proxies-checked
-          path: downloaded
-      - name: Move result into data directory
-        run: |
-          set -euo pipefail
-          FOUND_FILE="$(find downloaded -type f -name 'tg_proxies_found.json' | head -n 1 || true)"
-          if [[ -z "${FOUND_FILE}" ]]; then
-            echo "[!] Not found, creating placeholder"
-            cat > data/tg_proxies_found.json <<'JSON'
-          {"generated_at":"","generator":"tg-proxy-discovery.yml","checked_count":0,"online_count":0,"offline_count":0,"dns_fail_count":0,"avg_latency_ms":null,"proxies":[]}
-          JSON
-          else
-            cp "${FOUND_FILE}" data/tg_proxies_found.json
-            echo "[+] File copied"
-          fi
-      - name: Commit and push data
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git add data/tg_proxies_found.json || true
-          if git diff --staged --quiet; then
-            echo "[*] No changes"
-          else
-            git commit -m "chore(data): update tg_proxies_found.json [skip ci]"
-            git push origin "${GITHUB_REF_NAME}"
-            echo "[+] Committed"
-          fi
-
-  report:
-    name: 9 - Report
-    runs-on: ubuntu-latest
-    needs: [collect-candidates, fetch-and-extract, check-proxies, publish-results]
-    if: ${{ always() }}
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Download checked proxies for report
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: tg-proxies-checked
-          path: tg-report-artifacts
-      - name: Print report
-        run: |
-          echo "=================================================="
-          echo " TG Proxy Discovery finished"
-          echo "=================================================="
-          FILE="$(find tg-report-artifacts -type f -name 'tg_proxies_found.json' | head -n 1 || true)"
-          if [[ -z "${FILE}" ]]; then
-            echo "[!] No results file"
-            exit 0
-          fi
-          python <<PY
-          import json
-          path = "${FILE}"
-          try:
-              with open(path,"r",encoding="utf-8") as f:
-                  data = json.load(f)
-              print(f"Generated: {data.get('generated_at')}")
-              print(f"Checked: {data.get('checked_count')}")
-              print(f"Online: {data.get('online_count')}")
-              print(f"Offline: {data.get('offline_count')}")
-              print(f"DNS fail: {data.get('dns_fail_count')}")
-              print(f"Avg latency: {data.get('avg_latency_ms')}")
-          except Exception as e:
-              print(f"[!] Report error: {e}")
-          PY
-          echo "=================================================="
+*** Begin Patch
+*** Update File: .github/workflows/tg-proxy-discovery.yml
+@@
+       check_timeout:
+         description: "Таймаут проверки (секунды)"
+         required: false
+         type: string
+-        default: "4"
++        default: "6"
+@@
+       concurrency_limit:
+         description: "Сколько прокси проверять одновременно"
+         required: false
+         type: string
+-        default: "40"
++        default: "20"
+@@
+           MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
+-          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
+-          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
++          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '6' }}
++          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
+@@
+       - name: Run proxy health checks
+         env:
+           MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
+-          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
+-          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
++          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '6' }}
++          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
+         run: |
+-          python <<'PY'
+-          import asyncio, json, os, time, datetime, socket
+-          MAX_CHECK = int(os.getenv("MAX_CHECK_PROXIES", "500"))
+-          TIMEOUT = float(os.getenv("CHECK_TIMEOUT", "4"))
+-          CONC = int(os.getenv("CONCURRENCY_LIMIT", "40"))
+-          INPUT = "extracted/tg_proxies_extracted.json"
+-          OUTPUT = "checked/tg_proxies_checked.json"
+-          FINAL = os.getenv("OUTPUT_FILE", "data/tg_proxies_found.json")
+-          def now_iso():
+-              return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00","Z")
+-          def load_proxies():
+-              if not os.path.exists(INPUT): return []
+-              try:
+-                  with open(INPUT, "r", encoding="utf-8") as f:
+-                      return json.load(f).get("proxies", [])
+-              except: return []
+-          def classify_secret(secret):
+-              if not secret: return "unknown"
+-              s = secret.lower()
+-              if s.startswith("dd"): return "fake_tls_or_padding"
+-              if s.startswith("ee"): return "media_or_special"
+-              if len(s) == 32 or len(s) == 64: return "hex"
+-              return "other"
+-          async def check_one(proxy, sem):
+-              async with sem:
+-                  server = proxy.get("server"); port = proxy.get("port"); secret = proxy.get("secret")
+-                  result = {"id":None,"host":server,"server":server,"port":port,"secret":secret,"protocol":"MTProto","tg_url":proxy.get("tg_url"),"tme_url":proxy.get("tme_url"),"sources":proxy.get("sources",[]),"secret_type":classify_secret(secret),"checked_at":now_iso(),"dns_ok":False,"tcp_open":False,"latency_ms":None,"ping":None,"status":"offline","country":None,"errors":[]}
+-                  if not server or not port:
+-                      result["errors"].append("invalid_server_or_port"); return result
+-                  try:
+-                      port = int(port); result["port"] = port
+-                  except:
+-                      result["errors"].append("invalid_port"); return result
+-                  try:
+-                      infos = await asyncio.get_running_loop().getaddrinfo(server, port, proto=socket.IPPROTO_TCP)
+-                      if not infos:
+-                          result["errors"].append("dns_no_records"); return result
+-                      result["dns_ok"] = True
+-                  except Exception as e:
+-                      result["errors"].append(f"dns_error:{e.__class__.__name__}"); return result
+-                  for attempt in range(2):
+-                      start = time.perf_counter()
+-                      try:
+-                          reader, writer = await asyncio.wait_for(asyncio.open_connection(server, port), timeout=TIMEOUT)
+-                          latency = round((time.perf_counter() - start) * 1000, 2)
+-                          result["tcp_open"] = True; result["latency_ms"] = latency; result["ping"] = latency; result["status"] = "online"
+-                          try:
+-                              writer.close(); await writer.wait_closed()
+-                          except: pass
+-                          break
+-                      except asyncio.TimeoutError:
+-                          result["errors"].append(f"tcp_timeout_attempt_{attempt+1}")
+-                      except Exception as e:
+-                          result["errors"].append(f"tcp_error:{e.__class__.__name__}")
+-                      await asyncio.sleep(0.25)
+-                  return result
+-          async def main():
+-              proxies = load_proxies()
+-              if not proxies:
+-                  payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","checked_count":0,"online_count":0,"offline_count":0,"dns_fail_count":0,"avg_latency_ms":None,"proxies":[]}
+-                  os.makedirs("checked", exist_ok=True)
+-                  os.makedirs(os.path.dirname(FINAL), exist_ok=True)
+-                  with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
+-                  with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
+-                  print("[!] No proxies to check")
+-                  return
+-              proxies.sort(key=lambda x: len(x.get("sources", [])), reverse=True)
+-              proxies = proxies[:MAX_CHECK]
+-              print(f"[*] Checking {len(proxies)} proxies")
+-              sem = asyncio.Semaphore(CONC)
+-              tasks = [check_one(p, sem) for p in proxies]
+-              results = await asyncio.gather(*tasks)
+-              for idx, item in enumerate(results, 1):
+-                  item["id"] = idx
+-              online = [x for x in results if x["status"]=="online"]
+-              offline = [x for x in results if x["status"]!="online"]
+-              dns_fail = [x for x in results if not x["dns_ok"]]
+-              avg = None
+-              if online:
+-                  lat = [x["latency_ms"] for x in online if x.get("latency_ms") is not None]
+-                  if lat: avg = round(sum(lat)/len(lat), 2)
+-              results.sort(key=lambda x: (x["status"]!="online", x["latency_ms"] if x.get("latency_ms") is not None else 999999, -len(x.get("sources",[]))))
+-              payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","telegram_channel":"https://t.me/REMAININGCONNECTIONS","checked_count":len(results),"online_count":len(online),"offline_count":len(offline),"dns_fail_count":len(dns_fail),"avg_latency_ms":avg,"check_timeout_seconds":TIMEOUT,"concurrency_limit":CONC,"proxies":results}
+-              os.makedirs("checked", exist_ok=True)
+-              os.makedirs(os.path.dirname(FINAL), exist_ok=True)
+-              with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
+-              with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
+-              print(f"Checked: {len(results)}")
+-              print(f"Online: {len(online)}")
+-              print(f"Offline: {len(offline)}")
+-              print(f"DNS fail: {len(dns_fail)}")
+-              print(f"Avg latency: {avg}")
+-          asyncio.run(main())
+-          PY
++          python scripts/check_tg_proxies.py
+*** End Patch
