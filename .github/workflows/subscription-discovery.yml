@@ -1,86 +1,28 @@
 *** Begin Patch
 *** Update File: .github/workflows/subscription-discovery.yml
 @@
--          import os, re, json, time, datetime, requests, yaml
-+          import os, re, json, time, datetime, requests
-+          from scripts.subscription_validator import validate_subscription_content
-@@
--          PROTO_RE = re.compile(r"^(vless|vmess|ss|ssr|trojan|trojan-go|hysteria|hysteria2|hy2|tuic|wireguard|socks5|http|https|tg|mtproto)://", re.IGNORECASE)
-           BS_MARKERS = ["whitelist","white_list","белый список","белые списки","bs: true","bs=true",'"bs": true',"'bs': true","bypass_list","bypass"]
-@@
--          def count_text(text):
--              if not text: return 0
--              lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
--              if not lines: return 0
--              proto = [x for x in lines if PROTO_RE.match(x)]
--              if len(proto) >= max(1, int(len(lines)*0.25)): return len(proto)
--              return len(lines)
--          def count_yaml(text):
--              if not text: return 0
--              try:
--                  doc = yaml.safe_load(text)
--                  if isinstance(doc, dict):
--                      if isinstance(doc.get("proxies"), list): return len(doc["proxies"])
--                      if isinstance(doc.get("proxy-providers"), dict): return len(doc["proxy-providers"])
--                      if isinstance(doc.get("nodes"), list): return len(doc["nodes"])
--                  if isinstance(doc, list): return len(doc)
--              except Exception: pass
--              return count_text(text)
--          def count_by_path(text, path):
--              p = (path or "").lower()
--              if p.endswith((".yaml",".yml")): return count_yaml(text)
--              return count_text(text)
-+          def validate_by_path(text, path):
-+              return validate_subscription_content(text, path or "")
-@@
--              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
-+              found_url=None; found_path=None; validation=None; has_bs=False; sample=""
-               for p in uniq[:18]:
-                   raw = f"https://raw.githubusercontent.com/{repo}/{branch}/{p}"
-                   text = fetch_text(raw)
-                   if not text: continue
--                  c = count_by_path(text, p)
-+                  checked = validate_by_path(text, p)
-                   bs = check_bs(text)
--                  if c > 0:
--                      found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
-+                  if checked["valid"]:
-+                      found_url=raw; found_path=p; validation=checked; has_bs=bs; sample=text[:800]; break
-                   if not found_url:
--                      found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
-+                      found_url=raw; found_path=p; validation=checked; sample=text[:800]; has_bs=bs
-                   time.sleep(0.5)
--              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
--              return {"name":repo.split("/")[-1],"source":"github","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
-+              validation = validation or {"valid":False,"configs_count":0,"unique_configs_count":0,"protocols":{},"format":"none","errors":["no_subscription_file"]}
-+              status = "active" if validation["valid"] else ("stale" if updated_mins and updated_mins > 20160 else "invalid")
-+              return {"name":repo.split("/")[-1],"source":"github","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":validation["configs_count"],"unique_configs_count":validation["unique_configs_count"],"protocols":validation["protocols"],"content_format":validation["format"],"validation_errors":validation["errors"],"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
-@@
--              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
-+              found_url=None; found_path=None; validation=None; has_bs=False; sample=""
-               for b in [branch,"main","master"]:
--                  if found_url and cnt > 0: break
-+                  if validation and validation["valid"]: break
-                   for p in uniq[:12]:
-                       for raw in [f"{GITVERSE_BASE}/{repo}/raw/branch/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{p}"]:
-                           text = fetch_text(raw)
-                           if not text: continue
--                          c = count_by_path(text, p)
-+                          checked = validate_by_path(text, p)
-                           bs = check_bs(text)
--                          if c > 0:
--                              found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
-+                          if checked["valid"]:
-+                              found_url=raw; found_path=p; validation=checked; has_bs=bs; sample=text[:800]; break
-                           if not found_url:
--                              found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
--                      if found_url and cnt > 0: break
-+                              found_url=raw; found_path=p; validation=checked; sample=text[:800]; has_bs=bs
-+                      if validation and validation["valid"]: break
-                       time.sleep(0.5)
--              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
--              return {"name":repo.split("/")[-1],"source":"gitverse","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
-+              validation = validation or {"valid":False,"configs_count":0,"unique_configs_count":0,"protocols":{},"format":"none","errors":["no_subscription_file"]}
-+              status = "active" if validation["valid"] else ("stale" if updated_mins and updated_mins > 20160 else "invalid")
-+              return {"name":repo.split("/")[-1],"source":"gitverse","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":validation["configs_count"],"unique_configs_count":validation["unique_configs_count"],"protocols":validation["protocols"],"content_format":validation["format"],"validation_errors":validation["errors"],"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
+           with open(out_file, "w", encoding="utf-8") as f:
+               json.dump(output, f, ensure_ascii=False, indent=2)
+           print(f"[+] Saved {len(results)} subscriptions to {out_file}")
+           PY
++      - name: Install Xray core for strict node checks
++        run: |
++          set -euo pipefail
++          XRAY_VERSION="v25.2.21"
++          XRAY_ARCHIVE="Xray-linux-64.zip"
++          curl --fail --location --retry 3 \
++            "https://github.com/XTLS/Xray-core/releases/download/${XRAY_VERSION}/${XRAY_ARCHIVE}" \
++            --output /tmp/xray.zip
++          unzip -q /tmp/xray.zip -d /tmp/xray
++          install -m 0755 /tmp/xray/xray /usr/local/bin/xray
++          xray version
++      - name: Validate representative nodes through Xray
++        env:
++          MAX_XRAY_SUBSCRIPTION_PROBES: "40"
++          XRAY_NODES_PER_SUBSCRIPTION: "2"
++          XRAY_CHECK_TIMEOUT: "8"
++          XRAY_CHECK_CONCURRENCY: "4"
++        run: |
++          set -euo pipefail
++          python scripts/probe_subscription_configs.py --input data/subscriptions_found.json
 *** End Patch
