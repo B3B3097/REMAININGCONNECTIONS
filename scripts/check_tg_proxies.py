@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from strict_proxy_checker import check_telegram_proxy, utc_timestamp
+from strict_proxy_checker import check_telegram_proxy, check_xray_uri, parse_xray_uri, utc_timestamp
 
 
 def load_proxies(path: Path) -> list[dict[str, Any]]:
@@ -49,18 +49,43 @@ async def check_all(
     proxies: list[dict[str, Any]],
     timeout: float,
     concurrency: int,
+    enable_xray: bool,
 ) -> list[dict[str, Any]]:
     semaphore = asyncio.Semaphore(max(1, concurrency))
 
     async def check_one(proxy: dict[str, Any]) -> dict[str, Any]:
         normalized = normalize_proxy(proxy)
         async with semaphore:
+            # First try standard Telegram proxy check
             result = await check_telegram_proxy(normalized, timeout)
-        normalized.update(result.as_dict())
-        normalized["checked_at"] = utc_timestamp()
-        normalized["dns_ok"] = result.verification != "dns"
-        normalized["tcp_open"] = result.status in {"working", "unverified"}
-        normalized["ping"] = result.latency_ms
+            
+            # If Xray is enabled and proxy has a URI, also check through Xray
+            xray_result = None
+            if enable_xray and normalized.get("url"):
+                uri = normalized["url"]
+                parsed = parse_xray_uri(uri)
+                if parsed:
+                    xray_result = await check_xray_uri(uri, timeout)
+            
+            normalized.update(result.as_dict())
+            normalized["checked_at"] = utc_timestamp()
+            normalized["dns_ok"] = result.verification != "dns"
+            normalized["tcp_open"] = result.status in {"working", "unverified"}
+            normalized["ping"] = result.latency_ms
+            
+            # Add Xray verification if available
+            if xray_result:
+                normalized["xray_verification"] = {
+                    "status": xray_result.status,
+                    "verification": xray_result.verification,
+                    "latency_ms": xray_result.latency_ms,
+                    "error": xray_result.error,
+                }
+                # Upgrade status if Xray confirms working
+                if xray_result.status == "working" and result.status == "unverified":
+                    normalized["status"] = "working"
+                    normalized["verification"] = f"xray_{xray_result.verification}"
+            
         return normalized
 
     return await asyncio.gather(*(check_one(proxy) for proxy in proxies))
@@ -70,6 +95,7 @@ def build_payload(
     results: list[dict[str, Any]],
     timeout: float,
     concurrency: int,
+    enable_xray: bool,
 ) -> dict[str, Any]:
     working = [item for item in results if item["status"] == "working"]
     unverified = [item for item in results if item["status"] == "unverified"]
@@ -110,6 +136,7 @@ def build_payload(
         ),
         "check_timeout_seconds": timeout,
         "concurrency_limit": concurrency,
+        "xray_enabled": enable_xray,
         "verification_policy": {
             "socks5": (
                 "SOCKS5 authentication negotiation and CONNECT to a control HTTPS host"
@@ -117,8 +144,9 @@ def build_payload(
             "http": "HTTP CONNECT to a control HTTPS host",
             "mtproto": (
                 "not marked working by TCP only; requires a Telegram MTProto "
-                "client handshake"
+                "client handshake or Xray verification"
             ),
+            "xray": "Real connection test through Xray core if URI is available" if enable_xray else "disabled",
         },
         "proxies": results,
     }
@@ -135,17 +163,23 @@ def main() -> None:
     parser.add_argument(
         "--max-check",
         type=int,
-        default=int(os.getenv("MAX_CHECK_PROXIES", "500")),
+        default=int(os.getenv("MAX_CHECK_PROXIES", "2000")),
     )
     parser.add_argument(
         "--timeout",
         type=float,
-        default=float(os.getenv("CHECK_TIMEOUT", "6")),
+        default=float(os.getenv("CHECK_TIMEOUT", "8")),
     )
     parser.add_argument(
         "--concurrency",
         type=int,
-        default=int(os.getenv("CONCURRENCY_LIMIT", "20")),
+        default=int(os.getenv("CONCURRENCY_LIMIT", "30")),
+    )
+    parser.add_argument(
+        "--enable-xray",
+        action="store_true",
+        default=os.getenv("ENABLE_XRAY_CHECK", "").lower() in {"1", "true", "yes"},
+        help="Enable Xray core verification for proxy URIs",
     )
     args = parser.parse_args()
 
@@ -155,8 +189,8 @@ def main() -> None:
 
     timeout = max(1.0, args.timeout)
     concurrency = max(1, args.concurrency)
-    results = asyncio.run(check_all(proxies, timeout, concurrency))
-    payload = build_payload(results, timeout, concurrency)
+    results = asyncio.run(check_all(proxies, timeout, concurrency, args.enable_xray))
+    payload = build_payload(results, timeout, concurrency, args.enable_xray)
 
     for output in (Path(args.output), Path(args.final_output)):
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -169,6 +203,9 @@ def main() -> None:
     print(f"Working: {payload['working_count']}")
     print(f"Unverified MTProto: {payload['unverified_count']}")
     print(f"Failed: {payload['offline_count']}")
+    if args.enable_xray:
+        xray_verified = sum(1 for p in results if p.get("xray_verification"))
+        print(f"Xray verified: {xray_verified}")
 
 
 if __name__ == "__main__":
