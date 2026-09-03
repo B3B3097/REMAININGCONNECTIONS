@@ -1,741 +1,86 @@
-name: Subscription Discovery Pipeline
-
-on:
-  schedule:
-    - cron: "15 * * * *"
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Dry run: не коммитить результаты"
-        required: false
-        type: boolean
-        default: false
-      max_repos:
-        description: "Сколько репозиториев искать за запрос"
-        required: false
-        type: string
-        default: "80"
-      max_probe:
-        description: "Сколько кандидатов проверять"
-        required: false
-        type: string
-        default: "220"
-      include_gitverse:
-        description: "Искать в Gitverse"
-        required: false
-        type: boolean
-        default: true
-      skip_search:
-        description: "Пропустить поиск (только проверка существующих данных)"
-        required: false
-        type: boolean
-        default: false
-
-concurrency:
-  group: subscription-discovery
-  cancel-in-progress: false
-
-permissions:
-  contents: write
-  actions: read
-  checks: write
-
-env:
-  PYTHON_VERSION: "3.11"
-  OUTPUT_DIR: "data"
-  OUTPUT_FILE: "data/subscriptions_found.json"
-  GH_TOKEN: ${{ github.token }}
-  GITHUB_TOKEN: ${{ github.token }}
-  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
-
-defaults:
-  run:
-    shell: bash
-
-jobs:
-  prepare:
-    name: 1 - Prepare
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests pyyaml
-
-      - name: Create directories
-        run: |
-          mkdir -p raw candidates "${OUTPUT_DIR}"
-          echo "[+] Directories created"
-
-      - name: Write run metadata
-        env:
-          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
-          MAX_PROBE: ${{ github.event.inputs.max_probe || '220' }}
-        run: |
-          python <<'PY'
-          import json, datetime, os
-          payload = {
-              "run_id": "${{ github.run_id }}",
-              "run_number": "${{ github.run_number }}",
-              "workflow": "subscription-discovery",
-              "repository": "${{ github.repository }}",
-              "actor": "${{ github.actor }}",
-              "event_name": "${{ github.event_name }}",
-              "ref": "${{ github.ref }}",
-              "sha": "${{ github.sha }}",
-              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
-              "max_repos": os.getenv("MAX_REPOS", "80"),
-              "max_probe": os.getenv("MAX_PROBE", "220"),
-              "include_gitverse": "${{ github.event.inputs.include_gitverse }}" != "false",
-              "dry_run": "${{ github.event.inputs.dry_run }}" == "true",
-              "skip_search": "${{ github.event.inputs.skip_search }}" == "true",
-          }
-          os.makedirs("raw", exist_ok=True)
-          with open("raw/run_metadata.json", "w", encoding="utf-8") as f:
-              json.dump(payload, f, ensure_ascii=False, indent=2)
-          print("[+] Metadata saved")
-          PY
-
-      - name: Upload metadata
-        uses: actions/upload-artifact@v4
-        with:
-          name: prepare-metadata
-          path: raw/run_metadata.json
-          if-no-files-found: error
-          retention-days: 7
-
-  search-github-keywords:
-    name: 2 - Search GitHub keywords
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true }}
-    timeout-minutes: 25
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: v2ray
-            query: "v2ray OR xray OR vless OR vmess"
-          - slug: singbox
-            query: "sing-box OR singbox"
-          - slug: clash
-            query: "clash OR clash-meta OR mihomo"
-          - slug: shadowsocks
-            query: "shadowsocks OR shadowsocks-rust"
-          - slug: trojan
-            query: "trojan OR trojan-go"
-          - slug: hysteria
-            query: "hysteria OR hysteria2 OR hy2"
-          - slug: reality
-            query: "reality OR vless-reality"
-          - slug: vless
-            query: "vless OR vless-sub"
-          - slug: vmess
-            query: "vmess OR vmess-sub"
-          - slug: tuic
-            query: "tuic OR tuic-v5"
-          - slug: wireguard
-            query: "wireguard OR wg"
-          - slug: free-nodes
-            query: "free-nodes OR free nodes OR free subscription"
-          - slug: aggregation
-            query: "subscription aggregation OR proxy aggregation"
-          - slug: ru-net
-            query: "обход блокировок OR подписка прокси"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install utilities
-        run: sudo apt-get update -y && sudo apt-get install -y jq
-      - name: Search repos
-        env:
-          QUERY: ${{ matrix.query }}
-          SLUG: ${{ matrix.slug }}
-          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
-        run: |
-          set -euo pipefail
-          mkdir -p raw
-          OUT="raw/github_repos_${SLUG}.jsonl"
-          API_OUT="raw/github_repos_api_${SLUG}.json"
-          : > "${OUT}"
-          FULL_QUERY="${QUERY} in:name,description,readme fork:true archived:false"
-          if ! gh api -X GET search/repositories -f q="${FULL_QUERY}" -f per_page="${MAX_REPOS}" -f sort=updated -f order=desc > "${API_OUT}" 2>/dev/null; then
-            echo '{"items":[]}' > "${API_OUT}"
-          fi
-          jq -c '.items[]? | {source:"github",kind:"repo",repo:.full_name,url:.html_url,path:null,score:.score,stars:.stargazers_count,updated_at:.updated_at,pushed_at:.pushed_at,description:.description} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
-          echo "[+] Found: $(wc -l < "${OUT}")"
-          sleep $((RANDOM % 7 + 3))
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: search-github-keyword-${{ matrix.slug }}
-          path: raw/github_repos_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  search-github-topics:
-    name: 3 - Search GitHub topics
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true }}
-    timeout-minutes: 20
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: topic-v2ray
-            query: "topic:v2ray"
-          - slug: topic-xray
-            query: "topic:xray"
-          - slug: topic-singbox
-            query: "topic:sing-box"
-          - slug: topic-clash
-            query: "topic:clash"
-          - slug: topic-mihomo
-            query: "topic:mihomo"
-          - slug: topic-shadowsocks
-            query: "topic:shadowsocks"
-          - slug: topic-trojan
-            query: "topic:trojan"
-          - slug: topic-hysteria
-            query: "topic:hysteria"
-          - slug: topic-vless
-            query: "topic:vless"
-          - slug: topic-vmess
-            query: "topic:vmess"
-          - slug: topic-wireguard
-            query: "topic:wireguard"
-          - slug: topic-proxy
-            query: "topic:proxy"
-          - slug: topic-vpn
-            query: "topic:vpn"
-          - slug: topic-subscription
-            query: "topic:subscription"
-          - slug: topic-censorship
-            query: "topic:censorship-circumvention"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install utilities
-        run: sudo apt-get update -y && sudo apt-get install -y jq
-      - name: Search by topic
-        env:
-          QUERY: ${{ matrix.query }}
-          SLUG: ${{ matrix.slug }}
-          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
-        run: |
-          set -euo pipefail
-          mkdir -p raw
-          OUT="raw/github_topics_${SLUG}.jsonl"
-          API_OUT="raw/github_topics_api_${SLUG}.json"
-          : > "${OUT}"
-          FULL_QUERY="${QUERY} fork:true archived:false"
-          if ! gh api -X GET search/repositories -f q="${FULL_QUERY}" -f per_page="${MAX_REPOS}" -f sort=updated -f order=desc > "${API_OUT}" 2>/dev/null; then
-            echo '{"items":[]}' > "${API_OUT}"
-          fi
-          jq -c '.items[]? | {source:"github",kind:"topic",repo:.full_name,url:.html_url,path:null,score:.score,stars:.stargazers_count,updated_at:.updated_at,pushed_at:.pushed_at,description:.description} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
-          echo "[+] Found: $(wc -l < "${OUT}")"
-          sleep $((RANDOM % 7 + 3))
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: search-github-${{ matrix.slug }}
-          path: raw/github_topics_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  search-gitverse:
-    name: 4 - Search Gitverse
-    runs-on: ubuntu-latest
-    needs: prepare
-    if: ${{ github.event.inputs.skip_search != true && github.event.inputs.include_gitverse != false }}
-    timeout-minutes: 20
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - slug: gv-v2ray
-            query: "v2ray"
-          - slug: gv-xray
-            query: "xray"
-          - slug: gv-singbox
-            query: "sing-box"
-          - slug: gv-clash
-            query: "clash"
-          - slug: gv-shadowsocks
-            query: "shadowsocks"
-          - slug: gv-trojan
-            query: "trojan"
-          - slug: gv-vless
-            query: "vless"
-          - slug: gv-vmess
-            query: "vmess"
-          - slug: gv-proxy
-            query: "proxy"
-          - slug: gv-vpn
-            query: "vpn"
-          - slug: gv-subscription
-            query: "subscription"
-          - slug: gv-podpiska
-            query: "подписка"
-          - slug: gv-obhod
-            query: "обход"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: pip install requests
-      - name: Search Gitverse
-        env:
-          QUERY: ${{ matrix.query }}
-          SLUG: ${{ matrix.slug }}
-        run: |
-          python <<'PY'
-          import os, json, time, requests
-          query = os.getenv("QUERY", "")
-          slug = os.getenv("SLUG", "unknown")
-          base = "https://gitverse.ru"
-          ua = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
-          out_path = f"raw/gitverse_{slug}.jsonl"
-          os.makedirs("raw", exist_ok=True)
-          headers = {"User-Agent": ua, "Accept": "application/json"}
-          results = []
-          for endpoint in [f"{base}/api/v1/repos/search", f"{base}/api/v1/repositories/search"]:
-              try:
-                  r = requests.get(endpoint, params={"q": query, "limit": 50}, headers=headers, timeout=25)
-                  if r.status_code != 200:
-                      continue
-                  data = r.json()
-                  items = data.get("data", []) or data.get("items", []) or data.get("repos", []) if isinstance(data, dict) else data
-                  for item in items:
-                      full_name = item.get("full_name") or item.get("name")
-                      html_url = item.get("html_url") or item.get("url")
-                      if not full_name:
-                          continue
-                      if html_url and not html_url.startswith("http"):
-                          html_url = f"{base}/{full_name}"
-                      results.append({"source":"gitverse","kind":"repo","repo":full_name,"url":html_url,"path":None,"score":1.0,"updated_at":item.get("updated_at"),"description":item.get("description")})
-                  if results:
-                      break
-              except Exception as e:
-                  print(f"[!] Error: {e}")
-                  time.sleep(2)
-          with open(out_path, "w", encoding="utf-8") as f:
-              for row in results:
-                  f.write(json.dumps(row, ensure_ascii=False) + "\n")
-          print(f"[+] Found: {len(results)}")
-          time.sleep(2)
-          PY
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: search-gitverse-${{ matrix.slug }}
-          path: raw/gitverse_${{ matrix.slug }}.jsonl
-          if-no-files-found: ignore
-          retention-days: 7
-
-  collect-candidates:
-    name: 5 - Collect candidates
-    runs-on: ubuntu-latest
-    needs: [search-github-keywords, search-github-topics, search-gitverse]
-    if: ${{ always() }}
-    timeout-minutes: 15
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Create directories
-        run: mkdir -p candidates raw
-      - name: Download search artifacts
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          pattern: search-*
-          path: candidates
-          merge-multiple: true
-      - name: Normalize candidates
-        run: |
-          python <<'PY'
-          import os, json, glob
-          out_path = "raw/all_candidates.jsonl"
-          seen = set()
-          total = 0
-          written = 0
-          files = glob.glob("candidates/**/*.jsonl", recursive=True) + glob.glob("raw/**/*.jsonl", recursive=True)
-          files = [f for f in files if os.path.basename(f) != "all_candidates.jsonl"]
-          with open(out_path, "w", encoding="utf-8") as out:
-              for fp in sorted(files):
-                  try:
-                      with open(fp, "r", encoding="utf-8") as f:
-                          for line in f:
-                              line = line.strip()
-                              if not line:
-                                  continue
-                              total += 1
-                              try:
-                                  obj = json.loads(line)
-                              except Exception:
-                                  continue
-                              repo = obj.get("repo")
-                              source = obj.get("source")
-                              if not repo or not source:
-                                  continue
-                              path = obj.get("path") or ""
-                              key = f"{source}::{repo.lower()}::{path.lower()}"
-                              if key in seen:
-                                  continue
-                              seen.add(key)
-                              out.write(json.dumps({"source":source,"kind":obj.get("kind","repo"),"repo":repo,"url":obj.get("url"),"path":path or None,"score":obj.get("score",0),"stars":obj.get("stars"),"updated_at":obj.get("updated_at"),"pushed_at":obj.get("pushed_at"),"description":obj.get("description")}, ensure_ascii=False) + "\n")
-                              written += 1
-                  except Exception as e:
-                      print(f"[!] Error reading {fp}: {e}")
-          print(f"[*] Total: {total}")
-          print(f"[+] Unique: {written}")
-          PY
-      - name: Upload candidates
-        uses: actions/upload-artifact@v4
-        with:
-          name: all-candidates
-          path: raw/all_candidates.jsonl
-          if-no-files-found: warn
-          retention-days: 7
-
-  probe-candidates:
-    name: 6 - Probe candidates
-    runs-on: ubuntu-latest
-    needs: collect-candidates
-    if: ${{ always() }}
-    timeout-minutes: 45
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests pyyaml
-      - name: Create directories
-        run: mkdir -p candidates raw "${OUTPUT_DIR}"
-      - name: Download candidates
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: all-candidates
-          path: raw
-      - name: Probe repositories
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GITVERSE_BASE: "https://gitverse.ru"
-          MAX_PROBE: ${{ github.event.inputs.max_probe || '220' }}
-        run: |
-          python <<'PY'
-          import os, re, json, time, datetime, requests, yaml
-          GITHUB_API = "https://api.github.com"
-          GITVERSE_BASE = os.getenv("GITVERSE_BASE", "https://gitverse.ru")
-          TOKEN = os.getenv("GITHUB_TOKEN", "")
-          UA = os.getenv("USER_AGENT", "REMAININGCONNECTIONS/1.0")
-          MAX_PROBE = int(os.getenv("MAX_PROBE", "220"))
-          OUTPUT_DIR = os.getenv("OUTPUT_DIR", "data")
-          HEADERS = {"Accept":"application/vnd.github+json","User-Agent":UA}
-          if TOKEN:
-              HEADERS["Authorization"] = f"Bearer {TOKEN}"
-          COMMON_PATHS = ["sub.txt","subscribe.txt","subscription.txt","subscriptions.txt","v2ray.txt","xray.txt","nodes.txt","proxy.txt","proxies.txt","list.txt","clash.yaml","clash.yml","config.yaml","config.yml","sub.yaml","sub.yml","subscription.yaml","subscription.yml","proxies.yaml","proxies.yml","mihomo.yaml","mihomo.yml","sing-box.json","singbox.json","wireguard.conf","wg.conf"]
-          PROTO_RE = re.compile(r"^(vless|vmess|ss|ssr|trojan|trojan-go|hysteria|hysteria2|hy2|tuic|wireguard|socks5|http|https|tg|mtproto)://", re.IGNORECASE)
-          BS_MARKERS = ["whitelist","white_list","белый список","белые списки","bs: true","bs=true",'"bs": true',"'bs': true","bypass_list","bypass"]
-          session = requests.Session()
-          session.headers.update(HEADERS)
-          def now_utc():
-              return datetime.datetime.now(datetime.timezone.utc)
-          def parse_date(v):
-              if not v: return None
-              try:
-                  v = v.replace("Z","+00:00")
-                  dt = datetime.datetime.fromisoformat(v)
-                  if dt.tzinfo is None: dt = dt.replace(tzinfo=datetime.timezone.utc)
-                  return dt
-              except Exception: return None
-          def minutes_ago(dt):
-              if not dt: return None
-              return int((now_utc() - dt).total_seconds() / 60)
-          def fetch_json(url, params=None):
-              for attempt in range(3):
-                  try:
-                      r = session.get(url, params=params, timeout=25)
-                      if r.status_code == 200: return r.json()
-                      if r.status_code in (403,429):
-                          ra = r.headers.get("Retry-After")
-                          wait = int(ra) if ra and ra.isdigit() else 6
-                          time.sleep(wait); continue
-                      if 500 <= r.status_code < 600:
-                          time.sleep(2+attempt); continue
-                      return None
-                  except Exception as e:
-                      time.sleep(2+attempt)
-              return None
-          def fetch_text(url):
-              for attempt in range(2):
-                  try:
-                      r = session.get(url, timeout=25)
-                      if r.status_code == 200 and r.text and len(r.text.strip()) > 0:
-                          return r.text
-                      return None
-                  except Exception:
-                      time.sleep(1+attempt)
-              return None
-          def check_bs(text):
-              if not text: return False
-              low = text.lower()
-              return any(m in low for m in BS_MARKERS)
-          def count_text(text):
-              if not text: return 0
-              lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
-              if not lines: return 0
-              proto = [x for x in lines if PROTO_RE.match(x)]
-              if len(proto) >= max(1, int(len(lines)*0.25)): return len(proto)
-              return len(lines)
-          def count_yaml(text):
-              if not text: return 0
-              try:
-                  doc = yaml.safe_load(text)
-                  if isinstance(doc, dict):
-                      if isinstance(doc.get("proxies"), list): return len(doc["proxies"])
-                      if isinstance(doc.get("proxy-providers"), dict): return len(doc["proxy-providers"])
-                      if isinstance(doc.get("nodes"), list): return len(doc["nodes"])
-                  if isinstance(doc, list): return len(doc)
-              except Exception: pass
-              return count_text(text)
-          def count_by_path(text, path):
-              p = (path or "").lower()
-              if p.endswith((".yaml",".yml")): return count_yaml(text)
-              return count_text(text)
-          def probe_github(repo, cpath=None):
-              api_repo = f"{GITHUB_API}/repos/{repo}"
-              rd = fetch_json(api_repo)
-              if not rd: return None
-              branch = rd.get("default_branch","main")
-              html_url = rd.get("html_url", f"https://github.com/{repo}")
-              commits = fetch_json(f"{api_repo}/commits", params={"per_page":1})
-              updated_mins = None
-              last_msg = None
-              if isinstance(commits, list) and commits:
-                  cd = commits[0].get("commit",{})
-                  cm = cd.get("committer",{})
-                  ds = cm.get("date") or cd.get("author",{}).get("date")
-                  updated_mins = minutes_ago(parse_date(ds))
-                  last_msg = cd.get("message")
-              paths = ([cpath] if cpath else []) + COMMON_PATHS
-              seen = set()
-              uniq = []
-              for p in paths:
-                  if p and p not in seen:
-                      seen.add(p); uniq.append(p)
-              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
-              for p in uniq[:18]:
-                  raw = f"https://raw.githubusercontent.com/{repo}/{branch}/{p}"
-                  text = fetch_text(raw)
-                  if not text: continue
-                  c = count_by_path(text, p)
-                  bs = check_bs(text)
-                  if c > 0:
-                      found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
-                  if not found_url:
-                      found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
-                  time.sleep(0.5)
-              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
-              return {"name":repo.split("/")[-1],"source":"github","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
-          def probe_gitverse(repo, cpath=None):
-              api_repo = f"{GITVERSE_BASE}/api/v1/repos/{repo}"
-              rd = fetch_json(api_repo)
-              branch = "main"
-              html_url = f"{GITVERSE_BASE}/{repo}"
-              if rd:
-                  branch = rd.get("default_branch","main") or "main"
-                  html_url = rd.get("html_url") or html_url
-              commits = fetch_json(f"{api_repo}/commits", params={"limit":1})
-              updated_mins = None
-              last_msg = None
-              if isinstance(commits, list) and commits:
-                  cd = commits[0].get("commit",{})
-                  cm = cd.get("committer",{})
-                  ds = cm.get("date") or cd.get("author",{}).get("date")
-                  updated_mins = minutes_ago(parse_date(ds))
-                  last_msg = cd.get("message")
-              paths = ([cpath] if cpath else []) + COMMON_PATHS
-              seen=set(); uniq=[]
-              for p in paths:
-                  if p and p not in seen:
-                      seen.add(p); uniq.append(p)
-              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
-              for b in [branch,"main","master"]:
-                  if found_url and cnt > 0: break
-                  for p in uniq[:12]:
-                      for raw in [f"{GITVERSE_BASE}/{repo}/raw/branch/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{p}"]:
-                          text = fetch_text(raw)
-                          if not text: continue
-                          c = count_by_path(text, p)
-                          bs = check_bs(text)
-                          if c > 0:
-                              found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
-                          if not found_url:
-                              found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
-                      if found_url and cnt > 0: break
-                      time.sleep(0.5)
-              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
-              return {"name":repo.split("/")[-1],"source":"gitverse","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
-          cands = []
-          if os.path.exists("raw/all_candidates.jsonl"):
-              with open("raw/all_candidates.jsonl","r",encoding="utf-8") as f:
-                  for line in f:
-                      line=line.strip()
-                      if not line: continue
-                      try: cands.append(json.loads(line))
-                      except: continue
-          print(f"[*] Candidates: {len(cands)}")
-          cands.sort(key=lambda x: (x.get("source")!="github", x.get("path") is None, -(x.get("score") or 0)))
-          results = []
-          probed = set()
-          for c in cands:
-              if len(results) >= MAX_PROBE: break
-              repo = c.get("repo"); source = c.get("source"); path = c.get("path")
-              if not repo or not source: continue
-              key = f"{source}::{repo.lower()}"
-              if key in probed: continue
-              probed.add(key)
-              try:
-                  if source == "github":
-                      item = probe_github(repo, path)
-                  elif source == "gitverse":
-                      item = probe_gitverse(repo, path)
-                  else:
-                      item = None
-                  if item: results.append(item)
-              except Exception as e:
-                  print(f"[!] Error {key}: {e}")
-              time.sleep(0.5)
-          output = {"generated_at": now_utc().isoformat().replace("+00:00","Z"), "generator":"subscription-discovery.yml", "candidates_found": len(cands), "probed_count": len(results), "subscriptions": results}
-          os.makedirs(OUTPUT_DIR, exist_ok=True)
-          out_file = os.path.join(OUTPUT_DIR, "subscriptions_found.json")
-          with open(out_file, "w", encoding="utf-8") as f:
-              json.dump(output, f, ensure_ascii=False, indent=2)
-          print(f"[+] Saved {len(results)} subscriptions to {out_file}")
-          PY
-      - name: Upload probe results
-        uses: actions/upload-artifact@v4
-        with:
-          name: probe-results
-          path: data/subscriptions_found.json
-          if-no-files-found: warn
-          retention-days: 14
-
-  publish-results:
-    name: 7 - Publish results
-    runs-on: ubuntu-latest
-    needs: probe-candidates
-    if: ${{ always() && needs.probe-candidates.result == 'success' && github.event.inputs.dry_run != true }}
-    timeout-minutes: 15
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Create data directory
-        run: mkdir -p data downloaded
-      - name: Download probe results
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: probe-results
-          path: downloaded
-      - name: Move result into data directory
-        run: |
-          set -euo pipefail
-          FOUND_FILE="$(find downloaded -type f -name 'subscriptions_found.json' | head -n 1 || true)"
-          if [[ -z "${FOUND_FILE}" ]]; then
-            echo "[!] Not found, creating placeholder"
-            cat > data/subscriptions_found.json <<'JSON'
-          {"generated_at":"","generator":"subscription-discovery.yml","candidates_found":0,"probed_count":0,"subscriptions":[]}
-          JSON
-          else
-            cp "${FOUND_FILE}" data/subscriptions_found.json
-            echo "[+] File copied"
-          fi
-      - name: Commit and push data
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git add data/subscriptions_found.json || true
-          if git diff --staged --quiet; then
-            echo "[*] No changes"
-          else
-            git commit -m "chore(data): update subscriptions_found.json [skip ci]"
-            git push origin "${GITHUB_REF_NAME}"
-            echo "[+] Committed"
-          fi
-
-  report:
-    name: 8 - Report
-    runs-on: ubuntu-latest
-    needs: [collect-candidates, probe-candidates, publish-results]
-    if: ${{ always() }}
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Download results for report
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: probe-results
-          path: report-artifacts
-      - name: Print report
-        run: |
-          echo "=================================================="
-          echo " Subscription Discovery Pipeline finished"
-          echo "=================================================="
-          FILE="$(find report-artifacts -type f -name 'subscriptions_found.json' | head -n 1 || true)"
-          if [[ -z "${FILE}" ]]; then
-            echo "[!] No results file"
-            exit 0
-          fi
-          python <<PY
-          import json
-          path = "${FILE}"
-          try:
-              with open(path,"r",encoding="utf-8") as f:
-                  data = json.load(f)
-              print(f"Generated: {data.get('generated_at')}")
-              print(f"Candidates: {data.get('candidates_found')}")
-              print(f"Probed: {data.get('probed_count')}")
-              subs = data.get("subscriptions",[])
-              active = sum(1 for x in subs if x.get("status")=="active")
-              unknown = sum(1 for x in subs if x.get("status")=="unknown")
-              stale = sum(1 for x in subs if x.get("status")=="stale")
-              bs = sum(1 for x in subs if x.get("has_bs"))
-              print(f"Active: {active}")
-              print(f"Unknown: {unknown}")
-              print(f"Stale: {stale}")
-              print(f"With BS: {bs}")
-          except Exception as e:
-              print(f"[!] Report error: {e}")
-          PY
-          echo "=================================================="
+*** Begin Patch
+*** Update File: .github/workflows/subscription-discovery.yml
+@@
+-          import os, re, json, time, datetime, requests, yaml
++          import os, re, json, time, datetime, requests
++          from scripts.subscription_validator import validate_subscription_content
+@@
+-          PROTO_RE = re.compile(r"^(vless|vmess|ss|ssr|trojan|trojan-go|hysteria|hysteria2|hy2|tuic|wireguard|socks5|http|https|tg|mtproto)://", re.IGNORECASE)
+           BS_MARKERS = ["whitelist","white_list","белый список","белые списки","bs: true","bs=true",'"bs": true',"'bs': true","bypass_list","bypass"]
+@@
+-          def count_text(text):
+-              if not text: return 0
+-              lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#") and not l.strip().startswith("//")]
+-              if not lines: return 0
+-              proto = [x for x in lines if PROTO_RE.match(x)]
+-              if len(proto) >= max(1, int(len(lines)*0.25)): return len(proto)
+-              return len(lines)
+-          def count_yaml(text):
+-              if not text: return 0
+-              try:
+-                  doc = yaml.safe_load(text)
+-                  if isinstance(doc, dict):
+-                      if isinstance(doc.get("proxies"), list): return len(doc["proxies"])
+-                      if isinstance(doc.get("proxy-providers"), dict): return len(doc["proxy-providers"])
+-                      if isinstance(doc.get("nodes"), list): return len(doc["nodes"])
+-                  if isinstance(doc, list): return len(doc)
+-              except Exception: pass
+-              return count_text(text)
+-          def count_by_path(text, path):
+-              p = (path or "").lower()
+-              if p.endswith((".yaml",".yml")): return count_yaml(text)
+-              return count_text(text)
++          def validate_by_path(text, path):
++              return validate_subscription_content(text, path or "")
+@@
+-              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
++              found_url=None; found_path=None; validation=None; has_bs=False; sample=""
+               for p in uniq[:18]:
+                   raw = f"https://raw.githubusercontent.com/{repo}/{branch}/{p}"
+                   text = fetch_text(raw)
+                   if not text: continue
+-                  c = count_by_path(text, p)
++                  checked = validate_by_path(text, p)
+                   bs = check_bs(text)
+-                  if c > 0:
+-                      found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
++                  if checked["valid"]:
++                      found_url=raw; found_path=p; validation=checked; has_bs=bs; sample=text[:800]; break
+                   if not found_url:
+-                      found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
++                      found_url=raw; found_path=p; validation=checked; sample=text[:800]; has_bs=bs
+                   time.sleep(0.5)
+-              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
+-              return {"name":repo.split("/")[-1],"source":"github","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
++              validation = validation or {"valid":False,"configs_count":0,"unique_configs_count":0,"protocols":{},"format":"none","errors":["no_subscription_file"]}
++              status = "active" if validation["valid"] else ("stale" if updated_mins and updated_mins > 20160 else "invalid")
++              return {"name":repo.split("/")[-1],"source":"github","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":validation["configs_count"],"unique_configs_count":validation["unique_configs_count"],"protocols":validation["protocols"],"content_format":validation["format"],"validation_errors":validation["errors"],"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
+@@
+-              found_url=None; found_path=None; cnt=0; has_bs=False; sample=""
++              found_url=None; found_path=None; validation=None; has_bs=False; sample=""
+               for b in [branch,"main","master"]:
+-                  if found_url and cnt > 0: break
++                  if validation and validation["valid"]: break
+                   for p in uniq[:12]:
+                       for raw in [f"{GITVERSE_BASE}/{repo}/raw/branch/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{b}/{p}", f"{GITVERSE_BASE}/{repo}/raw/{p}"]:
+                           text = fetch_text(raw)
+                           if not text: continue
+-                          c = count_by_path(text, p)
++                          checked = validate_by_path(text, p)
+                           bs = check_bs(text)
+-                          if c > 0:
+-                              found_url=raw; found_path=p; cnt=c; has_bs=bs; sample=text[:800]; break
++                          if checked["valid"]:
++                              found_url=raw; found_path=p; validation=checked; has_bs=bs; sample=text[:800]; break
+                           if not found_url:
+-                              found_url=raw; found_path=p; sample=text[:800]; has_bs=bs
+-                      if found_url and cnt > 0: break
++                              found_url=raw; found_path=p; validation=checked; sample=text[:800]; has_bs=bs
++                      if validation and validation["valid"]: break
+                       time.sleep(0.5)
+-              status = "active" if cnt > 0 else ("stale" if updated_mins and updated_mins > 20160 else "unknown")
+-              return {"name":repo.split("/")[-1],"source":"gitverse","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":cnt,"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
++              validation = validation or {"valid":False,"configs_count":0,"unique_configs_count":0,"protocols":{},"format":"none","errors":["no_subscription_file"]}
++              status = "active" if validation["valid"] else ("stale" if updated_mins and updated_mins > 20160 else "invalid")
++              return {"name":repo.split("/")[-1],"source":"gitverse","repo":repo,"url":html_url,"subscription_url":found_url,"config_path":found_path,"updated_mins_ago":updated_mins,"configs_count":validation["configs_count"],"unique_configs_count":validation["unique_configs_count"],"protocols":validation["protocols"],"content_format":validation["format"],"validation_errors":validation["errors"],"has_bs":has_bs,"status":status,"last_commit_message":last_msg,"content_sample":sample}
+*** End Patch
