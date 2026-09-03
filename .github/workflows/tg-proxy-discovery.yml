@@ -1,127 +1,56 @@
 *** Begin Patch
 *** Update File: .github/workflows/tg-proxy-discovery.yml
 @@
-       check_timeout:
-         description: "Таймаут проверки (секунды)"
-         required: false
-         type: string
--        default: "4"
-+        default: "6"
+-          TG_PROXY_RE = re.compile(r"(?:tg://proxy|https?://t\.me/proxy)\?[^\s\)\]\"'<>]+", re.IGNORECASE)
++          TG_PROXY_RE = re.compile(r"(?:tg://(?:proxy|socks)|https?://t\.me/(?:proxy|socks)|socks5?://|https?://)[^\s\)\]\"'<>]+", re.IGNORECASE)
 @@
-       concurrency_limit:
-         description: "Сколько прокси проверять одновременно"
-         required: false
-         type: string
--        default: "40"
-+        default: "20"
+-          def parse_tg_url(url):
++          def parse_tg_url(url):
+               try:
+                   parsed = urlparse(url)
+                   params = parse_qs(parsed.query)
++                  scheme = parsed.scheme.lower()
++                  kind = (parsed.netloc if scheme == "tg" else parsed.path.strip("/")).lower()
++                  if scheme in ("tg", "http", "https") and kind == "socks":
++                      server = params.get("server", [None])[0]
++                      port = params.get("port", [None])[0]
++                      if not server or not port: return None
++                      port = int(port)
++                      if port <= 0 or port > 65535: return None
++                      if not re.fullmatch(r"[a-zA-Z0-9.-]{3,255}", server): return None
++                      return {"server":server,"port":port,"secret":None,"protocol":"socks5"}
++                  if scheme in ("socks", "socks5"):
++                      if not parsed.hostname or not parsed.port: return None
++                      if parsed.port <= 0 or parsed.port > 65535: return None
++                      return {"server":parsed.hostname,"port":parsed.port,"secret":None,"protocol":"socks5"}
++                  if scheme in ("http", "https") and parsed.hostname and parsed.port and parsed.netloc.lower() != "t.me":
++                      if parsed.port <= 0 or parsed.port > 65535: return None
++                      return {"server":parsed.hostname,"port":parsed.port,"secret":None,"protocol":"http"}
+                   server = params.get("server", [None])[0]
+                   port = params.get("port", [None])[0]
+                   secret = params.get("secret", [None])[0]
 @@
-           MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
--          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
--          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
-+          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '6' }}
-+          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
+-                  return {"server":server,"port":port,"secret":secret}
++                  return {"server":server,"port":port,"secret":secret,"protocol":"mtproto"}
+               except Exception:
+                   return None
 @@
-       - name: Run proxy health checks
-         env:
-           MAX_CHECK_PROXIES: ${{ github.event.inputs.max_check_proxies || '500' }}
--          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '4' }}
--          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '40' }}
-+          CHECK_TIMEOUT: ${{ github.event.inputs.check_timeout || '6' }}
-+          CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
-         run: |
--          python <<'PY'
--          import asyncio, json, os, time, datetime, socket
--          MAX_CHECK = int(os.getenv("MAX_CHECK_PROXIES", "500"))
--          TIMEOUT = float(os.getenv("CHECK_TIMEOUT", "4"))
--          CONC = int(os.getenv("CONCURRENCY_LIMIT", "40"))
--          INPUT = "extracted/tg_proxies_extracted.json"
--          OUTPUT = "checked/tg_proxies_checked.json"
--          FINAL = os.getenv("OUTPUT_FILE", "data/tg_proxies_found.json")
--          def now_iso():
--              return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00","Z")
--          def load_proxies():
--              if not os.path.exists(INPUT): return []
--              try:
--                  with open(INPUT, "r", encoding="utf-8") as f:
--                      return json.load(f).get("proxies", [])
--              except: return []
--          def classify_secret(secret):
--              if not secret: return "unknown"
--              s = secret.lower()
--              if s.startswith("dd"): return "fake_tls_or_padding"
--              if s.startswith("ee"): return "media_or_special"
--              if len(s) == 32 or len(s) == 64: return "hex"
--              return "other"
--          async def check_one(proxy, sem):
--              async with sem:
--                  server = proxy.get("server"); port = proxy.get("port"); secret = proxy.get("secret")
--                  result = {"id":None,"host":server,"server":server,"port":port,"secret":secret,"protocol":"MTProto","tg_url":proxy.get("tg_url"),"tme_url":proxy.get("tme_url"),"sources":proxy.get("sources",[]),"secret_type":classify_secret(secret),"checked_at":now_iso(),"dns_ok":False,"tcp_open":False,"latency_ms":None,"ping":None,"status":"offline","country":None,"errors":[]}
--                  if not server or not port:
--                      result["errors"].append("invalid_server_or_port"); return result
--                  try:
--                      port = int(port); result["port"] = port
--                  except:
--                      result["errors"].append("invalid_port"); return result
--                  try:
--                      infos = await asyncio.get_running_loop().getaddrinfo(server, port, proto=socket.IPPROTO_TCP)
--                      if not infos:
--                          result["errors"].append("dns_no_records"); return result
--                      result["dns_ok"] = True
--                  except Exception as e:
--                      result["errors"].append(f"dns_error:{e.__class__.__name__}"); return result
--                  for attempt in range(2):
--                      start = time.perf_counter()
--                      try:
--                          reader, writer = await asyncio.wait_for(asyncio.open_connection(server, port), timeout=TIMEOUT)
--                          latency = round((time.perf_counter() - start) * 1000, 2)
--                          result["tcp_open"] = True; result["latency_ms"] = latency; result["ping"] = latency; result["status"] = "online"
--                          try:
--                              writer.close(); await writer.wait_closed()
--                          except: pass
--                          break
--                      except asyncio.TimeoutError:
--                          result["errors"].append(f"tcp_timeout_attempt_{attempt+1}")
--                      except Exception as e:
--                          result["errors"].append(f"tcp_error:{e.__class__.__name__}")
--                      await asyncio.sleep(0.25)
--                  return result
--          async def main():
--              proxies = load_proxies()
--              if not proxies:
--                  payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","checked_count":0,"online_count":0,"offline_count":0,"dns_fail_count":0,"avg_latency_ms":None,"proxies":[]}
--                  os.makedirs("checked", exist_ok=True)
--                  os.makedirs(os.path.dirname(FINAL), exist_ok=True)
--                  with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
--                  with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
--                  print("[!] No proxies to check")
--                  return
--              proxies.sort(key=lambda x: len(x.get("sources", [])), reverse=True)
--              proxies = proxies[:MAX_CHECK]
--              print(f"[*] Checking {len(proxies)} proxies")
--              sem = asyncio.Semaphore(CONC)
--              tasks = [check_one(p, sem) for p in proxies]
--              results = await asyncio.gather(*tasks)
--              for idx, item in enumerate(results, 1):
--                  item["id"] = idx
--              online = [x for x in results if x["status"]=="online"]
--              offline = [x for x in results if x["status"]!="online"]
--              dns_fail = [x for x in results if not x["dns_ok"]]
--              avg = None
--              if online:
--                  lat = [x["latency_ms"] for x in online if x.get("latency_ms") is not None]
--                  if lat: avg = round(sum(lat)/len(lat), 2)
--              results.sort(key=lambda x: (x["status"]!="online", x["latency_ms"] if x.get("latency_ms") is not None else 999999, -len(x.get("sources",[]))))
--              payload = {"generated_at":now_iso(),"generator":"tg-proxy-discovery.yml","telegram_channel":"https://t.me/REMAININGCONNECTIONS","checked_count":len(results),"online_count":len(online),"offline_count":len(offline),"dns_fail_count":len(dns_fail),"avg_latency_ms":avg,"check_timeout_seconds":TIMEOUT,"concurrency_limit":CONC,"proxies":results}
--              os.makedirs("checked", exist_ok=True)
--              os.makedirs(os.path.dirname(FINAL), exist_ok=True)
--              with open(OUTPUT, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
--              with open(FINAL, "w", encoding="utf-8") as f: json.dump(payload, f, ensure_ascii=False, indent=2)
--              print(f"Checked: {len(results)}")
--              print(f"Online: {len(online)}")
--              print(f"Offline: {len(offline)}")
--              print(f"DNS fail: {len(dns_fail)}")
--              print(f"Avg latency: {avg}")
--          asyncio.run(main())
--          PY
-+          python scripts/check_tg_proxies.py
+-                  key = f"{parsed['server']}:{parsed['port']}:{parsed['secret']}"
+-                  tg_url = f"tg://proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
+-                  tme_url = f"https://t.me/proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
++                  protocol = parsed["protocol"]
++                  key = f"{protocol}:{parsed['server']}:{parsed['port']}:{parsed['secret'] or ''}"
++                  if protocol == "mtproto":
++                      tg_url = f"tg://proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
++                      tme_url = f"https://t.me/proxy?server={parsed['server']}&port={parsed['port']}&secret={parsed['secret']}"
++                  elif protocol == "socks5":
++                      tg_url = f"tg://socks?server={parsed['server']}&port={parsed['port']}"
++                      tme_url = f"https://t.me/socks?server={parsed['server']}&port={parsed['port']}"
++                  else:
++                      tg_url = None
++                      tme_url = None
+                   sref = {"source":source,"repo":repo,"path":path,"url":curl}
+                   if key not in proxies:
+-                      proxies[key] = {"server":parsed["server"],"port":parsed["port"],"secret":parsed["secret"],"protocol":"mtproto","tg_url":tg_url,"tme_url":tme_url,"sources":[sref]}
++                      proxies[key] = {"server":parsed["server"],"port":parsed["port"],"secret":parsed["secret"],"protocol":protocol,"tg_url":tg_url,"tme_url":tme_url,"sources":[sref]}
 *** End Patch
