@@ -104,7 +104,7 @@ jobs:
                               )
                           ]
 
-                          for file in sub_files[:10]:
+                          for file in sub_files[:20]:
                               raw_url = (
                                   f"https://raw.githubusercontent.com/"
                                   f"{repo_name}/{default_branch}/"
@@ -173,7 +173,7 @@ ${XRAY_VERSION}/${XRAY_ARCHIVE}" \
         env:
           MAX_PROBE_SUBSCRIPTIONS: >-
             ${{ github.event.inputs.max_probe || '100' }}
-          NODES_PER_SUBSCRIPTION: '50'
+          NODES_PER_SUBSCRIPTION: '100'
           XRAY_PROBE_TIMEOUT: '8'
         run: |
           set -euo pipefail
