@@ -1,16 +1,43 @@
+            $MTPROTO_FLAG
+      
+      - name: Deep Proxy Validation
         run: |
           set -euo pipefail
-          MTPROTO_FLAG=""
-          if [ "${ENABLE_MTPROTO_CHECK:-true}" = "true" ]; then
-            MTPROTO_FLAG="--enable-mtproto"
-          fi
+          echo "[+] Starting Advanced Deep Validation..."
+          python scripts/batch_validator.py \
+            --input data/tg_proxies_found.json \
+            --output data/deep_checked.json \
+            --concurrency ${CONCURRENCY_LIMIT}
+          
+          # Merge deep validation results into the main dataset
+          python << 'PY'
+          import json
+          with open('data/deep_checked.json', 'r') as f:
+              deep_data = json.load(f)
+          
+          with open('data/tg_proxies_found.json', 'r') as f:
+              main_data = json.load(f)
+              
+          # Update main data with deep validation metrics
+          for proxy in main_data['proxies']:
+              server = proxy.get('server')
+              port = proxy.get('port')
+              # Find matching proxy in deep data
+              for d_proxy in deep_data['proxies']:
+                  if d_proxy.get('server') == server and d_proxy.get('port') == port:
+                      proxy.update({
+                          'deep_score': d_proxy.get('deep_score'),
+                          'tcp_latency_ms': d_proxy.get('tcp_latency_ms'),
+                          'tls_cipher': d_proxy.get('tls_cipher'),
+                          'handshake_success': d_proxy.get('handshake_success')
+                      })
+                      break
+                      
+          with open('data/tg_proxies_found.json', 'w') as f:
+              json.dump(main_data, f, ensure_ascii=False, indent=2)
+          print("[+] Data merged successfully.")
+          PY
+          
+          echo "[+] Deep validation complete."
 
-          python scripts/check_tg_proxies.py \
-            --input extracted/tg_proxies_extracted.json \
-            --output checked/tg_proxies_checked.json \
-            --final-output data/tg_proxies_found.json \
-            --max-check ${MAX_CHECK_PROXIES} \
-            --timeout ${CHECK_TIMEOUT} \
-            --concurrency ${CONCURRENCY_LIMIT} \
-            $([ "${ENABLE_XRAY_CHECK}" = "true" ] && echo "--enable-xray" || echo "") \
-            $MTPROTO_FLAG
+      - name: Commit and push
