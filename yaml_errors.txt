@@ -1,9 +1,9 @@
 
 --- Файл: ./.github/workflows/deploy.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/deploy.yml:52:81: [error] line too long (84 > 80 characters) (line-length)
-  ./.github/workflows/deploy.yml:62:81: [error] line too long (91 > 80 characters) (line-length)
-  ./.github/workflows/deploy.yml:100:62: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/deploy.yml:236:81: [error] line too long (105 > 80 characters) (line-length)
+  ./.github/workflows/deploy.yml:237:81: [error] line too long (133 > 80 characters) (line-length)
+  ./.github/workflows/deploy.yml:258:14: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/export-and-commit.yml ---
 Последние 3 ошибки:
@@ -19,15 +19,15 @@
 
 --- Файл: ./.github/workflows/subscription-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/subscription-discovery.yml:690:81: [error] line too long (82 > 80 characters) (line-length)
-  ./.github/workflows/subscription-discovery.yml:715:81: [error] line too long (102 > 80 characters) (line-length)
-  ./.github/workflows/subscription-discovery.yml:741:68: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/subscription-discovery.yml:154:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/subscription-discovery.yml:160:81: [error] line too long (104 > 80 characters) (line-length)
+  ./.github/workflows/subscription-discovery.yml:161:19: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/tg-proxy-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/tg-proxy-discovery.yml:784:81: [error] line too long (82 > 80 characters) (line-length)
-  ./.github/workflows/tg-proxy-discovery.yml:801:81: [error] line too long (102 > 80 characters) (line-length)
-  ./.github/workflows/tg-proxy-discovery.yml:821:68: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/tg-proxy-discovery.yml:267:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/tg-proxy-discovery.yml:273:81: [error] line too long (117 > 80 characters) (line-length)
+  ./.github/workflows/tg-proxy-discovery.yml:274:19: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/utils-discovery.yml ---
 Последние 3 ошибки:
