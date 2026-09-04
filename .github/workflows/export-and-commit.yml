@@ -33,8 +33,9 @@ jobs:
 
       - name: Проверка YAML и сохранение ошибок в файл
         run: |
+          python3 -m pip install --upgrade pip
           python3 -m pip install yamllint
-          python3 << 'EOF'
+          python3 << 'PYEOF'
           import os
           import subprocess
 
@@ -56,16 +57,16 @@ jobs:
                   for yf in sorted(yaml_files):
                       out_file.write(f"\n--- Файл: {yf} ---\n")
                       res = subprocess.run(['yamllint', '-f', 'parsable', yf], capture_output=True, text=True)
-                      
+
                       errors = [line for line in (res.stdout + res.stderr).split('\n') if line.strip() and 'error' in line.lower()]
-                      
+
                       if errors:
                           out_file.write("Последние 3 ошибки:\n")
                           for err in errors[-3:]:
                               out_file.write(f"  {err}\n")
                       else:
                           out_file.write("  Ошибок не найдено ✅\n")
-          EOF
+          PYEOF
 
       - name: Коммит и пуш изменений в репозиторий
         run: |
