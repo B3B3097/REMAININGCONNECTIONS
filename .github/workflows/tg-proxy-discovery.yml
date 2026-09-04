@@ -1,10 +1,16 @@
-      - name: Install Xray core via manager
-        if: github.event.inputs.enable_xray == 'true'
         run: |
           set -euo pipefail
-          echo "[+] Installing Xray core using xray_manager..."
-          python scripts/xray_manager.py install --force
-          echo "[+] Verifying installation..."
-          xray version
+          MTPROTO_FLAG=""
+          if [ "${ENABLE_MTPROTO_CHECK:-true}" = "true" ]; then
+            MTPROTO_FLAG="--enable-mtproto"
+          fi
 
-      - name: Check proxies
+          python scripts/check_tg_proxies.py \
+            --input extracted/tg_proxies_extracted.json \
+            --output checked/tg_proxies_checked.json \
+            --final-output data/tg_proxies_found.json \
+            --max-check ${MAX_CHECK_PROXIES} \
+            --timeout ${CHECK_TIMEOUT} \
+            --concurrency ${CONCURRENCY_LIMIT} \
+            $([ "${ENABLE_XRAY_CHECK}" = "true" ] && echo "--enable-xray" || echo "") \
+            $MTPROTO_FLAG
