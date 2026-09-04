@@ -20,7 +20,8 @@ jobs:
     permissions:
       contents: write
     env:
-      CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
+      CONCURRENCY_LIMIT: >-
+        ${{ github.event.inputs.concurrency_limit || '20' }}
       MAX_CHANNELS: ${{ github.event.inputs.max_channels || '50' }}
     steps:
       - name: Checkout repository
@@ -55,65 +56,69 @@ jobs:
           set -euo pipefail
           echo "[+] Verifying data files..."
           if [ ! -f "data/tg_proxies_found.json" ]; then
-            echo "[!] Input file missing. Creating empty placeholder."
+            echo "[!] Input file missing. Creating placeholder."
             echo '{"proxies":[]}' > data/tg_proxies_found.json
             exit 0
           fi
-          
+
           echo "[+] Starting Advanced Deep Validation..."
           python scripts/batch_validator.py \
             --input data/tg_proxies_found.json \
             --output data/deep_checked.json \
             --concurrency ${CONCURRENCY_LIMIT}
-          
-          # Merge deep validation results into the main dataset
+
           python << 'PYEOF'
           import json
           import os
-          
+
           deep_file = 'data/deep_checked.json'
           main_file = 'data/tg_proxies_found.json'
-          
+
           if not os.path.exists(deep_file):
-              print("[!] Deep validation output not found. Skipping merge.")
+              print("[!] Deep validation not found. Skipping merge.")
               exit(0)
-              
+
           with open(deep_file, 'r') as f:
               deep_data = json.load(f)
-          
+
           with open(main_file, 'r') as f:
               main_data = json.load(f)
-              
-          # Update main data with deep validation metrics
+
           for proxy in main_data.get('proxies', []):
               server = proxy.get('server')
               port = proxy.get('port')
-              # Find matching proxy in deep data
               for d_proxy in deep_data.get('proxies', []):
-                  if d_proxy.get('server') == server and d_proxy.get('port') == port:
+                  if (d_proxy.get('server') == server and
+                          d_proxy.get('port') == port):
                       proxy.update({
                           'deep_score': d_proxy.get('deep_score'),
-                          'tcp_latency_ms': d_proxy.get('tcp_latency_ms'),
+                          'tcp_latency_ms': d_proxy.get(
+                              'tcp_latency_ms'
+                          ),
                           'tls_cipher': d_proxy.get('tls_cipher'),
-                          'handshake_success': d_proxy.get('handshake_success')
+                          'handshake_success': d_proxy.get(
+                              'handshake_success'
+                          )
                       })
                       break
-                      
+
           with open(main_file, 'w') as f:
               json.dump(main_data, f, ensure_ascii=False, indent=2)
           print("[+] Data merged successfully.")
           PYEOF
-          
+
           echo "[+] Deep validation complete."
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "github-actions[bot]@users.noreply.github.com"
           git add data/
           if git diff --staged --quiet; then
             echo "[*] No changes to commit."
           else
-            git commit -m "🔄 Auto-update: TG proxies with deep validation"
+            git commit -m \
+              "🔄 Auto-update: TG proxies with deep validation"
             git push
           fi
