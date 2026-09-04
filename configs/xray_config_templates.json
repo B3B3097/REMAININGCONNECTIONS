@@ -1,0 +1,475 @@
+{
+  "description": "Xray configuration templates for proxy testing",
+  "version": "1.0.0",
+  "templates": {
+    "base": {
+      "log": {
+        "loglevel": "warning",
+        "access": "",
+        "error": ""
+      },
+      "dns": {
+        "servers": [
+          "1.1.1.1",
+          "8.8.8.8",
+          "208.67.222.222"
+        ],
+        "queryStrategy": "UseIPv4"
+      },
+      "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+          {
+            "type": "field",
+            "domain": [
+              "geosite:category-ads-all"
+            ],
+            "outboundTag": "block"
+          },
+          {
+            "type": "field",
+            "protocol": [
+              "bittorrent"
+            ],
+            "outboundTag": "block"
+          }
+        ]
+      },
+      "policy": {
+        "levels": {
+          "0": {
+            "handshake": 4,
+            "connIdle": 300,
+            "uplinkOnly": 2,
+            "downlinkOnly": 5
+          }
+        },
+        "system": {
+          "statsInboundUplink": false,
+          "statsInboundDownlink": false,
+          "statsOutboundUplink": false,
+          "statsOutboundDownlink": false
+        }
+      }
+    },
+    "inbound_socks": {
+      "listen": "127.0.0.1",
+      "port": 1080,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "ip": "127.0.0.1"
+      },
+      "tag": "socks-in"
+    },
+    "inbound_http": {
+      "listen": "127.0.0.1",
+      "port": 8080,
+      "protocol": "http",
+      "settings": {
+        "timeout": 300,
+        "allowTransparent": false
+      },
+      "tag": "http-in"
+    },
+    "outbound_freedom": {
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      },
+      "tag": "direct"
+    },
+    "outbound_block": {
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      },
+      "tag": "block"
+    },
+    "outbound_vless": {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "uuid-here",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false,
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_vless_ws": {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "uuid-here",
+                "encryption": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "example.com"
+          }
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_vless_reality": {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "uuid-here",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.microsoft.com",
+          "fingerprint": "chrome",
+          "show": false,
+          "publicKey": "public-key-here",
+          "shortId": "short-id-here",
+          "spiderX": "/"
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_vmess": {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "uuid-here",
+                "alterId": 0,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_vmess_ws": {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "uuid-here",
+                "alterId": 0,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com"
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "example.com"
+          }
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_shadowsocks": {
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "example.com",
+            "port": 8388,
+            "method": "chacha20-ietf-poly1305",
+            "password": "password-here"
+          }
+        ]
+      },
+      "tag": "proxy"
+    },
+    "outbound_trojan": {
+      "protocol": "trojan",
+      "settings": {
+        "servers": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "password": "password-here"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_hysteria2": {
+      "protocol": "hysteria2",
+      "settings": {
+        "servers": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "password": "password-here"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_tuic": {
+      "protocol": "tuic",
+      "settings": {
+        "servers": [
+          {
+            "address": "example.com",
+            "port": 443,
+            "uuid": "uuid-here",
+            "password": "password-here",
+            "congestion_control": "bbr"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "example.com",
+          "allowInsecure": false
+        }
+      },
+      "tag": "proxy"
+    },
+    "outbound_wireguard": {
+      "protocol": "wireguard",
+      "settings": {
+        "secretKey": "private-key-here",
+        "address": [
+          "10.0.0.2/32"
+        ],
+        "peers": [
+          {
+            "publicKey": "public-key-here",
+            "endpoint": "example.com:51820"
+          }
+        ],
+        "mtu": 1420
+      },
+      "tag": "proxy"
+    }
+  },
+  "test_configurations": {
+    "minimal_socks": {
+      "log": {
+        "loglevel": "warning"
+      },
+      "inbounds": [
+        {
+          "listen": "127.0.0.1",
+          "port": 10808,
+          "protocol": "socks",
+          "settings": {
+            "udp": false
+          }
+        }
+      ],
+      "outbounds": [
+        {
+          "protocol": "freedom",
+          "tag": "direct"
+        }
+      ]
+    },
+    "proxy_chain": {
+      "log": {
+        "loglevel": "warning"
+      },
+      "inbounds": [
+        {
+          "listen": "127.0.0.1",
+          "port": 10808,
+          "protocol": "socks",
+          "settings": {
+            "udp": false
+          }
+        }
+      ],
+      "outbounds": [
+        {
+          "protocol": "vless",
+          "settings": {
+            "vnext": [
+              {
+                "address": "proxy.example.com",
+                "port": 443,
+                "users": [
+                  {
+                    "id": "uuid-placeholder",
+                    "encryption": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          "streamSettings": {
+            "network": "tcp",
+            "security": "tls"
+          },
+          "tag": "proxy"
+        },
+        {
+          "protocol": "freedom",
+          "tag": "direct"
+        }
+      ],
+      "routing": {
+        "rules": [
+          {
+            "type": "field",
+            "outboundTag": "proxy",
+            "network": "tcp,udp"
+          }
+        ]
+      }
+    }
+  },
+  "security_presets": {
+    "paranoid": {
+      "streamSettings": {
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "disableSystemRoot": false,
+          "fingerprint": "chrome",
+          "alpn": ["h2", "http/1.1"],
+          "minVersion": "1.3"
+        }
+      }
+    },
+    "balanced": {
+      "streamSettings": {
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "fingerprint": "chrome"
+        }
+      }
+    },
+    "permissive": {
+      "streamSettings": {
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": true
+        }
+      }
+    }
+  },
+  "performance_presets": {
+    "low_latency": {
+      "mux": {
+        "enabled": false
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpKeepAliveInterval": 30
+        }
+      }
+    },
+    "high_throughput": {
+      "mux": {
+        "enabled": true,
+        "concurrency": 8
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true
+        }
+      }
+    },
+    "balanced": {
+      "mux": {
+        "enabled": true,
+        "concurrency": 4
+      }
+    }
+  }
+}
