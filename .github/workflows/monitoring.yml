@@ -1,0 +1,48 @@
+name: Proxy Health Monitoring
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Run every 30 minutes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --no-cache-dir requests pyyaml pytest
+
+      - name: Run Proxy Health Monitor
+        run: |
+          echo "Starting health check..."
+          python scripts/proxy_monitoring_alerts.py
+      
+      - name: Check metrics history
+        run: |
+          if [ -f data/health_metrics.json ]; then
+            echo "Latest metrics:"
+            tail -n 20 data/health_metrics.json
+          else
+            echo "No metrics generated yet."
+          fi
+
+      - name: Commit metrics updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/health_metrics.json
+          git add data/monitoring_alerts.log
+          git diff --staged --quiet || git commit -m "📊 Auto-update monitoring metrics"
+          git push
