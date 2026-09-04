@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  dashboard-generator:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./docs:/app/docs
+    command: python scripts/dashboard_generator.py
+    restart: unless-stopped
+
+  api-server:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    command: python scripts/api_server.py
+    environment:
+      - DATA_DIR=/app/data
+    restart: unless-stopped
+
+  crawler:
+    build: .
+    volumes:
+      - ./data:/app/data
+    command: python scripts/web_crawler.py --start-urls "https://github.com/search" --max-depth 2
+    restart: "no"
