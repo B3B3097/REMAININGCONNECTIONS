@@ -1,8 +1,17 @@
-            $MTPROTO_FLAG
-      
+      - name: Setup Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Deep Proxy Validation
         run: |
           set -euo pipefail
+          echo "[+] Verifying data files..."
+          if [ ! -f "data/tg_proxies_found.json" ]; then
+            echo "[!] Input file missing. Exiting."
+            exit 1
+          fi
+          
           echo "[+] Starting Advanced Deep Validation..."
           python scripts/batch_validator.py \
             --input data/tg_proxies_found.json \
@@ -12,10 +21,19 @@
           # Merge deep validation results into the main dataset
           python << 'PY'
           import json
-          with open('data/deep_checked.json', 'r') as f:
+          import os
+          
+          deep_file = 'data/deep_checked.json'
+          main_file = 'data/tg_proxies_found.json'
+          
+          if not os.path.exists(deep_file):
+              print("[!] Deep validation output not found. Skipping merge.")
+              exit(0)
+              
+          with open(deep_file, 'r') as f:
               deep_data = json.load(f)
           
-          with open('data/tg_proxies_found.json', 'r') as f:
+          with open(main_file, 'r') as f:
               main_data = json.load(f)
               
           # Update main data with deep validation metrics
@@ -33,11 +51,9 @@
                       })
                       break
                       
-          with open('data/tg_proxies_found.json', 'w') as f:
+          with open(main_file, 'w') as f:
               json.dump(main_data, f, ensure_ascii=False, indent=2)
           print("[+] Data merged successfully.")
           PY
           
           echo "[+] Deep validation complete."
-
-      - name: Commit and push
