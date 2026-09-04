@@ -1,15 +1,15 @@
 name: Export Code & Validate YAML (Commit to Repo)
 
 on:
-  workflow_dispatch: # Ручной запуск из вкладки Actions
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # Опционально: раз в день автоматически
+    - cron: '0 0 * * *'
 
 jobs:
   process:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Разрешение на запись в репозиторий
+      contents: write
     steps:
       - name: Checkout репозитория
         uses: actions/checkout@v4
@@ -24,10 +24,13 @@ jobs:
             -not -name "codebase.txt" \
             -not -name "yaml_errors.txt" \
             -not -name "*.png" -not -name "*.jpg" -not -name "*.ico" \
-            -not -name "*.woff2" -not -name "*.ttf" -not -name "*.zip" \
-            -not -name "*.pyc" -not -path "*/__pycache__/*" | while read -r file; do
+            -not -name "*.woff2" -not -name "*.ttf" \
+            -not -name "*.zip" \
+            -not -name "*.pyc" \
+            -not -path "*/__pycache__/*" | while read -r file; do
             echo "=== $file ===" >> codebase.txt
-            cat "$file" >> codebase.txt 2>/dev/null || echo "[BINARY/UNREADABLE]" >> codebase.txt
+            cat "$file" >> codebase.txt 2>/dev/null || \
+              echo "[BINARY/UNREADABLE]" >> codebase.txt
             echo "" >> codebase.txt
           done
 
@@ -41,41 +44,51 @@ jobs:
 
           yaml_files = []
           for root, dirs, files in os.walk('.'):
-              # Пропускаем только настоящую директорию .git, не .github
               rel = os.path.relpath(root, '.')
               parts = rel.split(os.sep)
-              if '.git' in parts or 'node_modules' in parts or '__pycache__' in parts:
+              if ('.git' in parts or 'node_modules' in parts or
+                      '__pycache__' in parts):
                   continue
               for f in files:
                   if f.endswith(('.yml', '.yaml')):
                       yaml_files.append(os.path.join(root, f))
 
-          with open('yaml_errors.txt', 'w', encoding='utf-8') as out_file:
+          with open('yaml_errors.txt', 'w', encoding='utf-8') as out:
               if not yaml_files:
-                  out_file.write("YAML файлы не найдены.\n")
+                  out.write("YAML файлы не найдены.\n")
               else:
                   for yf in sorted(yaml_files):
-                      out_file.write(f"\n--- Файл: {yf} ---\n")
-                      res = subprocess.run(['yamllint', '-f', 'parsable', yf], capture_output=True, text=True)
+                      out.write(f"\n--- Файл: {yf} ---\n")
+                      res = subprocess.run(
+                          ['yamllint', '-f', 'parsable', yf],
+                          capture_output=True,
+                          text=True
+                      )
 
-                      errors = [line for line in (res.stdout + res.stderr).split('\n') if line.strip() and 'error' in line.lower()]
+                      errors = [
+                          line for line in
+                          (res.stdout + res.stderr).split('\n')
+                          if line.strip() and 'error' in line.lower()
+                      ]
 
                       if errors:
-                          out_file.write("Последние 3 ошибки:\n")
+                          out.write("Последние 3 ошибки:\n")
                           for err in errors[-3:]:
-                              out_file.write(f"  {err}\n")
+                              out.write(f"  {err}\n")
                       else:
-                          out_file.write("  Ошибок не найдено ✅\n")
+                          out.write("  Ошибок не найдено ✅\n")
           PYEOF
 
       - name: Коммит и пуш изменений в репозиторий
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email \
+            "github-actions[bot]@users.noreply.github.com"
           git add codebase.txt yaml_errors.txt
           if git diff --staged --quiet; then
             echo "Нет изменений для коммита."
           else
-            git commit -m "chore: обновить codebase.txt и yaml_errors.txt [skip ci]"
+            git commit -m \
+              "chore: обновить codebase.txt и yaml_errors.txt [skip ci]"
             git push
           fi
