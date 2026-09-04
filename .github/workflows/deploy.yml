@@ -40,6 +40,19 @@ jobs:
           mkdir -p "${DOCS_DIR}" "${DATA_DIR}"
           echo "[+] Directories ready"
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --no-cache-dir requests pyyaml
+
+      - name: Generate Static Dashboard
+        run: |
+          python scripts/dashboard_generator.py --data-dir ${{ env.DATA_DIR }} --output-dir ${{ env.DOCS_DIR }}
+
       - name: Copy data into docs (so it is served by Pages)
         shell: bash
         run: |
@@ -120,139 +133,3 @@ jobs:
           echo " URL: ${{ steps.deployment.outputs.page_url }}"
           echo " Time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           echo "============================================"
-@@END@@Обновляю `speedtest-fix.js`: исправляю генерацию случайных данных, контроль HTTP-статуса, тайм-аут и двойное завершение XHR.@@TOOL@@ EDIT_FILE
-@@ARGS@@ {"path":"docs/speedtest-fix.js"}
-@@CONTENT@@// Speed Test Upload Fix
-// This implementation is intended to replace the inline measureUpload()
-// in docs/index.html. It is kept here as the canonical reference.
-
-async function measureUpload() {
-    els.speedPhase.textContent = "Measuring upload...";
-    setGauge(0, "upload");
-
-    const chunkSize = 256 * 1024;
-    const maxBytes = Math.max(0, Number(SPEED.maxUploadBytes) || 0);
-    const chunk = new Uint8Array(chunkSize);
-
-    // Web Crypto accepts at most 65536 bytes per call.
-    for (let offset = 0; offset < chunk.length; offset += 65536) {
-        crypto.getRandomValues(chunk.subarray(offset, Math.min(offset + 65536, chunk.length)));
-    }
-
-    const parts = [];
-    let remaining = maxBytes;
-    while (remaining > 0) {
-        const size = Math.min(chunk.length, remaining);
-        parts.push(size === chunk.length ? chunk : chunk.slice(0, size));
-        remaining -= size;
-    }
-    const bigPayload = new Blob(parts, { type: "application/octet-stream" });
-
-    return new Promise((resolve) => {
-        const xhr = new XMLHttpRequest();
-        const start = performance.now();
-        let lastReport = start;
-        let lastLoaded = 0;
-        let settled = false;
-
-        const finish = (value, logMessage, logValue = "") => {
-            if (settled) return;
-            settled = true;
-            if (logMessage) speedLog(logMessage, logValue);
-            resolve(value);
-        };
-
-        xhr.timeout = 15000;
-
-        xhr.upload.addEventListener("progress", (event) => {
-            if (state.speedAbort) {
-                xhr.abort();
-                return;
-            }
-
-            const now = performance.now();
-            if (event.lengthComputable && now - lastReport > 200) {
-                const elapsed = (now - lastReport) / 1000;
-                const uploaded = event.loaded - lastLoaded;
-                const instantMbps = formatMbps(uploaded / elapsed);
-
-                setGauge(instantMbps, "upload");
-                speedLog(
-                    `upload ${Math.round(event.loaded / 1024)} KB / ${Math.round(event.total / 1024)} KB`,
-                    `${instantMbps.toFixed(2)} Mbps`
-                );
-                lastReport = now;
-                lastLoaded = event.loaded;
-            }
-        });
-
-        xhr.addEventListener("load", () => {
-            if (state.speedAbort) {
-                finish(null, "upload", "aborted");
-                return;
-            }
-            if (xhr.status < 200 || xhr.status >= 300) {
-                finish(null, "upload", `HTTP ${xhr.status}`);
-                return;
-            }
-
-            const totalElapsed = (performance.now() - start) / 1000;
-            if (totalElapsed <= 0 || bigPayload.size <= 0) {
-                finish(null);
-                return;
-            }
-
-            const mbps = formatMbps(bigPayload.size / totalElapsed);
-            setGauge(mbps, "upload");
-            finish(mbps, `upload complete ${Math.round(bigPayload.size / 1024)} KB`, `${mbps.toFixed(2)} Mbps`);
-        });
-
-        xhr.addEventListener("error", () => finish(null, "upload", "network error"));
-        xhr.addEventListener("timeout", () => finish(null, "upload", "timeout"));
-        xhr.addEventListener("abort", () => finish(null, "upload", "aborted"));
-
-        try {
-            xhr.open("POST", SPEED.uploadUrl, true);
-            xhr.setRequestHeader("Content-Type", "application/octet-stream");
-            xhr.send(bigPayload);
-        } catch (error) {
-            finish(null, "upload", `error: ${error.message || "request failed"}`);
-        }
-    });
-}
-@@END@@Исправляю `configs.js`: убираю скрытое ограничение в 200 конфигураций, добавляю безопасные внешние ссылки и тайм-аут для browser-side ping.@@TOOL@@ EDIT_FILE
-@@ARGS@@ {"path":"docs/configs.js","search":"for (const cfg of configs.slice(0, 200)) {","replace":"for (const cfg of configs) {"}
-@@CONTENT@@@@ -188,7 +188,7 @@
--    for (const cfg of configs.slice(0, 200)) {
-+    for (const cfg of configs) {
-@@ -205,7 +205,7 @@
--          <a href=\"${esc(qrUrl)}\" target=\"_blank\" class=\"rc-btn rc-btn-secondary\">QR</a>
-+          <a href=\"${esc(qrUrl)}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"rc-btn rc-btn-secondary\">QR</a>
-@@ -211,9 +211,6 @@
--    if (configs.length > 200) {
--      html += `<div style=\"text-align:center;padding:12px;color:#6b7280;font-size:12px;\">... and ${configs.length - 200} more (showing first 200)</div>`;
--    }
-@@ -252,7 +249,7 @@
--        <a href=\"${esc(subUrl)}\" target=\"_blank\" class=\"rc-btn rc-btn-secondary\">Open raw file</a>
-+        <a href=\"${esc(subUrl)}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"rc-btn rc-btn-secondary\">Open raw file</a>
-@@ -264,6 +261,7 @@
--        await fetch(url + \"?_=\" + Date.now() + \"-\" + i, {
-+        const controller = new AbortController();
-+        const timeout = setTimeout(() => controller.abort(), 5000);
-+        await fetch(url + \"?_=\" + Date.now() + \"-\" + i, {
-           mode: \"no-cors\",
-           cache: \"no-store\",
-           method: \"HEAD\",
-+          signal: controller.signal,
-         });
-+        clearTimeout(timeout);
-@@ -270,6 +268,7 @@
--      } catch (e) {
-+      } catch (e) {
-         const t1 = performance.now();
-         samples.push(t1 - t0);
-       }
-@@ -333,7 +332,7 @@
--    if (configs.length > 200) {
-+    if (false) {
-*** End Patch
