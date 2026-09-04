@@ -1,1 +1,1 @@
-            // Latency (Simple Histogram simulation)\n            // Support both legacy latency_ms and new tcp_latency_ms from deep validation\n            const latencies = proxies.map(p => p.tcp_latency_ms || p.latency_ms || 0).filter(l => l > 0);\n
+                    <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-300\">${p.tcp_latency_ms || p.latency_ms || '-'} ms</td>
