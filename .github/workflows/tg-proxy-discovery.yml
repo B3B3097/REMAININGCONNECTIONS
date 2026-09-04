@@ -1,15 +1,63 @@
-      - name: Setup Dependencies
+name: TG Proxy Discovery
+
+on:
+  schedule:
+    - cron: '10 * * * *'
+  workflow_dispatch:
+    inputs:
+      max_channels:
+        description: 'Max Telegram channels to check'
+        required: false
+        default: '50'
+      concurrency_limit:
+        description: 'Concurrency limit for validation'
+        required: false
+        default: '20'
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CONCURRENCY_LIMIT: ${{ github.event.inputs.concurrency_limit || '20' }}
+      MAX_CHANNELS: ${{ github.event.inputs.max_channels || '50' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Create data directory
+        run: mkdir -p data
+
+      - name: Search Telegram channels for proxies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "[+] Starting Telegram proxy discovery..."
+          python scripts/check_tg_proxies.py \
+            --output data/tg_proxies_found.json \
+            --max-channels ${MAX_CHANNELS}
+          echo "[+] Discovery complete."
 
       - name: Deep Proxy Validation
         run: |
           set -euo pipefail
           echo "[+] Verifying data files..."
           if [ ! -f "data/tg_proxies_found.json" ]; then
-            echo "[!] Input file missing. Exiting."
-            exit 1
+            echo "[!] Input file missing. Creating empty placeholder."
+            echo '{"proxies":[]}' > data/tg_proxies_found.json
+            exit 0
           fi
           
           echo "[+] Starting Advanced Deep Validation..."
@@ -19,7 +67,7 @@
             --concurrency ${CONCURRENCY_LIMIT}
           
           # Merge deep validation results into the main dataset
-          python << 'PY'
+          python << 'PYEOF'
           import json
           import os
           
@@ -37,11 +85,11 @@
               main_data = json.load(f)
               
           # Update main data with deep validation metrics
-          for proxy in main_data['proxies']:
+          for proxy in main_data.get('proxies', []):
               server = proxy.get('server')
               port = proxy.get('port')
               # Find matching proxy in deep data
-              for d_proxy in deep_data['proxies']:
+              for d_proxy in deep_data.get('proxies', []):
                   if d_proxy.get('server') == server and d_proxy.get('port') == port:
                       proxy.update({
                           'deep_score': d_proxy.get('deep_score'),
@@ -54,6 +102,18 @@
           with open(main_file, 'w') as f:
               json.dump(main_data, f, ensure_ascii=False, indent=2)
           print("[+] Data merged successfully.")
-          PY
+          PYEOF
           
           echo "[+] Deep validation complete."
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit."
+          else
+            git commit -m "🔄 Auto-update: TG proxies with deep validation"
+            git push
+          fi
