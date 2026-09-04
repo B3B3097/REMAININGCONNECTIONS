@@ -1,4 +1,410 @@
+name: Utility Discovery Pipeline
+
+on:
+  schedule:
+    - cron: "20 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: не коммитить результаты"
+        required: false
+        type: boolean
+        default: false
+      max_repos:
+        description: "Сколько репозиториев искать за запрос"
+        required: false
+        type: string
+        default: "80"
+      max_probe:
+        description: "Сколько утилит детально проверять"
+        required: false
+        type: string
+        default: "300"
+      include_readme:
+        description: "Читать README для определения платформ"
+        required: false
+        type: boolean
+        default: true
+      skip_search:
+        description: "Пропустить поиск (только проверка существующих данных)"
+        required: false
+        type: boolean
+        default: false
+      min_stars:
+        description: "Минимум звёзд для включения в результаты"
+        required: false
+        type: string
+        default: "0"
+
+concurrency:
+  group: utils-discovery
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+
+env:
+  PYTHON_VERSION: "3.11"
+  OUTPUT_DIR: "data"
+  OUTPUT_FILE: "data/utils_found.json"
+  GH_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ github.token }}
+  USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 REMAININGCONNECTIONS/1.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    name: 1 - Prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Create directories
+        run: |
+          mkdir -p raw candidates probed "${OUTPUT_DIR}"
+          echo "[+] Directories created"
+
+      - name: Write run metadata
+        env:
+          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
+          MAX_PROBE: ${{ github.event.inputs.max_probe || '300' }}
+          MIN_STARS: ${{ github.event.inputs.min_stars || '0' }}
+        run: |
+          python <<'PYEOF'
+          import json, datetime, os
+          payload = {
+              "run_id": "${{ github.run_id }}",
+              "run_number": "${{ github.run_number }}",
+              "workflow": "utils-discovery",
+              "repository": "${{ github.repository }}",
+              "actor": "${{ github.actor }}",
+              "event_name": "${{ github.event_name }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+              "max_repos": os.getenv("MAX_REPOS", "80"),
+              "max_probe": os.getenv("MAX_PROBE", "300"),
+              "include_readme": "${{ github.event.inputs.include_readme }}" != "false",
+              "dry_run": "${{ github.event.inputs.dry_run }}" == "true",
+              "skip_search": "${{ github.event.inputs.skip_search }}" == "true",
+              "min_stars": int(os.getenv("MIN_STARS", "0")),
+          }
+          os.makedirs("raw", exist_ok=True)
+          with open("raw/utils_run_metadata.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=2)
+          print("[+] Metadata saved")
+          PYEOF
+
+      - name: Upload metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-prepare-metadata
+          path: raw/utils_run_metadata.json
+          if-no-files-found: error
+          retention-days: 7
+
+  search-github-keywords:
+    name: 2 - Search GitHub keywords
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: ${{ github.event.inputs.skip_search != true }}
+    timeout-minutes: 30
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: v2ray-client
+            query: "v2ray client OR v2ray gui"
+          - slug: xray-client
+            query: "xray client OR xray gui"
+          - slug: singbox-client
+            query: "sing-box client OR singbox gui"
+          - slug: clash-client
+            query: "clash client OR clash gui"
+          - slug: mihomo-client
+            query: "mihomo client OR clash meta gui"
+          - slug: shadowsocks-client
+            query: "shadowsocks client OR shadowsocks gui"
+          - slug: trojan-client
+            query: "trojan client OR trojan gui"
+          - slug: hysteria-client
+            query: "hysteria client OR hysteria2 client"
+          - slug: wireguard-client
+            query: "wireguard client OR wireguard gui"
+          - slug: android-proxy
+            query: "android proxy client OR android vpn client"
+          - slug: android-v2ray
+            query: "v2ray android OR xray android"
+          - slug: android-singbox
+            query: "sing-box android OR singbox android"
+          - slug: android-clash
+            query: "clash android OR mihomo android"
+          - slug: ios-proxy
+            query: "ios proxy client OR ios vpn client"
+          - slug: ios-v2ray
+            query: "ios v2ray OR ios xray"
+          - slug: windows-proxy
+            query: "windows proxy client OR windows vpn gui"
+          - slug: windows-clash
+            query: "clash windows OR clash verge"
+          - slug: windows-v2ray
+            query: "v2ray windows OR xray windows"
+          - slug: linux-proxy
+            query: "linux proxy client OR linux vpn gui"
+          - slug: linux-clash
+            query: "clash linux OR mihomo linux"
+          - slug: cross-platform-proxy
+            query: "cross platform proxy client OR universal proxy client"
+          - slug: proxy-manager
+            query: "proxy manager OR subscription manager"
+          - slug: subscription-client
+            query: "subscription client OR subscription converter gui"
+          - slug: open-source-vpn
+            query: "open source vpn client OR open source proxy client"
+          - slug: proxy-gui
+            query: "proxy gui OR vpn gui"
+          - slug: hiddify
+            query: "hiddify OR hiddify-next"
+          - slug: nekobox
+            query: "nekobox OR nekobox-android"
+          - slug: v2rayng
+            query: "v2rayng OR v2ray-ng"
+          - slug: clash-verge
+            query: "clash verge OR clash-verge-rev"
+          - slug: mihomo-party
+            query: "mihomo party OR mihomo-party"
+          - slug: proxy-panel
+            query: "proxy panel OR vpn panel OR proxy dashboard"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Search GitHub repositories
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
+        run: |
+          set -euo pipefail
+          mkdir -p raw
+          OUT="raw/utils_github_keyword_${SLUG}.jsonl"
+          API_OUT="raw/utils_github_keyword_api_${SLUG}.json"
+          : > "${OUT}"
+          FULL_QUERY="${QUERY} fork:true archived:false"
+          if ! gh api -X GET search/repositories -f q="${FULL_QUERY}" -f per_page="${MAX_REPOS}" -f sort=stars -f order=desc > "${API_OUT}" 2>/dev/null; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+          jq -c --arg slug "$SLUG" '.items[]? | {source:"github",kind:"keyword",query_slug:$slug,repo:.full_name,name:.name,url:.html_url,stars:.stargazers_count,forks:.forks_count,description:.description,language:.language,topics:.topics,updated_at:.updated_at,pushed_at:.pushed_at,archived:.archived,fork:.fork} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
+          echo "[+] Found: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 6 + 3))
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-search-keyword-${{ matrix.slug }}
+          path: raw/utils_github_keyword_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  search-github-topics:
+    name: 3 - Search GitHub topics
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: ${{ github.event.inputs.skip_search != true }}
+    timeout-minutes: 30
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: topic-v2ray
+            query: "topic:v2ray"
+          - slug: topic-xray
+            query: "topic:xray"
+          - slug: topic-singbox
+            query: "topic:sing-box"
+          - slug: topic-clash
+            query: "topic:clash"
+          - slug: topic-mihomo
+            query: "topic:mihomo"
+          - slug: topic-shadowsocks
+            query: "topic:shadowsocks"
+          - slug: topic-trojan
+            query: "topic:trojan"
+          - slug: topic-hysteria
+            query: "topic:hysteria"
+          - slug: topic-hysteria2
+            query: "topic:hysteria2"
+          - slug: topic-tuic
+            query: "topic:tuic"
+          - slug: topic-wireguard
+            query: "topic:wireguard"
+          - slug: topic-proxy
+            query: "topic:proxy"
+          - slug: topic-vpn
+            query: "topic:vpn"
+          - slug: topic-android
+            query: "topic:android"
+          - slug: topic-ios
+            query: "topic:ios"
+          - slug: topic-windows
+            query: "topic:windows"
+          - slug: topic-linux
+            query: "topic:linux"
+          - slug: topic-gui
+            query: "topic:gui"
+          - slug: topic-client
+            query: "topic:client"
+          - slug: topic-subscription
+            query: "topic:subscription"
+          - slug: topic-censorship
+            query: "topic:censorship-circumvention"
+          - slug: topic-clash-verge
+            query: "topic:clash-verge"
+          - slug: topic-mihomo-party
+            query: "topic:mihomo-party"
+          - slug: topic-hiddify
+            query: "topic:hiddify"
+          - slug: topic-nekobox
+            query: "topic:nekobox"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install utilities
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Search by topic
+        env:
+          QUERY: ${{ matrix.query }}
+          SLUG: ${{ matrix.slug }}
+          MAX_REPOS: ${{ github.event.inputs.max_repos || '80' }}
+        run: |
+          set -euo pipefail
+          mkdir -p raw
+          OUT="raw/utils_github_${SLUG}.jsonl"
+          API_OUT="raw/utils_github_api_${SLUG}.json"
+          : > "${OUT}"
+          FULL_QUERY="${QUERY} fork:true archived:false"
+          if ! gh api -X GET search/repositories -f q="${FULL_QUERY}" -f per_page="${MAX_REPOS}" -f sort=stars -f order=desc > "${API_OUT}" 2>/dev/null; then
+            echo '{"items":[]}' > "${API_OUT}"
+          fi
+          jq -c --arg slug "$SLUG" '.items[]? | {source:"github",kind:"topic",query_slug:$slug,repo:.full_name,name:.name,url:.html_url,stars:.stargazers_count,forks:.forks_count,description:.description,language:.language,topics:.topics,updated_at:.updated_at,pushed_at:.pushed_at,archived:.archived,fork:.fork} | select(.repo != null)' "${API_OUT}" >> "${OUT}" 2>/dev/null || true
+          echo "[+] Found: $(wc -l < "${OUT}")"
+          sleep $((RANDOM % 6 + 3))
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-search-${{ matrix.slug }}
+          path: raw/utils_github_${{ matrix.slug }}.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+  collect-candidates:
+    name: 4 - Collect candidates
+    runs-on: ubuntu-latest
+    needs: [search-github-keywords, search-github-topics]
+    if: ${{ always() }}
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create directories
+        run: mkdir -p raw candidates
+
+      - name: Download search artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: utils-search-*
+          path: candidates
+          merge-multiple: true
+
+      - name: Normalize candidates
+        run: |
+          python <<'PYEOF'
+          import os, json, glob
+          files = glob.glob("candidates/**/*.jsonl", recursive=True) + glob.glob("raw/**/*.jsonl", recursive=True)
+          out_path = "raw/utils_candidates.jsonl"
+          seen = {}
+          total = 0
+          for fp in sorted(files):
+              try:
+                  with open(fp, "r", encoding="utf-8") as f:
+                      for line in f:
+                          line = line.strip()
+                          if not line:
+                              continue
+                          total += 1
+                          try:
+                              obj = json.loads(line)
+                          except Exception:
+                              continue
+                          repo = obj.get("repo")
+                          if not repo:
+                              continue
+                          if repo not in seen:
+                              seen[repo] = obj
+                          else:
+                              old = seen[repo]
+                              old_slugs = old.get("query_slugs", [])
+                              if old.get("query_slug") and old["query_slug"] not in old_slugs:
+                                  old_slugs.append(old["query_slug"])
+                              new_slug = obj.get("query_slug")
+                              if new_slug and new_slug not in old_slugs:
+                                  old_slugs.append(new_slug)
+                              old["query_slugs"] = old_slugs
+                              if obj.get("stars", 0) > old.get("stars", 0):
+                                  old["stars"] = obj.get("stars", 0)
+                              if len(obj.get("description") or "") > len(old.get("description") or ""):
+                                  old["description"] = obj.get("description")
+                              old_topics = set(old.get("topics") or [])
+                              new_topics = set(obj.get("topics") or [])
+                              old["topics"] = list(old_topics | new_topics)
+              except Exception as e:
+                  print(f"[!] Error reading {fp}: {e}")
+          candidates = list(seen.values())
+          candidates.sort(key=lambda x: x.get("stars", 0), reverse=True)
+          os.makedirs("raw", exist_ok=True)
+          with open(out_path, "w", encoding="utf-8") as out:
+              for item in candidates:
+                  out.write(json.dumps(item, ensure_ascii=False) + "\n")
+          print(f"[*] Total: {total}")
+          print(f"[+] Unique: {len(candidates)}")
+          PYEOF
+
+      - name: Upload candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: utils-candidates
+          path: raw/utils_candidates.jsonl
+          if-no-files-found: warn
+          retention-days: 7
