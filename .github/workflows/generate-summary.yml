@@ -1,0 +1,72 @@
+ name: Generate Summary Report
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Subscription Discovery"
+      - "TG Proxy Discovery"
+      - "HTTP/SOCKS Proxy Discovery"
+      - "Utils Discovery"
+    types:
+      - completed
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate summary report
+        run: |
+          python scripts/generate_summary.py
+
+      - name: Generate README stats
+        run: |
+          if [ -f data/summary.json ]; then
+            total=$(jq '.total_proxies' data/summary.json)
+            subs=$(jq '.categories.subscriptions.count' data/summary.json)
+            tg=$(jq '.categories.telegram.count' data/summary.json)
+            http=$(jq '.categories.http.count' data/summary.json)
+            socks=$(jq '.categories.socks.count' data/summary.json)
+            utils=$(jq '.categories.utilities.count' data/summary.json)
+            
+            echo "## 📊 Current Stats" > STATS.md
+            echo "" >> STATS.md
+            echo "**Total Proxies Found:** ${total}" >> STATS.md
+            echo "" >> STATS.md
+            echo "| Category | Count |" >> STATS.md
+            echo "|----------|-------|" >> STATS.md
+            echo "| Subscriptions | ${subs} |" >> STATS.md
+            echo "| Telegram Proxies | ${tg} |" >> STATS.md
+            echo "| HTTP Proxies | ${http} |" >> STATS.md
+            echo "| SOCKS Proxies | ${socks} |" >> STATS.md
+            echo "| Utilities | ${utils} |" >> STATS.md
+            echo "" >> STATS.md
+            echo "*Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*" >> STATS.md
+            
+            echo "[+] Stats generated in STATS.md"
+          fi
+
+      - name: Commit and push summary
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/summary.json STATS.md
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore: update summary report [$(date -u +%Y-%m-%d)]"
+            git push
+            echo "[+] Summary updated"
+          fi
