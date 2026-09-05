@@ -34,7 +34,8 @@ def generate_dashboard():
     subs_data = load_json_safe('data/subscriptions_found.json', {"subscriptions": []})
 
     proxies = tg_data.get('proxies', [])
-    working = [p for p in proxies if p.get('working', False)]
+    # Support both old 'working' field and new 'status' field
+    working = [p for p in proxies if p.get('status') == 'working' or p.get('working', False)]
     total = len(proxies)
     working_count = len(working)
 
@@ -106,9 +107,9 @@ def generate_dashboard():
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Protocol</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Server</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Latency</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Score</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">TLS Cipher</th>
                         </tr>
                     </thead>
                     <tbody id="proxy-table-body" class="divide-y divide-slate-700">
@@ -132,6 +133,19 @@ def generate_dashboard():
                 "'": '&#039;'
             };
             return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        function getStatusBadge(proxy) {
+            const status = proxy.status || (proxy.working ? 'working' : 'failed');
+            const bypass = proxy.bypass_status;
+            
+            if (status === 'working') {
+                if (bypass === 'works_with_bypass') {
+                    return '<span class="px-2 py-1 rounded text-xs font-bold bg-yellow-800 text-yellow-200">БС</span>';
+                }
+                return '<span class="px-2 py-1 rounded text-xs font-bold bg-green-800 text-green-200">OK</span>';
+            }
+            return '<span class="px-2 py-1 rounded text-xs font-bold bg-red-800 text-red-200">FAIL</span>';
         }
 
         function getScoreColor(score) {
@@ -211,7 +225,9 @@ def generate_dashboard():
         // Render proxy table
         function renderTable(data) {
             const tbody = document.getElementById('proxy-table-body');
-            const workingProxies = (data.proxies || []).filter(p => p.working);
+            const workingProxies = (data.proxies || []).filter(p => 
+                p.status === 'working' || p.working
+            );
 
             if (workingProxies.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-400">No working proxies found.</td></tr>';
@@ -222,15 +238,14 @@ def generate_dashboard():
                 const latency = p.tcp_latency_ms ? p.tcp_latency_ms.toFixed(0) + ' ms'
                     : (p.latency_ms ? p.latency_ms.toFixed(0) + ' ms' : '-');
                 const score = p.deep_score != null ? p.deep_score.toFixed(1) : '-';
-                const cipher = p.tls_cipher || '-';
                 return '<tr>'
                     + '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-300">' + escapeHtml(p.protocol || '') + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">' + escapeHtml(p.server || '') + '</td>'
+                    + '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">' + escapeHtml(p.server || p.host || '') + '</td>'
+                    + '<td class="px-6 py-4 whitespace-nowrap text-sm">' + getStatusBadge(p) + '</td>'
                     + '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">' + escapeHtml(latency) + '</td>'
                     + '<td class="px-6 py-4 whitespace-nowrap text-sm">'
                     +   '<span class="px-2 py-1 rounded text-xs font-bold ' + getScoreColor(p.deep_score) + '">' + escapeHtml(score) + '</span>'
                     + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400 font-mono truncate" style="max-width:150px" title="' + escapeHtml(cipher) + '">' + escapeHtml(cipher) + '</td>'
                     + '</tr>';
             }).join('');
         }
