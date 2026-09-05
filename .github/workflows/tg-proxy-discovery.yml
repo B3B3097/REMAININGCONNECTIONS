@@ -1,4 +1,4 @@
-name: TG Proxy Discovery
+ name: TG Proxy Discovery
 
 on:
   schedule:
@@ -38,15 +38,31 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create data directory
+      - name: Create data directories
         run: mkdir -p data extracted checked
 
-      - name: Search and extract Telegram proxies
+      - name: Extract Telegram proxies from GitHub
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          echo "[+] Starting Telegram proxy discovery..."
+          echo "[+] Extracting Telegram proxies from GitHub..."
+          python scripts/extract_tg_proxies.py
+          
+          if [ -f extracted/tg_proxies_extracted.json ]; then
+            extracted_count=$(jq '.total_extracted // 0' extracted/tg_proxies_extracted.json)
+            echo "[+] Extracted ${extracted_count} proxies"
+          else
+            echo "[!] Warning: No proxies extracted"
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_extracted":0,"proxies":[]}' > extracted/tg_proxies_extracted.json
+          fi
+
+      - name: Validate extracted proxies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "[+] Validating extracted Telegram proxies..."
           python scripts/check_tg_proxies.py \
             --input extracted/tg_proxies_extracted.json \
             --output checked/tg_proxies_checked.json \
@@ -55,18 +71,17 @@ jobs:
             --timeout 8 \
             --concurrency ${CONCURRENCY_LIMIT} \
             --enable-mtproto
-          echo "[+] Discovery complete."
+          echo "[+] Validation complete."
 
-      - name: Commit and push
+      - name: Commit and push results
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email \
-            "github-actions[bot]@users.noreply.github.com"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/ extracted/ checked/
           if git diff --staged --quiet; then
-            echo "[*] No changes to commit."
+            echo "[*] No changes to commit"
           else
-            git commit -m \
-              "🔄 Auto-update: TG proxies with MTProto validation"
+            git commit -m "chore: update Telegram proxy data [$(date -u +%Y-%m-%d)]"
             git push
+            echo "[+] Changes committed and pushed"
           fi
