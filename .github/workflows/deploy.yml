@@ -35,13 +35,13 @@ jobs:
       - name: Generate Dashboard
         run: python scripts/dashboard_generator.py
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
           path: 'docs'
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - name: Deploy to GitHub Pages
         id: deployment
