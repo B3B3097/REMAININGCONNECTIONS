@@ -2,12 +2,10 @@
 """Advanced proxy monitoring and alerting system for REMAININGCONNECTIONS."""
 
 import json
-import sys
-import os
 import logging
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Configuration defaults
 DEFAULT_DATA_DIR = "data"
@@ -18,6 +16,7 @@ HEALTH_METRICS_PATH = "data/health_metrics.json"
 THRESHOLD_LOW_SUCCESS_RATE = 0.1  # 10%
 THRESHOLD_HIGH_LATENCY_MS = 2000  # 2 seconds
 THRESHOLD_CRITICAL_DROP = 0.5     # 50% drop from previous run
+
 
 class ProxyHealthMonitor:
     """Monitors proxy health metrics and generates alerts."""
@@ -41,148 +40,175 @@ class ProxyHealthMonitor:
         ch.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         self.logger.addHandler(ch)
 
-    def get_latest_proxy_file(self) -> Optional[Path]:
-        """Find the most recent tg_proxies_found.json."""
-        try:
-            files = list(self.data_dir.glob("tg_proxies_found.json"))
-            if not files:
-                return None
-            return max(files, key=lambda p: p.stat().st_mtime)
-        except Exception:
-            return None
-
-    def load_proxy_data(self, filepath: Path) -> Optional[List[Dict[str, Any]]]:
+    def load_proxy_data(self, filepath: Path) -> list[dict[str, Any]]:
         """Load proxies from JSON file."""
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
-            proxies = data.get("proxies", [])
-            return proxies
-        except (json.JSONDecodeError, FileNotFoundError, IOError) as e:
-            self.logger.error(f"Failed to load proxies from {filepath}: {e}")
-            return None
+                return data.get("proxies", [])
+        except (OSError, json.JSONDecodeError):
+            return []
 
-    def analyze_health(self, proxies: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Calculate comprehensive health metrics."""
+    def load_subscriptions(self, filepath: Path) -> list[dict[str, Any]]:
+        """Load subscriptions from JSON file."""
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get("subscriptions", [])
+        except (OSError, json.JSONDecodeError):
+            return []
+
+    def calculate_metrics(self, proxies: list[dict[str, Any]]) -> dict[str, Any]:
+        """Calculate health metrics from proxy data."""
+        if not proxies:
+            return {
+                "total": 0,
+                "working": 0,
+                "success_rate": 0.0,
+                "avg_latency_ms": 0.0,
+                "protocols": {},
+                "bypass_needed": 0,
+            }
+        
         total = len(proxies)
-        working = 0
-        failed = 0
+        working = [p for p in proxies if p.get("status") == "working"]
+        working_count = len(working)
+        
+        # Calculate average latency from working proxies
         latencies = []
-        protocols = {}
+        for p in working:
+            lat = p.get("tcp_latency_ms") or p.get("latency_ms")
+            if lat is not None:
+                latencies.append(lat)
         
-        for p in proxies:
-            status = p.get("status", "unknown")
-            if status == "working":
-                working += 1
-                lat = p.get("latency_ms")
-                if lat is not None:
-                    latencies.append(lat)
-                
-                proto = p.get("protocol", "unknown")
-                protocols[proto] = protocols.get(proto, 0) + 1
-            else:
-                failed += 1
-        
-        success_rate = (working / total) if total > 0 else 0.0
         avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
-        min_latency = min(latencies) if latencies else 0.0
-        max_latency = max(latencies) if latencies else 0.0
+        
+        # Count protocols
+        protocols = {}
+        for p in proxies:
+            proto = p.get("protocol", "unknown")
+            protocols[proto] = protocols.get(proto, 0) + 1
+        
+        # Count proxies that need bypass
+        bypass_needed = len([
+            p for p in proxies 
+            if p.get("bypass_status") == "works_with_bypass"
+        ])
         
         return {
-            "total_proxies": total,
-            "working_count": working,
-            "failed_count": failed,
-            "success_rate": round(success_rate, 4),
+            "total": total,
+            "working": working_count,
+            "success_rate": working_count / total if total > 0 else 0.0,
             "avg_latency_ms": round(avg_latency, 2),
-            "min_latency_ms": round(min_latency, 2),
-            "max_latency_ms": round(max_latency, 2),
-            "protocol_distribution": protocols,
-            "timestamp": datetime.utcnow().isoformat()
+            "protocols": protocols,
+            "bypass_needed": bypass_needed,
         }
 
-    def check_thresholds(self, metrics: Dict[str, Any]) -> List[str]:
-        """Check metrics against thresholds and return alerts."""
+    def check_alerts(self, metrics: dict[str, Any], previous_metrics: dict[str, Any] | None) -> list[str]:
+        """Check for alert conditions and return alert messages."""
         alerts = []
         
-        # Success Rate Alert
+        # Low success rate alert
         if metrics["success_rate"] < THRESHOLD_LOW_SUCCESS_RATE:
-            msg = f"CRITICAL: Success rate dropped to {metrics['success_rate']:.2%} (threshold: {THRESHOLD_LOW_SUCCESS_RATE:.2%})"
-            alerts.append(msg)
-            self.logger.critical(msg)
+            alerts.append(
+                f"⚠️ LOW SUCCESS RATE: {metrics['success_rate']:.1%} "
+                f"({metrics['working']}/{metrics['total']} working)"
+            )
         
-        # Latency Alert
+        # High latency alert
         if metrics["avg_latency_ms"] > THRESHOLD_HIGH_LATENCY_MS:
-            msg = f"WARNING: Average latency is high ({metrics['avg_latency_ms']:.0f}ms)"
-            alerts.append(msg)
-            self.logger.warning(msg)
+            alerts.append(
+                f"⚠️ HIGH LATENCY: {metrics['avg_latency_ms']:.0f}ms average"
+            )
+        
+        # Critical drop alert
+        if previous_metrics and previous_metrics.get("working", 0) > 0:
+            prev_working = previous_metrics["working"]
+            curr_working = metrics["working"]
+            drop_ratio = (prev_working - curr_working) / prev_working
             
-        # Volume Alert (Too few proxies found)
-        if metrics["total_proxies"] < 10:
-            msg = f"INFO: Very low number of proxies found ({metrics['total_proxies']})"
-            alerts.append(msg)
-            self.logger.info(msg)
-            
+            if drop_ratio > THRESHOLD_CRITICAL_DROP:
+                alerts.append(
+                    f"🚨 CRITICAL DROP: Working proxies dropped {drop_ratio:.1%} "
+                    f"({prev_working} → {curr_working})"
+                )
+        
         return alerts
 
-    def save_metrics(self, metrics: Dict[str, Any]):
-        """Save current metrics to history file."""
-        try:
-            history = []
-            if self.metrics_path.exists():
-                try:
-                    with open(self.metrics_path, 'r') as f:
-                        history = json.load(f)
-                except:
-                    history = []
-            
-            history.append(metrics)
-            # Keep last 100 entries
-            history = history[-100:]
-            
-            with open(self.metrics_path, 'w') as f:
-                json.dump(history, f, indent=2)
-                
-            self.logger.info(f"Metrics saved to {self.metrics_path}")
-        except Exception as e:
-            self.logger.error(f"Failed to save metrics: {e}")
+    def save_metrics(self, metrics: dict[str, Any]) -> None:
+        """Save current metrics to file."""
+        metrics["timestamp"] = datetime.utcnow().isoformat() + "Z"
+        
+        self.metrics_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.metrics_path, 'w', encoding='utf-8') as f:
+            json.dump(metrics, f, indent=2, ensure_ascii=False)
 
-    def run_check(self):
-        """Main execution loop."""
-        self.logger.info("="*50)
-        self.logger.info("Starting Proxy Health Check...")
+    def load_previous_metrics(self) -> dict[str, Any] | None:
+        """Load previous metrics if available."""
+        if not self.metrics_path.exists():
+            return None
+        try:
+            with open(self.metrics_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return None
+
+    def run_monitoring(self) -> None:
+        """Run the monitoring check."""
+        self.logger.info("=" * 60)
+        self.logger.info("Starting proxy health monitoring")
         
-        latest_file = self.get_latest_proxy_file()
-        if not latest_file:
-            self.logger.warning("No proxy data file found.")
+        # Load proxy data
+        proxy_file = self.data_dir / "tg_proxies_found.json"
+        if not proxy_file.exists():
+            self.logger.warning("No proxy data file found")
             return
-            
-        self.logger.info(f"Reading data from: {latest_file.name}")
         
-        proxies = self.load_proxy_data(latest_file)
+        proxies = self.load_proxy_data(proxy_file)
         if not proxies:
-            self.logger.warning("No proxies loaded.")
+            self.logger.warning("No proxies loaded from data file")
             return
-            
-        metrics = self.analyze_health(proxies)
-        alerts = self.check_thresholds(metrics)
-        self.save_metrics(metrics)
         
-        self.logger.info("-" * 30)
-        self.logger.info(f"Summary: {metrics['working_count']} Working / {metrics['failed_count']} Failed")
-        self.logger.info(f"Success Rate: {metrics['success_rate']:.2%}")
-        self.logger.info(f"Avg Latency: {metrics['avg_latency_ms']:.2f} ms")
+        # Calculate current metrics
+        metrics = self.calculate_metrics(proxies)
+        
+        # Load subscription data
+        subs_file = self.data_dir / "subscriptions_found.json"
+        if subs_file.exists():
+            subscriptions = self.load_subscriptions(subs_file)
+            working_subs = [s for s in subscriptions if s.get("status") == "working"]
+            metrics["subscriptions_total"] = len(subscriptions)
+            metrics["subscriptions_working"] = len(working_subs)
+        
+        # Log current status
+        self.logger.info(f"Total proxies: {metrics['total']}")
+        self.logger.info(f"Working proxies: {metrics['working']}")
+        self.logger.info(f"Success rate: {metrics['success_rate']:.1%}")
+        self.logger.info(f"Average latency: {metrics['avg_latency_ms']:.0f}ms")
+        self.logger.info(f"Bypass needed: {metrics['bypass_needed']}")
+        
+        # Check for alerts
+        previous_metrics = self.load_previous_metrics()
+        alerts = self.check_alerts(metrics, previous_metrics)
         
         if alerts:
-            self.logger.warning(f"Generated {len(alerts)} alerts!")
+            self.logger.warning("ALERTS TRIGGERED:")
+            for alert in alerts:
+                self.logger.warning(alert)
         else:
-            self.logger.info("All systems normal.")
-            
-        self.logger.info("="*50)
+            self.logger.info("✅ All metrics within normal range")
+        
+        # Save metrics
+        self.save_metrics(metrics)
+        self.logger.info("Metrics saved to " + str(self.metrics_path))
+        self.logger.info("=" * 60)
 
-def main():
+
+def main() -> None:
+    """Main entry point."""
     monitor = ProxyHealthMonitor()
-    monitor.run_check()
+    monitor.run_monitoring()
+
 
 if __name__ == "__main__":
     main()
