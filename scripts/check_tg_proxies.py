@@ -61,203 +61,155 @@ async def check_all(
             # First try standard Telegram proxy check
             result = await check_telegram_proxy(normalized, timeout)
             
+            # Determine status and bypass status
+            status = "failed"
+            bypass_status = None
+            
+            if result.get("tcp_ok") or result.get("socket_connected"):
+                # Basic connectivity works
+                if result.get("telegram_handshake_ok"):
+                    status = "working"
+                else:
+                    # TCP works but handshake fails - might need bypass
+                    status = "failed"
+                    bypass_status = "might_work_with_bypass"
+            
             # If Xray is enabled and proxy has a URI, also check through Xray
-            xray_result = None
             if enable_xray and normalized.get("url"):
-                uri = normalized["url"]
-                parsed = parse_xray_uri(uri)
+                parsed = parse_xray_uri(normalized["url"])
                 if parsed:
-                    xray_result = await check_xray_uri(uri, timeout)
-            
-            # If MTProto check is enabled and protocol is mtproto, validate secret
-            mtproto_result = None
+                    xray_result = await check_xray_uri(normalized["url"], timeout)
+                    result.update(xray_result)
+                    if xray_result.get("xray_ok"):
+                        # Xray works - this means it works with bypass
+                        if status == "failed":
+                            status = "working"
+                            bypass_status = "works_with_bypass"
+
+            # If MTProto is enabled, run full MTProto check
             if enable_mtproto and normalized.get("protocol") == "mtproto":
-                host = normalized.get("host")
-                port = normalized.get("port")
-                secret = normalized.get("secret")
-                
-                if host and port and secret:
-                    try:
-                        mtproto_result = await check_mtproto_proxy_full(
-                            host=host,
-                            port=int(port),
-                            secret=secret,
-                            timeout=timeout,
-                        )
-                    except Exception as exc:
-                        mtproto_result = type('obj', (object,), {
-                            'status': 'error',
-                            'verification': 'mtproto_check',
-                            'latency_ms': None,
-                            'error': str(exc)[:200],
-                        })()
-            
-            normalized.update(result.as_dict())
-            normalized["checked_at"] = utc_timestamp()
-            normalized["dns_ok"] = result.verification != "dns"
-            normalized["tcp_open"] = result.status in {"working", "unverified"}
-            normalized["ping"] = result.latency_ms
-            
-            # Add Xray verification if available
-            if xray_result:
-                normalized["xray_verification"] = {
-                    "status": xray_result.status,
-                    "verification": xray_result.verification,
-                    "latency_ms": xray_result.latency_ms,
-                    "error": xray_result.error,
-                }
-                # Upgrade status if Xray confirms working
-                if xray_result.status == "working" and result.status == "unverified":
-                    normalized["status"] = "working"
-                    normalized["verification"] = f"xray_{xray_result.verification}"
-            
-            # Add MTProto verification if available
-            if mtproto_result:
-                normalized["mtproto_verification"] = {
-                    "status": mtproto_result.status,
-                    "verification": mtproto_result.verification,
-                    "latency_ms": mtproto_result.latency_ms,
-                    "error": mtproto_result.error,
-                    "protocol_version": getattr(mtproto_result, 'protocol_version', None),
-                }
-                # Upgrade status if MTProto check confirms working
-                if mtproto_result.status == "working" and result.status == "unverified":
-                    normalized["status"] = "working"
-                    normalized["verification"] = "mtproto_validated"
-            
-        return normalized
+                mtproto_result = await check_mtproto_proxy_full(
+                    normalized.get("host"),
+                    normalized.get("port"),
+                    normalized.get("secret"),
+                    timeout,
+                )
+                result.update(mtproto_result)
+                if mtproto_result.get("mtproto_handshake_valid"):
+                    status = "working"
+                    # If it only works via MTProto but not basic check, mark as bypass
+                    if not result.get("telegram_handshake_ok"):
+                        bypass_status = "works_with_bypass"
 
-    return await asyncio.gather(*(check_one(proxy) for proxy in proxies))
+            result.update({
+                "status": status,
+                "bypass_status": bypass_status,
+                "working": status == "working",  # Keep for backward compatibility
+                "checked_at": utc_timestamp(),
+            })
+            return result
+
+    tasks = [check_one(p) for p in proxies]
+    return await asyncio.gather(*tasks)
 
 
-def build_payload(
-    results: list[dict[str, Any]],
-    timeout: float,
-    concurrency: int,
-    enable_xray: bool,
-    enable_mtproto: bool,
-) -> dict[str, Any]:
-    working = [item for item in results if item["status"] == "working"]
-    unverified = [item for item in results if item["status"] == "unverified"]
-    failed = [item for item in results if item["status"] not in {"working", "unverified"}]
-    latencies = [
-        item["latency_ms"]
-        for item in working
-        if item.get("latency_ms") is not None
-    ]
+def merge_results(
+    existing: list[dict[str, Any]],
+    checked: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    by_key = {}
+    for p in existing:
+        key = (p.get("host") or p.get("server"), p.get("port"))
+        by_key[key] = p
 
-    results.sort(
-        key=lambda item: (
-            item["status"] != "working",
-            item["status"] != "unverified",
-            item["latency_ms"]
-            if item.get("latency_ms") is not None
-            else float("inf"),
-            -len(item.get("sources", [])),
+    for checked_proxy in checked:
+        key = (
+            checked_proxy.get("host") or checked_proxy.get("server"),
+            checked_proxy.get("port"),
         )
-    )
-    for index, item in enumerate(results, start=1):
-        item["id"] = index
+        if key in by_key:
+            by_key[key].update(checked_proxy)
+        else:
+            by_key[key] = checked_proxy
 
-    return {
-        "generated_at": utc_timestamp(),
-        "generator": "scripts/check_tg_proxies.py",
-        "telegram_channel": "https://t.me/REMAININGCONNECTIONS",
-        "checked_count": len(results),
-        "working_count": len(working),
-        "unverified_count": len(unverified),
-        "offline_count": len(failed),
-        "online_count": len(working),
-        "dns_fail_count": sum(
-            1 for item in results if item.get("verification") == "dns"
+    return list(by_key.values())
+
+
+async def main_async(args: argparse.Namespace) -> None:
+    input_path = Path(args.input)
+    output_path = Path(args.output)
+    final_output_path = Path(args.final_output)
+
+    existing_proxies = load_proxies(input_path)
+    if not existing_proxies:
+        print("[!] No proxies to check.")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            json.dumps({"proxies": [], "generated_at": utc_timestamp()}, indent=2),
+            encoding="utf-8",
+        )
+        if final_output_path:
+            final_output_path.parent.mkdir(parents=True, exist_ok=True)
+            final_output_path.write_text(
+                json.dumps({"proxies": [], "generated_at": utc_timestamp()}, indent=2),
+                encoding="utf-8",
+            )
+        return
+
+    max_check = args.max_check
+    to_check = existing_proxies[:max_check] if max_check > 0 else existing_proxies
+
+    print(f"[*] Checking {len(to_check)} proxies (timeout={args.timeout}s, concurrency={args.concurrency})...")
+    checked = await check_all(
+        to_check,
+        args.timeout,
+        args.concurrency,
+        args.enable_xray,
+        args.enable_mtproto,
+    )
+
+    merged = merge_results(existing_proxies, checked)
+    working = [p for p in merged if p.get("status") == "working"]
+    
+    print(f"[+] Checked {len(checked)} proxies. {len(working)} working.")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(
+            {"proxies": merged, "generated_at": utc_timestamp()},
+            indent=2,
+            ensure_ascii=False,
         ),
-        "avg_latency_ms": (
-            round(sum(latencies) / len(latencies), 2) if latencies else None
-        ),
-        "check_timeout_seconds": timeout,
-        "concurrency_limit": concurrency,
-        "xray_enabled": enable_xray,
-        "mtproto_check_enabled": enable_mtproto,
-        "verification_policy": {
-            "socks5": (
-                "SOCKS5 authentication negotiation and CONNECT to a control HTTPS host"
+        encoding="utf-8",
+    )
+    print(f"[+] Wrote {output_path}")
+
+    if final_output_path:
+        final_output_path.parent.mkdir(parents=True, exist_ok=True)
+        final_output_path.write_text(
+            json.dumps(
+                {"proxies": merged, "generated_at": utc_timestamp()},
+                indent=2,
+                ensure_ascii=False,
             ),
-            "http": "HTTP CONNECT to a control HTTPS host",
-            "mtproto": (
-                "MTProto secret validation and handshake with protocol negotiation" 
-                if enable_mtproto else
-                "not marked working by TCP only; requires a Telegram MTProto "
-                "client handshake or Xray verification"
-            ),
-            "xray": "Real connection test through Xray core if URI is available" if enable_xray else "disabled",
-        },
-        "proxies": results,
-    }
+            encoding="utf-8",
+        )
+        print(f"[+] Wrote {final_output_path}")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description="Check Telegram proxies with strict validation")
     parser.add_argument("--input", default="extracted/tg_proxies_extracted.json")
     parser.add_argument("--output", default="checked/tg_proxies_checked.json")
-    parser.add_argument(
-        "--final-output",
-        default=os.getenv("OUTPUT_FILE", "data/tg_proxies_found.json"),
-    )
-    parser.add_argument(
-        "--max-check",
-        type=int,
-        default=int(os.getenv("MAX_CHECK_PROXIES", "2000")),
-    )
-    parser.add_argument(
-        "--timeout",
-        type=float,
-        default=float(os.getenv("CHECK_TIMEOUT", "8")),
-    )
-    parser.add_argument(
-        "--concurrency",
-        type=int,
-        default=int(os.getenv("CONCURRENCY_LIMIT", "30")),
-    )
-    parser.add_argument(
-        "--enable-xray",
-        action="store_true",
-        default=os.getenv("ENABLE_XRAY_CHECK", "").lower() in {"1", "true", "yes"},
-        help="Enable Xray core verification for proxy URIs",
-    )
-    parser.add_argument(
-        "--enable-mtproto",
-        action="store_true",
-        default=os.getenv("ENABLE_MTPROTO_CHECK", "true").lower() in {"1", "true", "yes"},
-        help="Enable full MTProto secret validation and handshake",
-    )
+    parser.add_argument("--final-output", default="data/tg_proxies_found.json")
+    parser.add_argument("--max-check", type=int, default=2000)
+    parser.add_argument("--timeout", type=float, default=8.0)
+    parser.add_argument("--concurrency", type=int, default=30)
+    parser.add_argument("--enable-xray", action="store_true", default=False)
+    parser.add_argument("--enable-mtproto", action="store_true", default=False)
     args = parser.parse_args()
 
-    proxies = load_proxies(Path(args.input))
-    proxies.sort(key=lambda item: len(item.get("sources", [])), reverse=True)
-    proxies = proxies[: max(0, args.max_check)]
-
-    timeout = max(1.0, args.timeout)
-    concurrency = max(1, args.concurrency)
-    results = asyncio.run(check_all(proxies, timeout, concurrency, args.enable_xray, args.enable_mtproto))
-    payload = build_payload(results, timeout, concurrency, args.enable_xray, args.enable_mtproto)
-
-    for output in (Path(args.output), Path(args.final_output)):
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-
-    print(f"Checked: {payload['checked_count']}")
-    print(f"Working: {payload['working_count']}")
-    print(f"Unverified MTProto: {payload['unverified_count']}")
-    print(f"Failed: {payload['offline_count']}")
-    if args.enable_xray:
-        xray_verified = sum(1 for p in results if p.get("xray_verification"))
-        print(f"Xray verified: {xray_verified}")
-    if args.enable_mtproto:
-        mtproto_verified = sum(1 for p in results if p.get("mtproto_verification", {}).get("status") == "working")
-        print(f"MTProto verified: {mtproto_verified}")
+    asyncio.run(main_async(args))
 
 
 if __name__ == "__main__":
