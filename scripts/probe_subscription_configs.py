@@ -6,13 +6,12 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import os
 import re
 from pathlib import Path
 from typing import Any
 
 from strict_proxy_checker import check_xray_uri, utc_timestamp
-from subscription_validator import validate_subscription_content
+from subscription_validator import validate_subscription
 
 
 def uri_lines(text: str) -> list[str]:
@@ -49,8 +48,15 @@ async def probe_one(
     content = item.get("content", "")
     
     # Validate subscription content structure
-    validation = validate_subscription_content(content, url)
+    validation = validate_subscription(content)
     item["validation"] = validation
+    
+    if not validation["valid"]:
+        item["status"] = "invalid"
+        item["total_configs"] = 0
+        item["working_configs"] = 0
+        item["checked_at"] = utc_timestamp()
+        return item
     
     # Extract URIs for Xray probing
     nodes = uri_lines(content)
@@ -61,194 +67,163 @@ async def probe_one(
     nodes_to_probe = nodes[:nodes_per_subscription]
     
     if not nodes_to_probe:
-        item["status"] = "unverified" if validation["valid"] else "invalid"
-        item["xray_probe"] = {
-            "status": "unverified" if validation["valid"] else "invalid",
-            "reason": (
-                "structured_config_requires_format_conversion"
-                if validation["valid"]
-                else "no_supported_config_to_probe"
-            ),
-            "checked_at": utc_timestamp(),
-        }
+        item["status"] = "empty"
+        item["working_configs"] = 0
+        item["checked_at"] = utc_timestamp()
         return item
     
-    # Probe all extracted configs through Xray
-    semaphore = asyncio.Semaphore(10)
+    # Probe each node through Xray
+    working_count = 0
+    probe_results = []
     
-    async def check_one_uri(uri: str) -> dict[str, Any]:
-        async with semaphore:
-            result = await check_xray_uri(uri, timeout)
-            return {
-                "uri": uri[:100] + "..." if len(uri) > 100 else uri,
-                "status": result.status,
-                "verification": result.verification,
-                "latency_ms": result.latency_ms,
-                "error": result.error,
-            }
+    for uri in nodes_to_probe:
+        result = await check_xray_uri(uri, timeout)
+        if result.get("xray_ok"):
+            working_count += 1
+        probe_results.append({
+            "uri": uri[:100],  # Truncate for storage
+            "xray_ok": result.get("xray_ok", False),
+            "error": result.get("error"),
+        })
     
-    probe_results = await asyncio.gather(
-        *(check_one_uri(uri) for uri in nodes_to_probe),
-        return_exceptions=True,
-    )
+    item["working_configs"] = working_count
+    item["probed_sample"] = len(nodes_to_probe)
+    item["probe_results"] = probe_results[:10]  # Keep only first 10 results
     
-    # Analyze results
-    working = [r for r in probe_results if isinstance(r, dict) and r["status"] == "working"]
-    failed = [r for r in probe_results if isinstance(r, dict) and r["status"] != "working"]
-    errors = [r for r in probe_results if isinstance(r, Exception)]
-    
-    item["xray_probe"] = {
-        "checked_at": utc_timestamp(),
-        "total_probed": len(nodes_to_probe),
-        "working_count": len(working),
-        "failed_count": len(failed),
-        "error_count": len(errors),
-        "working_configs": working[:5],  # Top 5 working
-        "failed_configs": failed[:3],  # Sample failures
-    }
-    
-    # Set overall status
-    if len(working) > 0:
+    # Set status based on working configs
+    if working_count > 0:
         item["status"] = "working"
-        item["working_ratio"] = round(len(working) / len(nodes_to_probe), 3)
-    elif len(failed) > 0:
-        item["status"] = "degraded"
     else:
-        item["status"] = "invalid"
+        item["status"] = "failed"
     
-    # Calculate average latency for working configs
-    latencies = [r["latency_ms"] for r in working if r.get("latency_ms")]
-    if latencies:
-        item["avg_latency_ms"] = round(sum(latencies) / len(latencies), 2)
-    
+    item["checked_at"] = utc_timestamp()
     return item
 
 
 async def probe_all(
     subscriptions: list[dict[str, Any]],
     timeout: float,
+    concurrency: int,
     nodes_per_subscription: int,
-    max_subscriptions: int,
 ) -> list[dict[str, Any]]:
-    """Probe multiple subscriptions with error handling."""
+    """Probe all subscriptions with concurrency control."""
+    semaphore = asyncio.Semaphore(max(1, concurrency))
     
-    async def guarded(item: dict[str, Any]) -> dict[str, Any]:
-        try:
-            return await probe_one(item, timeout, nodes_per_subscription)
-        except Exception as exc:
-            item["status"] = "error"
-            item["xray_probe"] = {
-                "status": "error",
-                "error": f"{type(exc).__name__}: {str(exc)[:200]}",
-                "checked_at": utc_timestamp(),
-            }
-            return item
+    async def probe_with_semaphore(sub: dict[str, Any]) -> dict[str, Any]:
+        async with semaphore:
+            return await probe_one(sub, timeout, nodes_per_subscription)
     
-    # Probe limited number of subscriptions
-    probe_targets = subscriptions[:max_subscriptions]
-    checked = await asyncio.gather(*(guarded(item) for item in probe_targets))
-    
-    # Return probed + unchecked subscriptions
-    return checked + subscriptions[max_subscriptions:]
+    tasks = [probe_with_semaphore(sub) for sub in subscriptions]
+    return await asyncio.gather(*tasks)
 
 
-def build_payload(
-    subscriptions: list[dict[str, Any]],
-    timeout: float,
-    nodes_per_subscription: int,
-) -> dict[str, Any]:
-    """Build output JSON payload with statistics."""
-    working = [s for s in subscriptions if s.get("status") == "working"]
-    degraded = [s for s in subscriptions if s.get("status") == "degraded"]
-    invalid = [s for s in subscriptions if s.get("status") == "invalid"]
+async def main_async(args: argparse.Namespace) -> None:
+    """Main async entry point."""
+    input_path = Path(args.input)
+    output_path = Path(args.output)
     
-    # Sort by working status and latency
-    subscriptions.sort(
-        key=lambda s: (
-            s.get("status") != "working",
-            s.get("status") != "degraded",
-            s.get("avg_latency_ms") if s.get("avg_latency_ms") else float("inf"),
-            -s.get("working_ratio", 0),
+    subscriptions = load_subscriptions(input_path)
+    if not subscriptions:
+        print("[!] No subscriptions to probe.")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            json.dumps(
+                {"subscriptions": [], "generated_at": utc_timestamp()},
+                indent=2,
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
         )
+        return
+    
+    max_probe = args.max_probe
+    to_probe = subscriptions[:max_probe] if max_probe > 0 else subscriptions
+    
+    print(f"[*] Probing {len(to_probe)} subscriptions...")
+    print(f"[*] Settings: timeout={args.timeout}s, concurrency={args.concurrency}")
+    print(f"[*] Testing up to {args.nodes_per_sub} nodes per subscription")
+    
+    probed = await probe_all(
+        to_probe,
+        args.timeout,
+        args.concurrency,
+        args.nodes_per_sub,
     )
     
-    return {
-        "generated_at": utc_timestamp(),
-        "generator": "scripts/probe_subscription_configs.py",
-        "telegram_channel": "https://t.me/REMAININGCONNECTIONS",
-        "total_subscriptions": len(subscriptions),
-        "working_count": len(working),
-        "degraded_count": len(degraded),
-        "invalid_count": len(invalid),
-        "probe_timeout_seconds": timeout,
-        "nodes_per_subscription": nodes_per_subscription,
-        "verification_method": "xray_core_real_connection",
-        "subscriptions": subscriptions,
-    }
+    # Filter out invalid subscriptions
+    valid_subscriptions = [
+        sub for sub in probed 
+        if sub.get("validation", {}).get("valid", False)
+    ]
+    
+    working = [sub for sub in valid_subscriptions if sub.get("status") == "working"]
+    
+    print(f"[+] Probed {len(probed)} subscriptions.")
+    print(f"[+] Valid: {len(valid_subscriptions)}, Working: {len(working)}")
+    
+    # Save only valid subscriptions
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(
+            {
+                "subscriptions": valid_subscriptions,
+                "generated_at": utc_timestamp(),
+                "summary": {
+                    "total": len(valid_subscriptions),
+                    "working": len(working),
+                    "failed": len([s for s in valid_subscriptions if s.get("status") == "failed"]),
+                },
+            },
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    print(f"[+] Wrote {output_path}")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+    """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="Probe subscription configs through Xray core"
+    )
     parser.add_argument(
         "--input",
         default="extracted/subscriptions_extracted.json",
-        help="Input JSON with subscription content",
+        help="Input JSON file with extracted subscriptions",
     )
     parser.add_argument(
         "--output",
-        default="checked/subscriptions_probed.json",
-        help="Output JSON with Xray probe results",
+        default="data/subscriptions_found.json",
+        help="Output JSON file with probed subscriptions",
+    )
+    parser.add_argument(
+        "--max-probe",
+        type=int,
+        default=100,
+        help="Maximum subscriptions to probe (0 = all)",
     )
     parser.add_argument(
         "--timeout",
         type=float,
-        default=float(os.getenv("XRAY_PROBE_TIMEOUT", "8")),
-        help="Timeout per config probe (seconds)",
+        default=10.0,
+        help="Timeout for each Xray connectivity check",
+    )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=5,
+        help="Concurrency limit for probing",
     )
     parser.add_argument(
         "--nodes-per-sub",
         type=int,
-        default=int(os.getenv("NODES_PER_SUBSCRIPTION", "50")),
-        help="Max configs to probe per subscription",
-    )
-    parser.add_argument(
-        "--max-subscriptions",
-        type=int,
-        default=int(os.getenv("MAX_PROBE_SUBSCRIPTIONS", "100")),
-        help="Max subscriptions to probe",
+        default=5,
+        help="Number of nodes to test per subscription",
     )
     args = parser.parse_args()
     
-    subscriptions = load_subscriptions(Path(args.input))
-    print(f"Loaded {len(subscriptions)} subscriptions")
-    
-    timeout = max(2.0, args.timeout)
-    nodes_per_sub = max(1, args.nodes_per_sub)
-    max_subs = max(1, args.max_subscriptions)
-    
-    print(f"Probing up to {max_subs} subscriptions...")
-    print(f"Testing up to {nodes_per_sub} configs per subscription")
-    print(f"Timeout: {timeout}s per config")
-    
-    subscriptions = asyncio.run(
-        probe_all(subscriptions, timeout, nodes_per_sub, max_subs)
-    )
-    
-    payload = build_payload(subscriptions, timeout, nodes_per_sub)
-    
-    output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    
-    print(f"\nResults:")
-    print(f"  Working: {payload['working_count']}")
-    print(f"  Degraded: {payload['degraded_count']}")
-    print(f"  Invalid: {payload['invalid_count']}")
-    print(f"  Total: {payload['total_subscriptions']}")
-    print(f"\nSaved to: {args.output}")
+    asyncio.run(main_async(args))
 
 
 if __name__ == "__main__":
