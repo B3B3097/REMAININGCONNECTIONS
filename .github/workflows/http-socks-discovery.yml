@@ -1,0 +1,117 @@
+ name: HTTP/SOCKS Proxy Discovery
+
+on:
+  schedule:
+    - cron: '25 */2 * * *'  # Every 2 hours at :25
+  workflow_dispatch:
+    inputs:
+      max_check:
+        description: 'Max proxies to check per type'
+        required: false
+        default: '1000'
+      concurrency_limit:
+        description: 'Concurrency limit for validation'
+        required: false
+        default: '50'
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CONCURRENCY_LIMIT: >-
+        ${{ github.event.inputs.concurrency_limit || '50' }}
+      MAX_CHECK_PROXIES: >-
+        ${{ github.event.inputs.max_check || '1000' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create data directories
+        run: mkdir -p data extracted checked
+
+      - name: Extract HTTP/SOCKS proxies from GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "[+] Extracting HTTP/SOCKS proxies from GitHub..."
+          python scripts/extract_http_socks_proxies.py
+          
+          if [ -f extracted/http_proxies_extracted.json ]; then
+            http_count=$(jq '.total_extracted // 0' extracted/http_proxies_extracted.json)
+            echo "[+] Extracted ${http_count} HTTP/HTTPS proxies"
+          fi
+          
+          if [ -f extracted/socks_proxies_extracted.json ]; then
+            socks_count=$(jq '.total_extracted // 0' extracted/socks_proxies_extracted.json)
+            echo "[+] Extracted ${socks_count} SOCKS proxies"
+          fi
+
+      - name: Validate HTTP proxies
+        run: |
+          set -euo pipefail
+          
+          if [ ! -f extracted/http_proxies_extracted.json ]; then
+            echo "[!] No HTTP proxies to validate"
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_working":0,"proxies":[]}' > data/http_proxies_found.json
+            exit 0
+          fi
+          
+          echo "[+] Validating HTTP/HTTPS proxies..."
+          python scripts/strict_proxy_checker.py \
+            --input extracted/http_proxies_extracted.json \
+            --output data/http_proxies_found.json \
+            --protocols http https \
+            --timeout 10 \
+            --max-check ${MAX_CHECK_PROXIES} \
+            --concurrency ${CONCURRENCY_LIMIT}
+          
+          working=$(jq '.total_working // 0' data/http_proxies_found.json)
+          echo "[+] HTTP validation complete: ${working} working"
+
+      - name: Validate SOCKS proxies
+        run: |
+          set -euo pipefail
+          
+          if [ ! -f extracted/socks_proxies_extracted.json ]; then
+            echo "[!] No SOCKS proxies to validate"
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_working":0,"proxies":[]}' > data/socks_proxies_found.json
+            exit 0
+          fi
+          
+          echo "[+] Validating SOCKS proxies..."
+          python scripts/strict_proxy_checker.py \
+            --input extracted/socks_proxies_extracted.json \
+            --output data/socks_proxies_found.json \
+            --protocols socks4 socks5 \
+            --timeout 10 \
+            --max-check ${MAX_CHECK_PROXIES} \
+            --concurrency ${CONCURRENCY_LIMIT}
+          
+          working=$(jq '.total_working // 0' data/socks_proxies_found.json)
+          echo "[+] SOCKS validation complete: ${working} working"
+
+      - name: Commit and push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ extracted/ checked/
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore: update HTTP/SOCKS proxy data [$(date -u +%Y-%m-%d)]"
+            git push
+            echo "[+] Changes committed and pushed"
+          fi
