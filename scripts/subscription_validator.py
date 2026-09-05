@@ -6,7 +6,6 @@ from __future__ import annotations
 import base64
 import json
 import re
-from collections import Counter
 from typing import Any
 from urllib.parse import urlparse
 
@@ -34,7 +33,7 @@ URI_RE = re.compile(
     r"(?im)^\s*((?:" + "|".join(re.escape(item) for item in URI_PROTOCOLS) + r")://[^\s#]+(?:#[^\r\n]*)?)\s*$"
 )
 BASE64_CANDIDATE_RE = re.compile(r"^[A-Za-z0-9+/_=\-\s]{32,}$")
-MAX_TEXT_BYTES = 10_000_000  # Увеличен до 10 МБ
+MAX_TEXT_BYTES = 10_000_000
 
 
 def _decode_base64_subscription(text: str) -> str | None:
@@ -73,88 +72,161 @@ def _valid_uri(value: str) -> tuple[str, str] | None:
     return protocol, value
 
 
-def _collect_uri_lines(text: str) -> tuple[list[str], Counter[str]]:
-    values: list[str] = []
-    protocols: Counter[str] = Counter()
-    for match in URI_RE.finditer(text):
-        candidate = match.group(1)
-        parsed = _valid_uri(candidate)
-        if parsed is None:
+def _collect_uri_lines(text: str) -> tuple[list[str], dict[str, int]]:
+    """Collect unique proxy URIs and count by protocol."""
+    seen_uris = set()
+    protocols = {}
+    
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
             continue
-        protocol, normalized = parsed
-        values.append(normalized)
-        protocols[protocol] += 1
-    return values, protocols
+        result = _valid_uri(line)
+        if result:
+            protocol, uri = result
+            if uri not in seen_uris:
+                seen_uris.add(uri)
+                protocols[protocol] = protocols.get(protocol, 0) + 1
+    
+    return list(seen_uris), protocols
 
 
-def _walk_structured_config(value: Any, protocols: Counter[str]) -> int:
-    if isinstance(value, list):
-        return sum(_walk_structured_config(item, protocols) for item in value)
-    if not isinstance(value, dict):
-        return 0
+def _try_clash_yaml(text: str) -> tuple[list[str], dict[str, int]] | None:
+    """Parse Clash YAML format and extract unique proxies."""
+    try:
+        data = yaml.safe_load(text)
+        if not isinstance(data, dict):
+            return None
+        
+        proxies = data.get("proxies", [])
+        if not isinstance(proxies, list):
+            return None
+        
+        seen_uris = set()
+        protocols = {}
+        
+        for item in proxies:
+            if not isinstance(item, dict):
+                continue
+            
+            proxy_type = item.get("type", "").lower()
+            server = item.get("server")
+            port = item.get("port")
+            
+            if not server or not port:
+                continue
+            
+            # Create unique key for deduplication
+            unique_key = f"{proxy_type}://{server}:{port}"
+            
+            if unique_key not in seen_uris:
+                seen_uris.add(unique_key)
+                protocols[proxy_type] = protocols.get(proxy_type, 0) + 1
+        
+        return list(seen_uris), protocols if seen_uris else None
+    except (yaml.YAMLError, AttributeError, KeyError):
+        return None
 
-    kind = str(value.get("type") or value.get("protocol") or "").lower()
-    host = value.get("server") or value.get("address") or value.get("hostname")
-    port = value.get("port")
-    if kind in URI_PROTOCOLS and host:
-        try:
-            if port is None or 1 <= int(port) <= 65535:
-                protocols[kind] += 1
-                return 1
-        except (TypeError, ValueError):
-            pass
 
-    total = 0
-    for key, child in value.items():
-        if key in {"proxies", "outbounds", "nodes", "servers"}:
-            total += _walk_structured_config(child, protocols)
-    return total
+def _try_xray_json(text: str) -> tuple[list[str], dict[str, int]] | None:
+    """Parse Xray JSON format and extract unique proxies."""
+    try:
+        data = json.loads(text)
+        if not isinstance(data, dict):
+            return None
+        
+        outbounds = data.get("outbounds", [])
+        if not isinstance(outbounds, list):
+            return None
+        
+        seen_uris = set()
+        protocols = {}
+        
+        for item in outbounds:
+            if not isinstance(item, dict):
+                continue
+            
+            protocol = item.get("protocol", "").lower()
+            settings = item.get("settings", {})
+            
+            if not isinstance(settings, dict):
+                continue
+            
+            servers = settings.get("servers", [])
+            if isinstance(servers, list):
+                for srv in servers:
+                    if not isinstance(srv, dict):
+                        continue
+                    
+                    address = srv.get("address")
+                    port = srv.get("port")
+                    
+                    if address and port:
+                        unique_key = f"{protocol}://{address}:{port}"
+                        if unique_key not in seen_uris:
+                            seen_uris.add(unique_key)
+                            protocols[protocol] = protocols.get(protocol, 0) + 1
+        
+        return list(seen_uris), protocols if seen_uris else None
+    except (json.JSONDecodeError, AttributeError, KeyError):
+        return None
 
 
-def validate_subscription_content(text: str, path: str = "") -> dict[str, Any]:
-    """Return deterministic parse diagnostics without treating arbitrary text as nodes."""
-    if not isinstance(text, str) or not text.strip():
+def validate_subscription(content: str) -> dict[str, Any]:
+    """
+    Validate subscription content and return analysis.
+    Returns unique node count and protocol distribution.
+    """
+    if not content or len(content) > MAX_TEXT_BYTES:
         return {
             "valid": False,
-            "format": "empty",
-            "configs_count": 0,
-            "unique_configs_count": 0,
+            "format": "invalid",
+            "total_nodes": 0,
             "protocols": {},
-            "errors": ["empty_content"],
+            "reason": "empty or too large",
         }
 
-    raw = text[:MAX_TEXT_BYTES]
-    decoded = _decode_base64_subscription(raw)
-    effective = decoded or raw
-    uri_values, protocols = _collect_uri_lines(effective)
-    unique_uris = set(uri_values)
-    structured_count = 0
-    detected_format = "base64_uri_list" if decoded else "uri_list"
-    errors: list[str] = []
+    # Try base64 decode first
+    decoded = _decode_base64_subscription(content)
+    if decoded:
+        content = decoded
 
-    lower_path = path.lower()
-    is_structured = lower_path.endswith((".yaml", ".yml", ".json")) or effective.lstrip().startswith(("{", "[", "proxies:"))
-    if is_structured:
-        try:
-            parsed: Any
-            if lower_path.endswith(".json") or effective.lstrip().startswith(("{", "[")):
-                parsed = json.loads(effective)
-                detected_format = "json"
-            else:
-                parsed = yaml.safe_load(effective)
-                detected_format = "yaml"
-            structured_count = _walk_structured_config(parsed, protocols)
-        except (json.JSONDecodeError, yaml.YAMLError, TypeError, ValueError) as exc:
-            errors.append(f"structured_parse_error:{type(exc).__name__}")
+    # Try URI list format
+    uris, protocols = _collect_uri_lines(content)
+    if uris:
+        return {
+            "valid": True,
+            "format": "uri_list",
+            "total_nodes": len(uris),
+            "protocols": protocols,
+        }
 
-    total = len(unique_uris) + structured_count
-    if total == 0 and not errors:
-        errors.append("no_supported_configs")
+    # Try Clash YAML
+    result = _try_clash_yaml(content)
+    if result:
+        uris, protocols = result
+        return {
+            "valid": True,
+            "format": "clash_yaml",
+            "total_nodes": len(uris),
+            "protocols": protocols,
+        }
+
+    # Try Xray JSON
+    result = _try_xray_json(content)
+    if result:
+        uris, protocols = result
+        return {
+            "valid": True,
+            "format": "xray_json",
+            "total_nodes": len(uris),
+            "protocols": protocols,
+        }
+
     return {
-        "valid": total > 0,
-        "format": detected_format,
-        "configs_count": total,
-        "unique_configs_count": len(unique_uris),
-        "protocols": dict(sorted(protocols.items())),
-        "errors": errors,
+        "valid": False,
+        "format": "unknown",
+        "total_nodes": 0,
+        "protocols": {},
+        "reason": "unrecognized format",
     }
