@@ -59,215 +59,230 @@ def generate_dashboard():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMAININGCONNECTIONS Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .proxy-table {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-working {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        .status-unknown {
+            background: rgba(251, 191, 36, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.5);
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        .timestamp {
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-blue-400">REMAININGCONNECTIONS</h1>
-            <p class="text-slate-400 mt-1">Proxy Discovery &amp; Validation Dashboard</p>
-            <p class="text-slate-500 text-sm mt-1" id="generated-at"></p>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 REMAININGCONNECTIONS</h1>
+            <p class="subtitle">Proxy & Subscription Discovery Dashboard</p>
         </header>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                <h3 class="text-slate-400 text-sm font-medium">Total Proxies</h3>
-                <p class="text-3xl font-bold text-white mt-2" id="stat-total">-</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Proxies</div>
+                <div class="stat-value" id="total-proxies">0</div>
             </div>
-            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                <h3 class="text-slate-400 text-sm font-medium">Working</h3>
-                <p class="text-3xl font-bold text-green-400 mt-2" id="stat-working">-</p>
+            <div class="stat-card">
+                <div class="stat-label">Working Proxies</div>
+                <div class="stat-value" id="working-proxies">0</div>
             </div>
-            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                <h3 class="text-slate-400 text-sm font-medium">Success Rate</h3>
-                <p class="text-3xl font-bold text-blue-400 mt-2" id="stat-rate">-</p>
+            <div class="stat-card">
+                <div class="stat-label">Subscriptions</div>
+                <div class="stat-value" id="subscriptions">0</div>
             </div>
-            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                <h3 class="text-slate-400 text-sm font-medium">Subscriptions</h3>
-                <p class="text-3xl font-bold text-purple-400 mt-2" id="stat-subs">-</p>
-            </div>
-        </div>
-
-        <!-- Chart -->
-        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 mb-8">
-            <h2 class="text-xl font-bold mb-4">Protocol Distribution</h2>
-            <canvas id="protocolChart" height="80"></canvas>
-        </div>
-
-        <!-- Proxy Table -->
-        <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-            <div class="p-4 border-b border-slate-700">
-                <h2 class="text-xl font-bold">Working Proxies</h2>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-700">
-                    <thead class="bg-slate-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Protocol</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Server</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Latency</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Score</th>
-                        </tr>
-                    </thead>
-                    <tbody id="proxy-table-body" class="divide-y divide-slate-700">
-                    </tbody>
-                </table>
+            <div class="stat-card">
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-value" id="success-rate">0%</div>
             </div>
         </div>
-
-        <footer class="mt-8 text-center text-slate-500 text-sm">
-            <p>REMAININGCONNECTIONS &copy; 2024 | Auto-generated dashboard</p>
+        
+        <div class="proxy-table">
+            <h2>Recent Proxies (Top 100)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Server</th>
+                        <th>Port</th>
+                        <th>Protocol</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="proxy-list">
+                    <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>Automated proxy and subscription discovery system</p>
+            <p class="timestamp" id="last-updated">Last updated: Loading...</p>
+            <p>⭐ <a href="https://github.com/B3B3097/REMAININGCONNECTIONS" style="color: #fff;">GitHub Repository</a></p>
         </footer>
     </div>
 
     <script>
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        function getStatusBadge(proxy) {
-            const status = proxy.status || (proxy.working ? 'working' : 'failed');
-            const bypass = proxy.bypass_status;
-            
-            if (status === 'working') {
-                if (bypass === 'works_with_bypass') {
-                    return '<span class="px-2 py-1 rounded text-xs font-bold bg-yellow-800 text-yellow-200">БС</span>';
-                }
-                return '<span class="px-2 py-1 rounded text-xs font-bold bg-green-800 text-green-200">OK</span>';
-            }
-            return '<span class="px-2 py-1 rounded text-xs font-bold bg-red-800 text-red-200">FAIL</span>';
-        }
-
-        function getScoreColor(score) {
-            if (score == null) return 'bg-slate-600 text-slate-300';
-            if (score >= 80) return 'bg-green-800 text-green-200';
-            if (score >= 50) return 'bg-yellow-800 text-yellow-200';
-            return 'bg-red-800 text-red-200';
-        }
-
-        // Embedded Configuration Data
-        const CONFIG_DATA_STR = '__CONFIG_JSON__';
-        let CONFIG_DATA;
-        try {
-            CONFIG_DATA = JSON.parse(CONFIG_DATA_STR);
-        } catch (e) {
-            console.error("Failed to parse config data", e);
-            CONFIG_DATA = {};
-        }
-
-        // Render stats
-        document.getElementById('stat-total').textContent = CONFIG_DATA.total_proxies || 0;
-        document.getElementById('stat-working').textContent = CONFIG_DATA.working_proxies || 0;
-        const rate = CONFIG_DATA.total_proxies > 0
-            ? ((CONFIG_DATA.working_proxies / CONFIG_DATA.total_proxies) * 100).toFixed(1) + '%'
-            : '0%';
-        document.getElementById('stat-rate').textContent = rate;
-        document.getElementById('stat-subs').textContent = CONFIG_DATA.subscriptions_count || 0;
-        document.getElementById('generated-at').textContent = 'Generated: ' + (CONFIG_DATA.generated_at || 'unknown');
-
-        // Render protocol chart
-        if (CONFIG_DATA.proxies && CONFIG_DATA.proxies.length > 0) {
-            const protocolCounts = {};
-            CONFIG_DATA.proxies.forEach(p => {
-                const proto = p.protocol || 'unknown';
-                protocolCounts[proto] = (protocolCounts[proto] || 0) + 1;
-            });
-            const ctx = document.getElementById('protocolChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(protocolCounts),
-                    datasets: [{
-                        label: 'Proxies by Protocol',
-                        data: Object.values(protocolCounts),
-                        backgroundColor: [
-                            'rgba(59,130,246,0.7)',
-                            'rgba(16,185,129,0.7)',
-                            'rgba(245,158,11,0.7)',
-                            'rgba(239,68,68,0.7)',
-                            'rgba(139,92,246,0.7)',
-                            'rgba(236,72,153,0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(59,130,246,1)',
-                            'rgba(16,185,129,1)',
-                            'rgba(245,158,11,1)',
-                            'rgba(239,68,68,1)',
-                            'rgba(139,92,246,1)',
-                            'rgba(236,72,153,1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { labels: { color: '#e2e8f0' } }
-                    },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
-                    }
-                }
+        const data = """ + safe_json + """;
+        
+        // Update stats
+        document.getElementById('total-proxies').textContent = data.total_proxies.toLocaleString();
+        document.getElementById('working-proxies').textContent = data.working_proxies.toLocaleString();
+        document.getElementById('subscriptions').textContent = data.subscriptions_count.toLocaleString();
+        
+        const successRate = data.total_proxies > 0 
+            ? ((data.working_proxies / data.total_proxies) * 100).toFixed(1) 
+            : 0;
+        document.getElementById('success-rate').textContent = successRate + '%';
+        
+        // Update timestamp
+        const timestamp = new Date(data.generated_at);
+        document.getElementById('last-updated').textContent = 
+            'Last updated: ' + timestamp.toUTCString();
+        
+        // Populate proxy table
+        const tbody = document.getElementById('proxy-list');
+        tbody.innerHTML = '';
+        
+        const proxies = data.proxies.slice(0, 100);
+        if (proxies.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No proxies available</td></tr>';
+        } else {
+            proxies.forEach(proxy => {
+                const row = document.createElement('tr');
+                
+                const status = proxy.status || (proxy.working ? 'working' : 'unknown');
+                const statusClass = status === 'working' ? 'status-working' : 'status-unknown';
+                
+                row.innerHTML = `
+                    <td>${proxy.server || 'N/A'}</td>
+                    <td>${proxy.port || 'N/A'}</td>
+                    <td>${proxy.protocol || 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                `;
+                
+                tbody.appendChild(row);
             });
         }
-
-        // Render proxy table
-        function renderTable(data) {
-            const tbody = document.getElementById('proxy-table-body');
-            const workingProxies = (data.proxies || []).filter(p => 
-                p.status === 'working' || p.working
-            );
-
-            if (workingProxies.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-400">No working proxies found.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = workingProxies.map(p => {
-                const latency = p.tcp_latency_ms ? p.tcp_latency_ms.toFixed(0) + ' ms'
-                    : (p.latency_ms ? p.latency_ms.toFixed(0) + ' ms' : '-');
-                const score = p.deep_score != null ? p.deep_score.toFixed(1) : '-';
-                return '<tr>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-300">' + escapeHtml(p.protocol || '') + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">' + escapeHtml(p.server || p.host || '') + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm">' + getStatusBadge(p) + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">' + escapeHtml(latency) + '</td>'
-                    + '<td class="px-6 py-4 whitespace-nowrap text-sm">'
-                    +   '<span class="px-2 py-1 rounded text-xs font-bold ' + getScoreColor(p.deep_score) + '">' + escapeHtml(score) + '</span>'
-                    + '</td>'
-                    + '</tr>';
-            }).join('');
-        }
-
-        renderTable(CONFIG_DATA);
     </script>
 </body>
 </html>"""
 
-    # Inject the JSON data safely
-    escaped_json = safe_json.replace("'", "\\'")
-    html_output = html_template.replace('__CONFIG_JSON__', escaped_json)
-
-    # Write output
+    # Write the dashboard
+    output_path = 'docs/index.html'
     os.makedirs('docs', exist_ok=True)
-    output_path = os.path.join('docs', 'index.html')
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(html_output)
+        f.write(html_template)
 
-    print(f"[+] Dashboard generated: {output_path}")
-    print(f"[+] Total proxies: {total}, Working: {working_count}")
+    print(f"[✓] Dashboard generated successfully: {output_path}")
+    print(f"    Total proxies: {total}")
+    print(f"    Working proxies: {working_count}")
+    print(f"    Subscriptions: {len(subs_data.get('subscriptions', []))}")
+    return True
 
 
-if __name__ == '__main__':
-    generate_dashboard()
+if __name__ == "__main__":
+    try:
+        success = generate_dashboard()
+        sys.exit(0 if success else 1)
+    except Exception as e:
+        print(f"[✗] Dashboard generation failed: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
