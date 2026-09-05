@@ -70,7 +70,7 @@ jobs:
           fi
           
           echo "[+] Validating HTTP/HTTPS proxies..."
-          python scripts/strict_proxy_checker.py \
+          python scripts/validate_http_socks_proxies.py \
             --input extracted/http_proxies_extracted.json \
             --output data/http_proxies_found.json \
             --protocols http https \
@@ -92,7 +92,7 @@ jobs:
           fi
           
           echo "[+] Validating SOCKS proxies..."
-          python scripts/strict_proxy_checker.py \
+          python scripts/validate_http_socks_proxies.py \
             --input extracted/socks_proxies_extracted.json \
             --output data/socks_proxies_found.json \
             --protocols socks4 socks5 \
