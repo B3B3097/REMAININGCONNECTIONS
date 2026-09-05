@@ -1,0 +1,172 @@
+ name: Health Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run health check
+        id: health
+        continue-on-error: true
+        run: |
+          python scripts/health_check.py
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Read health metrics
+        id: metrics
+        run: |
+          if [ -f data/health_metrics.json ]; then
+            status=$(jq -r '.overall_status' data/health_metrics.json)
+            total=$(jq -r '.total_proxies' data/health_metrics.json)
+            echo "status=${status}" >> $GITHUB_OUTPUT
+            echo "total=${total}" >> $GITHUB_OUTPUT
+          else
+            echo "status=error" >> $GITHUB_OUTPUT
+            echo "total=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update health badge
+        run: |
+          status="${{ steps.metrics.outputs.status }}"
+          color="red"
+          
+          case "$status" in
+            ok) color="green" ;;
+            warning) color="yellow" ;;
+            error) color="red" ;;
+          esac
+          
+          mkdir -p .github/badges
+          cat > .github/badges/health.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "health",
+            "message": "$status",
+            "color": "$color"
+          }
+          EOF
+          
+          cat > .github/badges/proxies.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "proxies",
+            "message": "${{ steps.metrics.outputs.total }}",
+            "color": "blue"
+          }
+          EOF
+
+      - name: Create issue on failure
+        if: steps.metrics.outputs.status == 'error'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const health = JSON.parse(fs.readFileSync('data/health_metrics.json', 'utf8'));
+            
+            let issueBody = '## 🚨 Health Check Failed\n\n';
+            issueBody += `**Timestamp:** ${health.timestamp}\n`;
+            issueBody += `**Overall Status:** ❌ ${health.overall_status}\n`;
+            issueBody += `**Total Proxies:** ${health.total_proxies}\n\n`;
+            issueBody += '### Detailed Status\n\n';
+            
+            for (const [category, checks] of Object.entries(health.checks)) {
+              issueBody += `#### ${category}\n`;
+              issueBody += `- Freshness: ${checks.freshness.status} - ${checks.freshness.message}\n`;
+              issueBody += `- Availability: ${checks.availability.count} proxies (min: ${checks.availability.minimum})\n\n`;
+            }
+            
+            issueBody += '\n---\n';
+            issueBody += '_This issue was created automatically by the health monitor workflow._';
+            
+            // Check if there's already an open health issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'health-check,automated'
+            });
+            
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Health Check Failed - ${new Date().toISOString().split('T')[0]}`,
+                body: issueBody,
+                labels: ['health-check', 'automated', 'bug']
+              });
+              console.log('Created new health check issue');
+            } else {
+              console.log('Health check issue already exists, skipping creation');
+            }
+
+      - name: Close health issues on success
+        if: steps.metrics.outputs.status == 'ok'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'health-check,automated'
+            });
+            
+            for (const issue of issues.data) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ Health check is now passing. Closing this issue automatically.'
+              });
+              
+              console.log(`Closed issue #${issue.number}`);
+            }
+
+      - name: Commit health data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/health_metrics.json .github/badges/
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore: update health metrics [$(date -u +%Y-%m-%d)]"
+            git push
+            echo "[+] Health data updated"
+          fi
+
+      - name: Send notification summary
+        run: |
+          status="${{ steps.metrics.outputs.status }}"
+          total="${{ steps.metrics.outputs.total }}"
+          
+          case "$status" in
+            ok) emoji="✅" ;;
+            warning) emoji="⚠️" ;;
+            error) emoji="❌" ;;
+            *) emoji="❓" ;;
+          esac
+          
+          echo "::notice::Health Status: $emoji $status | Total Proxies: $total"
