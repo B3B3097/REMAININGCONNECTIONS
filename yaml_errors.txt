@@ -1,36 +1,38 @@
 
 --- Файл: ./.github/workflows/deploy.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/deploy.yml:236:81: [error] line too long (105 > 80 characters) (line-length)
-  ./.github/workflows/deploy.yml:237:81: [error] line too long (133 > 80 characters) (line-length)
-  ./.github/workflows/deploy.yml:258:14: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/deploy.yml:48:38: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/export-and-commit.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/export-and-commit.yml:73:81: [error] line too long (87 > 80 characters) (line-length)
-  ./.github/workflows/export-and-commit.yml:78:81: [error] line too long (84 > 80 characters) (line-length)
-  ./.github/workflows/export-and-commit.yml:80:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/export-and-commit.yml:94:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/monitoring.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/monitoring.yml:46:81: [error] line too long (89 > 80 characters) (line-length)
+  ./.github/workflows/monitoring.yml:52:13: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/search-query-generator.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/search-query-generator.yml:297:81: [error] line too long (103 > 80 characters) (line-length)
-  ./.github/workflows/search-query-generator.yml:300:81: [error] line too long (87 > 80 characters) (line-length)
-  ./.github/workflows/search-query-generator.yml:307:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/search-query-generator.yml:306:81: [error] line too long (103 > 80 characters) (line-length)
+  ./.github/workflows/search-query-generator.yml:309:81: [error] line too long (87 > 80 characters) (line-length)
+  ./.github/workflows/search-query-generator.yml:316:13: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/subscription-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/subscription-discovery.yml:154:1: [error] trailing spaces (trailing-spaces)
-  ./.github/workflows/subscription-discovery.yml:160:81: [error] line too long (104 > 80 characters) (line-length)
-  ./.github/workflows/subscription-discovery.yml:161:19: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/subscription-discovery.yml:172:13: [error] syntax error: could not find expected ':' (syntax)
 
 --- Файл: ./.github/workflows/tg-proxy-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/tg-proxy-discovery.yml:267:1: [error] trailing spaces (trailing-spaces)
-  ./.github/workflows/tg-proxy-discovery.yml:273:81: [error] line too long (117 > 80 characters) (line-length)
-  ./.github/workflows/tg-proxy-discovery.yml:274:19: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/tg-proxy-discovery.yml:72:13: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/utils-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/utils-discovery.yml:686:81: [error] line too long (100 > 80 characters) (line-length)
-  ./.github/workflows/utils-discovery.yml:709:81: [error] line too long (164 > 80 characters) (line-length)
-  ./.github/workflows/utils-discovery.yml:713:68: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/utils-discovery.yml:443:81: [error] line too long (100 > 80 characters) (line-length)
+  ./.github/workflows/utils-discovery.yml:466:81: [error] line too long (164 > 80 characters) (line-length)
+  ./.github/workflows/utils-discovery.yml:470:68: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./docker-compose.yml ---
+Последние 3 ошибки:
+  ./docker-compose.yml:27:81: [error] line too long (97 > 80 characters) (line-length)
+  ./docker-compose.yml:28:18: [error] no new line character at the end of file (new-line-at-end-of-file)
