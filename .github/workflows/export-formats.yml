@@ -1,0 +1,144 @@
+ name: Export Proxy Formats
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'  # Every 6 hours at :15
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Generate Summary Report"
+    types:
+      - completed
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Export to multiple formats
+        run: |
+          python scripts/export_formats.py
+
+      - name: Create exports archive
+        run: |
+          if [ -d exports ]; then
+            cd exports
+            zip -r ../exports.zip .
+            cd ..
+            echo "[+] Created exports.zip"
+          fi
+
+      - name: Generate exports README
+        run: |
+          cat > exports/README.md << 'EOF'
+          # 📦 Exported Proxy Data
+          
+          This directory contains proxy data exported in various formats for easy integration.
+          
+          ## 📁 Available Formats
+          
+          ### Plain Text Files
+          
+          - `*_simple.txt` - Simple format: `host:port`
+          - `*_protocol.txt` - With protocol: `protocol://host:port`
+          - `*_detailed.txt` - Detailed: `host:port | protocol | latency`
+          
+          ### CSV Files
+          
+          - `*_proxies.csv` - Full data with all fields
+          - Headers: host, port, protocol, type, latency_ms, verified_at, source
+          
+          ### PAC Files
+          
+          - `*_proxy.pac` - Proxy Auto-Config files for browsers
+          - Can be used in browser proxy settings
+          
+          ### Special Formats
+          
+          - `telegram_links.txt` - Ready-to-use Telegram proxy links (`tg://proxy?...`)
+          
+          ### Combined Files
+          
+          - `all_proxies.txt` - All HTTP and SOCKS proxies in one file
+          - `all_proxies.csv` - All proxies in CSV format
+          - `all_proxies.pac` - PAC file with all proxies
+          
+          ## 🔄 Update Frequency
+          
+          These exports are regenerated every 6 hours automatically.
+          
+          ## 📖 Usage Examples
+          
+          ### Load proxies in your application
+          
+          **Python:**
+          ```python
+          with open('http_simple.txt') as f:
+              proxies = [line.strip() for line in f]
+          ```
+          
+          **Bash:**
+          ```bash
+          while IFS= read -r proxy; do
+              curl -x "$proxy" https://example.com
+          done < http_simple.txt
+          ```
+          
+          **JavaScript:**
+          ```javascript
+          const fs = require('fs');
+          const proxies = fs.readFileSync('http_simple.txt', 'utf-8')
+              .split('\n')
+              .filter(line => line.trim());
+          ```
+          
+          ### Use PAC file in browser
+          
+          1. Go to browser proxy settings
+          2. Select "Automatic proxy configuration"
+          3. Enter URL: `file:///path/to/http_proxy.pac`
+          
+          ### Import Telegram proxies
+          
+          Open any link from `telegram_links.txt` in Telegram app or browser.
+          
+          ## ⚠️ Important Notes
+          
+          - Proxies are validated before export
+          - Only working proxies are included
+          - Latency is measured at validation time
+          - Always test proxies in your environment
+          
+          ---
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+          
+          echo "[+] Created exports/README.md"
+
+      - name: Commit and push exports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add exports/ exports.zip
+          if git diff --staged --quiet; then
+            echo "[*] No changes to commit"
+          else
+            git commit -m "chore: update exported formats [$(date -u +%Y-%m-%d)]"
+            git push
+            echo "[+] Exports updated"
+          fi
