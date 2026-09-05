@@ -1,0 +1,25 @@
+name: Validate Data Files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate data files
+        run: python scripts/validate_data.py
+
+      - name: Check tg_proxies_found.json size
+        run: |
+          ls -lh data/tg_proxies_found.json || echo "File not found"
+          head -c 1000 data/tg_proxies_found.json || echo "Cannot read file"
+          file data/tg_proxies_found.json || echo "Cannot determine file type"
