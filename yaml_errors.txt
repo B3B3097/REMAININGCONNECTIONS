@@ -1,11 +1,35 @@
 
 --- Файл: ./.github/workflows/deploy.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/deploy.yml:48:38: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/deploy.yml:34:35: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/export-and-commit.yml ---
 Последние 3 ошибки:
   ./.github/workflows/export-and-commit.yml:94:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/export-formats.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/export-formats.yml:130:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/export-formats.yml:141:81: [error] line too long (81 > 80 characters) (line-length)
+  ./.github/workflows/export-formats.yml:144:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/generate-summary.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/generate-summary.yml:56:81: [error] line too long (82 > 80 characters) (line-length)
+  ./.github/workflows/generate-summary.yml:57:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/generate-summary.yml:72:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/health-monitor.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/health-monitor.yml:164:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/health-monitor.yml:171:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/health-monitor.yml:172:81: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/http-socks-discovery.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/http-socks-discovery.yml:102:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/http-socks-discovery.yml:114:81: [error] line too long (86 > 80 characters) (line-length)
+  ./.github/workflows/http-socks-discovery.yml:117:13: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/monitoring.yml ---
 Последние 3 ошибки:
@@ -24,13 +48,19 @@
 
 --- Файл: ./.github/workflows/tg-proxy-discovery.yml ---
 Последние 3 ошибки:
-  ./.github/workflows/tg-proxy-discovery.yml:72:13: [error] no new line character at the end of file (new-line-at-end-of-file)
+  ./.github/workflows/tg-proxy-discovery.yml:57:81: [error] line too long (141 > 80 characters) (line-length)
+  ./.github/workflows/tg-proxy-discovery.yml:84:81: [error] line too long (84 > 80 characters) (line-length)
+  ./.github/workflows/tg-proxy-discovery.yml:87:13: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./.github/workflows/utils-discovery.yml ---
 Последние 3 ошибки:
   ./.github/workflows/utils-discovery.yml:443:81: [error] line too long (100 > 80 characters) (line-length)
   ./.github/workflows/utils-discovery.yml:466:81: [error] line too long (164 > 80 characters) (line-length)
   ./.github/workflows/utils-discovery.yml:470:68: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+--- Файл: ./.github/workflows/validate-data.yml ---
+Последние 3 ошибки:
+  ./.github/workflows/validate-data.yml:25:79: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 --- Файл: ./docker-compose.yml ---
 Последние 3 ошибки:
