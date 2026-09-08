@@ -6,24 +6,24 @@
     <title>REMAININGCONNECTIONS Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .card {{
+        .card {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 0.5rem;
-        }}
-        .badge {{
+        }
+        .badge {
             display: inline-block;
             padding: 0.15rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
-        }}
-        .badge-success {{ background: #065f46; color: #6ee7b7; }}
-        .badge-warning {{ background: #78350f; color: #fde68a; }}
-        .badge-danger {{ background: #7f1d1d; color: #fca5a5; }}
-        .badge-neutral {{ background: #1e3a5f; color: #93c5fd; }}
-        .badge-platform {{ background: #4c1d95; color: #c4b5fd; }}
-        .btn {{
+        }
+        .badge-success { background: #065f46; color: #6ee7b7; }
+        .badge-warning { background: #78350f; color: #fde68a; }
+        .badge-danger { background: #7f1d1d; color: #fca5a5; }
+        .badge-neutral { background: #1e3a5f; color: #93c5fd; }
+        .badge-platform { background: #4c1d95; color: #c4b5fd; }
+        .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -35,22 +35,22 @@
             cursor: pointer;
             border: none;
             transition: opacity 0.2s;
-        }}
-        .btn:hover {{ opacity: 0.85; }}
-        .btn-primary {{ background: #2563eb; color: white; }}
-        .btn-secondary {{ background: #374151; color: #d1d5db; }}
-        .ping-dot {{
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-secondary { background: #374151; color: #d1d5db; }
+        .ping-dot {
             display: inline-block;
             width: 8px;
             height: 8px;
             border-radius: 50%;
             margin-right: 4px;
-        }}
-        .ping-good {{ background: #10b981; }}
-        .ping-ok {{ background: #f59e0b; }}
-        .ping-bad {{ background: #ef4444; }}
-        .text-muted {{ color: #94a3b8; }}
-        .text-faint {{ color: #64748b; }}
+        }
+        .ping-good { background: #10b981; }
+        .ping-ok { background: #f59e0b; }
+        .ping-bad { background: #ef4444; }
+        .text-muted { color: #94a3b8; }
+        .text-faint { color: #64748b; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
@@ -112,23 +112,23 @@
     </div>
 
     <script>
-        const CONFIG = {safe_json};
+        const CONFIG = {"generated_at": "2026-09-08T14:46:27.301072Z", "total_proxies": 0, "working_proxies": 0, "proxies": [], "utilities_summary": {"total_utilities": 300, "with_release": 250, "without_release": 50, "android": 125, "ios": 90, "windows": 131, "linux": 139, "active": 188, "stale": 26, "outdated": 36, "no_release": 21, "no_release_recent_repo": 29}, "subscriptions_count": 220};
 
         let currentFilter = 'all';
         let searchQuery = '';
 
-        function formatDate(isoString) {{
+        function formatDate(isoString) {
             const date = new Date(isoString);
-            return date.toLocaleString('en-US', {{ 
+            return date.toLocaleString('en-US', { 
                 year: 'numeric', 
                 month: 'short', 
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
-            }});
-        }}
+            });
+        }
 
-        function renderStats() {{
+        function renderStats() {
             document.getElementById('stat-total').textContent = CONFIG.total_proxies.toLocaleString();
             document.getElementById('stat-working').textContent = CONFIG.working_proxies.toLocaleString();
             
@@ -138,18 +138,18 @@
             document.getElementById('stat-rate').textContent = rate + '%';
             
             document.getElementById('stat-updated').textContent = formatDate(CONFIG.generated_at);
-        }}
+        }
 
-        function matchesFilter(proxy) {{
+        function matchesFilter(proxy) {
             if (currentFilter === 'all') return true;
-            if (currentFilter === 'working') {{
+            if (currentFilter === 'working') {
                 return proxy.status === 'working' || proxy.working === true;
-            }}
+            }
             const protocol = (proxy.protocol || proxy.type || '').toLowerCase();
             return protocol === currentFilter;
-        }}
+        }
 
-        function matchesSearch(proxy) {{
+        function matchesSearch(proxy) {
             if (!searchQuery) return true;
             const query = searchQuery.toLowerCase();
             const searchable = [
@@ -160,81 +160,81 @@
                 proxy.source || ''
             ].join(' ').toLowerCase();
             return searchable.includes(query);
-        }}
+        }
 
-        function getStatusBadge(proxy) {{
+        function getStatusBadge(proxy) {
             const status = proxy.status || (proxy.working ? 'working' : 'unknown');
-            const badges = {{
+            const badges = {
                 'working': '<span class="badge badge-success">✓ Working</span>',
                 'failed': '<span class="badge badge-danger">✗ Failed</span>',
                 'timeout': '<span class="badge badge-warning">⏱ Timeout</span>',
                 'unknown': '<span class="badge badge-neutral">? Unknown</span>'
-            }};
+            };
             return badges[status] || badges.unknown;
-        }}
+        }
 
-        function getPingIndicator(ping) {{
+        function getPingIndicator(ping) {
             if (!ping) return '';
             let dotClass = 'ping-bad';
             if (ping < 200) dotClass = 'ping-good';
             else if (ping < 500) dotClass = 'ping-ok';
-            return `<span class="ping-dot ${{dotClass}}"></span>${{ping}}ms`;
-        }}
+            return `<span class="ping-dot ${dotClass}"></span>${ping}ms`;
+        }
 
-        function renderProxies() {{
+        function renderProxies() {
             const container = document.getElementById('proxy-container');
             const noResults = document.getElementById('no-results');
             
             const filtered = CONFIG.proxies.filter(p => matchesFilter(p) && matchesSearch(p));
             
-            if (filtered.length === 0) {{
+            if (filtered.length === 0) {
                 container.innerHTML = '';
                 noResults.classList.remove('hidden');
                 return;
-            }}
+            }
             
             noResults.classList.add('hidden');
-            container.innerHTML = filtered.map(proxy => {{
+            container.innerHTML = filtered.map(proxy => {
                 const protocol = (proxy.protocol || proxy.type || 'unknown').toUpperCase();
                 const lastChecked = proxy.last_checked 
-                    ? `<span class="text-xs text-faint">Checked: ${{formatDate(proxy.last_checked)}}</span>`
+                    ? `<span class="text-xs text-faint">Checked: ${formatDate(proxy.last_checked)}</span>`
                     : '';
                 const ping = proxy.ping ? getPingIndicator(proxy.ping) : '';
-                const country = proxy.country ? `<span class="badge badge-platform">${{proxy.country}}</span>` : '';
-                const source = proxy.source ? `<span class="text-xs text-faint">via ${{proxy.source}}</span>` : '';
+                const country = proxy.country ? `<span class="badge badge-platform">${proxy.country}</span>` : '';
+                const source = proxy.source ? `<span class="text-xs text-faint">via ${proxy.source}</span>` : '';
                 
                 return `
                     <div class="border border-slate-700 rounded p-4 hover:border-slate-600 transition-colors">
                         <div class="flex flex-wrap items-center gap-2 mb-2">
-                            <span class="font-mono text-lg font-semibold">${{proxy.host}}:${{proxy.port}}</span>
-                            <span class="badge badge-platform">${{protocol}}</span>
-                            ${{country}}
-                            ${{getStatusBadge(proxy)}}
+                            <span class="font-mono text-lg font-semibold">${proxy.host}:${proxy.port}</span>
+                            <span class="badge badge-platform">${protocol}</span>
+                            ${country}
+                            ${getStatusBadge(proxy)}
                         </div>
                         <div class="flex flex-wrap gap-4 text-sm text-slate-400">
-                            ${{ping ? `<span>${{ping}}</span>` : ''}}
-                            ${{lastChecked}}
-                            ${{source}}
+                            ${ping ? `<span>${ping}</span>` : ''}
+                            ${lastChecked}
+                            ${source}
                         </div>
                     </div>
                 `;
-            }}).join('');
-        }}
+            }).join('');
+        }
 
         // Event listeners
-        document.querySelectorAll('.filter-btn').forEach(btn => {{
-            btn.addEventListener('click', () => {{
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
                 renderProxies();
-            }});
-        }});
+            });
+        });
 
-        document.getElementById('search-input').addEventListener('input', (e) => {{
+        document.getElementById('search-input').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             renderProxies();
-        }});
+        });
 
         // Initial render
         renderStats();
