@@ -282,7 +282,7 @@ class DeepValidator:
             except asyncio.TimeoutError:
                 result.handshake_error = "TCP Timeout"
             except (OSError, ConnectionRefusedError) as e:
-                result.handshake_error = f"Connection Failed: {str(e)}"
+                result.handshake_error = f"Connection Error: {str(e)}"
             except Exception as e:
                 result.handshake_error = f"Unexpected Error: {str(e)}"
 
@@ -301,6 +301,8 @@ class DeepValidator:
             if lat < 100: score += 15.0
             elif lat < 300: score += 10.0
             elif lat < 600: score += 5.0
+            # Extreme latency penalty
+            if lat >= 1000: score -= 10.0
             
         if result.tls_success:
             score += 20.0

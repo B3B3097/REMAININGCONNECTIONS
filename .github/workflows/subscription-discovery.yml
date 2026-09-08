@@ -163,7 +163,7 @@ jobs:
           XRAY_ARCHIVE="Xray-linux-64.zip"
           curl --fail --location --retry 3 \
             "https://github.com/XTLS/Xray-core/releases/download/\
-${XRAY_VERSION}/${XRAY_ARCHIVE}" \
+          ${XRAY_VERSION}/${XRAY_ARCHIVE}" \
             --output /tmp/xray.zip
           unzip -q /tmp/xray.zip -d /tmp/xray
           sudo install -m 0755 /tmp/xray/xray /usr/local/bin/xray

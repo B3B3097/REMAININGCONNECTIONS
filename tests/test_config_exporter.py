@@ -267,7 +267,9 @@ class TestSurgeExport(TestConfigExporter):
         # Verify basic structure
         for line in proxy_lines:
             assert "=" in line
-            parts = line.split("=")
+            # Split only the "name = rest" separator; the rest may contain
+            # valid Surge key=value parameters
+            parts = line.split(" = ", 1)
             assert len(parts) == 2
 
 
@@ -278,7 +280,9 @@ class TestEdgeCases(TestConfigExporter):
         exporter = ConfigExporter([])
         
         assert exporter.to_uri_list() == []
-        assert len(exporter.to_base64_subscription()) > 0  # Empty but valid base64
+        # base64 of empty content is a valid (empty) subscription
+        import base64
+        assert base64.b64decode(exporter.to_base64_subscription()) == b""
         
         clash = yaml.safe_load(exporter.to_clash_yaml())
         assert len(clash["proxies"]) == 0

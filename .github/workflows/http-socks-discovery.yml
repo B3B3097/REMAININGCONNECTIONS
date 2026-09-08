@@ -1,4 +1,4 @@
- name: HTTP/SOCKS Proxy Discovery
+name: HTTP/SOCKS Proxy Discovery
 
 on:
   schedule:
@@ -48,27 +48,31 @@ jobs:
           set -euo pipefail
           echo "[+] Extracting HTTP/SOCKS proxies from GitHub..."
           python scripts/extract_http_socks_proxies.py
-          
+
           if [ -f extracted/http_proxies_extracted.json ]; then
-            http_count=$(jq '.total_extracted // 0' extracted/http_proxies_extracted.json)
+            http_count=$(jq '.total_extracted // 0' \
+              extracted/http_proxies_extracted.json)
             echo "[+] Extracted ${http_count} HTTP/HTTPS proxies"
           fi
-          
+
           if [ -f extracted/socks_proxies_extracted.json ]; then
-            socks_count=$(jq '.total_extracted // 0' extracted/socks_proxies_extracted.json)
+            socks_count=$(jq '.total_extracted // 0' \
+              extracted/socks_proxies_extracted.json)
             echo "[+] Extracted ${socks_count} SOCKS proxies"
           fi
 
       - name: Validate HTTP proxies
         run: |
           set -euo pipefail
-          
+
           if [ ! -f extracted/http_proxies_extracted.json ]; then
             echo "[!] No HTTP proxies to validate"
-            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_working":0,"proxies":[]}' > data/http_proxies_found.json
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)\
+              '","total_working":0,"proxies":[]}' \
+              > data/http_proxies_found.json
             exit 0
           fi
-          
+
           echo "[+] Validating HTTP/HTTPS proxies..."
           python scripts/validate_http_socks_proxies.py \
             --input extracted/http_proxies_extracted.json \
@@ -77,20 +81,22 @@ jobs:
             --timeout 10 \
             --max-check ${MAX_CHECK_PROXIES} \
             --concurrency ${CONCURRENCY_LIMIT}
-          
+
           working=$(jq '.total_working // 0' data/http_proxies_found.json)
           echo "[+] HTTP validation complete: ${working} working"
 
       - name: Validate SOCKS proxies
         run: |
           set -euo pipefail
-          
+
           if [ ! -f extracted/socks_proxies_extracted.json ]; then
             echo "[!] No SOCKS proxies to validate"
-            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_working":0,"proxies":[]}' > data/socks_proxies_found.json
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)\
+              '","total_working":0,"proxies":[]}' \
+              > data/socks_proxies_found.json
             exit 0
           fi
-          
+
           echo "[+] Validating SOCKS proxies..."
           python scripts/validate_http_socks_proxies.py \
             --input extracted/socks_proxies_extracted.json \
@@ -99,7 +105,7 @@ jobs:
             --timeout 10 \
             --max-check ${MAX_CHECK_PROXIES} \
             --concurrency ${CONCURRENCY_LIMIT}
-          
+
           working=$(jq '.total_working // 0' data/socks_proxies_found.json)
           echo "[+] SOCKS validation complete: ${working} working"
 
@@ -111,7 +117,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "[*] No changes to commit"
           else
-            git commit -m "chore: update HTTP/SOCKS proxy data [$(date -u +%Y-%m-%d)]"
+            git commit -m \
+              "chore: update HTTP/SOCKS proxy data [$(date -u +%Y-%m-%d)]"
             git push
             echo "[+] Changes committed and pushed"
           fi

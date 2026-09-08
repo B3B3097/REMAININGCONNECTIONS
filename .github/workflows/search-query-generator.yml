@@ -88,19 +88,66 @@ jobs:
           out_dir = os.getenv("OUTPUT_DIR", ".github/generated")
           os.makedirs(out_dir, exist_ok=True)
 
-          SUB_PROTOCOLS = ["vless","vmess","xray","reality","sing-box","singbox","clash","clash-meta","mihomo","shadowsocks","trojan","hysteria","hysteria2","tuic","wireguard","proxy","vpn"]
-          SUB_INTENTS_EN = ["subscription","subscriptions","sub","nodes","free nodes","proxy list","aggregator","mirror","archive","daily update"]
-          SUB_INTENTS_RU = ["подписка","подписки","узлы","конфиги","обход блокировок","остаться на связи","рабочие подписки"]
-          TG_PROTOCOLS = ["mtproto","mtproxy","telegram proxy","tg proxy","t.me proxy"]
-          TG_INTENTS_EN = ["proxy","proxies","mtproto proxy","mtproxy list","free proxy","secret"]
-          TG_INTENTS_RU = ["телеграм прокси","тг прокси","мтпрокси","прокси список","бесплатный прокси"]
-          UTIL_PROTOCOLS = ["v2ray","xray","vless","vmess","sing-box","clash","mihomo","shadowsocks","trojan","hysteria","wireguard","proxy","vpn"]
-          UTIL_INTENTS_EN = ["client","gui","app","manager","dashboard","desktop","mobile","release"]
-          UTIL_INTENTS_RU = ["клиент","приложение","программа","интерфейс","менеджер","утилита"]
-          PLATFORMS = ["android","ios","windows","linux","macos","desktop","mobile"]
-          TOPICS = ["v2ray","xray","vless","vmess","reality","sing-box","clash","mihomo","shadowsocks","trojan","hysteria","tuic","wireguard","proxy","vpn","subscription","mtproto","mtproxy"]
-          SUB_FILENAMES = ["sub.txt","subscribe.txt","subscription.txt","v2ray.txt","nodes.txt","proxy.txt","clash.yaml","config.yaml","mihomo.yaml","sing-box.json"]
-          TG_FILENAMES = ["mtproxy.txt","tg-proxy.txt","telegram-proxy.txt","proxy.txt","list.txt","mtproxy.json"]
+          SUB_PROTOCOLS = [
+              "vless", "vmess", "xray", "reality", "sing-box",
+              "singbox", "clash", "clash-meta", "mihomo",
+              "shadowsocks", "trojan", "hysteria", "hysteria2",
+              "tuic", "wireguard", "proxy", "vpn",
+          ]
+          SUB_INTENTS_EN = [
+              "subscription", "subscriptions", "sub", "nodes",
+              "free nodes", "proxy list", "aggregator", "mirror",
+              "archive", "daily update",
+          ]
+          SUB_INTENTS_RU = [
+              "подписка", "подписки", "узлы", "конфиги",
+              "обход блокировок", "остаться на связи",
+              "рабочие подписки",
+          ]
+          TG_PROTOCOLS = [
+              "mtproto", "mtproxy", "telegram proxy", "tg proxy",
+              "t.me proxy",
+          ]
+          TG_INTENTS_EN = [
+              "proxy", "proxies", "mtproto proxy", "mtproxy list",
+              "free proxy", "secret",
+          ]
+          TG_INTENTS_RU = [
+              "телеграм прокси", "тг прокси", "мтпрокси",
+              "прокси список", "бесплатный прокси",
+          ]
+          UTIL_PROTOCOLS = [
+              "v2ray", "xray", "vless", "vmess", "sing-box",
+              "clash", "mihomo", "shadowsocks", "trojan",
+              "hysteria", "wireguard", "proxy", "vpn",
+          ]
+          UTIL_INTENTS_EN = [
+              "client", "gui", "app", "manager", "dashboard",
+              "desktop", "mobile", "release",
+          ]
+          UTIL_INTENTS_RU = [
+              "клиент", "приложение", "программа", "интерфейс",
+              "менеджер", "утилита",
+          ]
+          PLATFORMS = [
+              "android", "ios", "windows", "linux", "macos",
+              "desktop", "mobile",
+          ]
+          TOPICS = [
+              "v2ray", "xray", "vless", "vmess", "reality",
+              "sing-box", "clash", "mihomo", "shadowsocks",
+              "trojan", "hysteria", "tuic", "wireguard", "proxy",
+              "vpn", "subscription", "mtproto", "mtproxy",
+          ]
+          SUB_FILENAMES = [
+              "sub.txt", "subscribe.txt", "subscription.txt",
+              "v2ray.txt", "nodes.txt", "proxy.txt", "clash.yaml",
+              "config.yaml", "mihomo.yaml", "sing-box.json",
+          ]
+          TG_FILENAMES = [
+              "mtproxy.txt", "tg-proxy.txt", "telegram-proxy.txt",
+              "proxy.txt", "list.txt", "mtproxy.json",
+          ]
 
           def cs(v):
               return re.sub(r"\s+", " ", v or "").strip()
@@ -124,7 +171,16 @@ jobs:
                   return None
               qual = qual or []
               fq = cs(" ".join([q] + qual))
-              return {"id": qid(fq), "category": cat, "type": qt, "query": q, "full_query": fq, "qualifiers": qual, "priority": pri, "reason": reason}
+              return {
+                  "id": qid(fq),
+                  "category": cat,
+                  "type": qt,
+                  "query": q,
+                  "full_query": fq,
+                  "qualifiers": qual,
+                  "priority": pri,
+                  "reason": reason,
+              }
 
           def finalize(entries, limit, cat, qt):
               seen = set()
@@ -153,17 +209,34 @@ jobs:
               e = []
               for p in SUB_PROTOCOLS:
                   for i in SUB_INTENTS_EN:
-                      e.append(entry("subscriptions", "repo", bq(p, i), 92, "protocol+intent", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "subscriptions", "repo", bq(p, i), 92,
+                          "protocol+intent",
+                          ["fork:true", "archived:false"],
+                      ))
               for i in SUB_INTENTS_RU:
-                  e.append(entry("subscriptions", "repo", bq(p, i), 88, "protocol+ru", ["fork:true", "archived:false"]))
+                  e.append(entry(
+                      "subscriptions", "repo", bq(p, i), 88,
+                      "protocol+ru", ["fork:true", "archived:false"],
+                  ))
               for p in SUB_PROTOCOLS:
                   for pl in PLATFORMS:
-                      e.append(entry("subscriptions", "repo", bq(p, pl, "subscription"), 84, "protocol+platform", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "subscriptions", "repo",
+                          bq(p, pl, "subscription"), 84,
+                          "protocol+platform",
+                          ["fork:true", "archived:false"],
+                      ))
               now = dt.datetime.utcnow()
               for d in [7, 30, 90, 180]:
                   date = (now - dt.timedelta(days=d)).strftime("%Y-%m-%d")
                   for p in SUB_PROTOCOLS[:10]:
-                      e.append(entry("subscriptions", "repo", bq(p, "subscription", f"pushed:>{date}"), 80, "recent", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "subscriptions", "repo",
+                          bq(p, "subscription", f"pushed:>{date}"),
+                          80, "recent",
+                          ["fork:true", "archived:false"],
+                      ))
               return e
 
           def sub_code():
@@ -171,27 +244,50 @@ jobs:
               terms = SUB_PROTOCOLS + SUB_INTENTS_EN
               for t in terms:
                   for f in SUB_FILENAMES:
-                      e.append(entry("subscriptions", "code", bq(t, f"filename:{f}"), 86, "term+filename"))
+                      e.append(entry(
+                          "subscriptions", "code",
+                          bq(t, f"filename:{f}"), 86, "term+filename",
+                      ))
               return e
 
           def sub_topic():
-              return [entry("subscriptions", "topic", f"topic:{t}", 80, "topic", ["fork:true", "archived:false"]) for t in TOPICS]
+              return [
+                  entry(
+                      "subscriptions", "topic", f"topic:{t}", 80,
+                      "topic", ["fork:true", "archived:false"],
+                  )
+                  for t in TOPICS
+              ]
 
           def tg_repo():
               e = []
               for t in TG_PROTOCOLS + TG_INTENTS_EN + TG_INTENTS_RU:
-                  e.append(entry("tg_proxies", "repo", bq(t), 90, "tg base", ["fork:true", "archived:false"]))
+                  e.append(entry(
+                      "tg_proxies", "repo", bq(t), 90, "tg base",
+                      ["fork:true", "archived:false"],
+                  ))
               for p in TG_PROTOCOLS:
                   for i in TG_INTENTS_EN:
-                      e.append(entry("tg_proxies", "repo", bq(p, i), 92, "tg proto+intent", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "tg_proxies", "repo", bq(p, i), 92,
+                          "tg proto+intent",
+                          ["fork:true", "archived:false"],
+                      ))
               return e
 
           def tg_code():
               e = []
               for t in TG_PROTOCOLS + TG_INTENTS_EN:
                   for f in TG_FILENAMES:
-                      e.append(entry("tg_proxies", "code", bq(t, f"filename:{f}"), 88, "tg term+filename"))
-              for pat in ["tg://proxy", "t.me/proxy", "server port secret", "mtproxy secret"]:
+                      e.append(entry(
+                          "tg_proxies", "code",
+                          bq(t, f"filename:{f}"), 88,
+                          "tg term+filename",
+                      ))
+              for pat in [
+                  "tg://proxy", "t.me/proxy",
+                  "server port secret", "mtproxy secret",
+              ]:
                   e.append(entry("tg_proxies", "code", pat, 95, "tg pattern"))
               return e
 
@@ -199,22 +295,43 @@ jobs:
               e = []
               for p in UTIL_PROTOCOLS:
                   for i in UTIL_INTENTS_EN:
-                      e.append(entry("utilities", "repo", bq(p, i), 92, "util proto+intent", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "utilities", "repo", bq(p, i), 92,
+                          "util proto+intent",
+                          ["fork:true", "archived:false"],
+                      ))
               for i in UTIL_INTENTS_RU:
-                  e.append(entry("utilities", "repo", bq(p, i), 85, "util proto+ru", ["fork:true", "archived:false"]))
+                  e.append(entry(
+                      "utilities", "repo", bq(p, i), 85,
+                      "util proto+ru", ["fork:true", "archived:false"],
+                  ))
               for p in UTIL_PROTOCOLS:
                   for pl in PLATFORMS:
-                      e.append(entry("utilities", "repo", bq(p, pl, "client"), 90, "util proto+platform", ["fork:true", "archived:false"]))
+                      e.append(entry(
+                          "utilities", "repo", bq(p, pl, "client"),
+                          90, "util proto+platform",
+                          ["fork:true", "archived:false"],
+                      ))
               return e
 
           def util_code():
               e = []
               for t in (UTIL_PROTOCOLS + UTIL_INTENTS_EN)[:40]:
-                  e.append(entry("utilities", "code", bq(t, "filename:README.md"), 70, "util term+filename"))
+                  e.append(entry(
+                      "utilities", "code", bq(t, "filename:README.md"),
+                      70, "util term+filename",
+                  ))
               return e
 
           def util_topic():
-              return [entry("utilities", "topic", f"topic:{t}", 82, "util topic", ["fork:true", "archived:false"]) for t in TOPICS + ["client", "gui", "app", "release"]]
+              extra_topics = ["client", "gui", "app", "release"]
+              return [
+                  entry(
+                      "utilities", "topic", f"topic:{t}", 82,
+                      "util topic", ["fork:true", "archived:false"],
+                  )
+                  for t in TOPICS + extra_topics
+              ]
 
           mr = int(os.getenv("MAX_REPO_QUERIES", "1200"))
           mc = int(os.getenv("MAX_CODE_QUERIES", "800"))
@@ -249,31 +366,68 @@ jobs:
               }
           }
 
-          with open(os.path.join(out_dir, "queries.json"), "w", encoding="utf-8") as f:
+          path = os.path.join(out_dir, "queries.json")
+          with open(path, "w", encoding="utf-8") as f:
               json.dump(payload, f, ensure_ascii=False, indent=2)
 
           for qt, entries in [("repo", sr), ("code", sc), ("topic", st)]:
-              with open(os.path.join(out_dir, f"queries_subscriptions_{qt}.txt"), "w") as f:
+              path = os.path.join(
+                  out_dir, f"queries_subscriptions_{qt}.txt")
+              with open(path, "w") as f:
                   for e in entries:
                       f.write(e["full_query"] + "\n")
-              mx = [{"slug": e["slug"], "query": e["query"], "full_query": e["full_query"], "priority": e["priority"]} for e in entries]
-              with open(os.path.join(out_dir, f"matrix_subscriptions_{qt}.json"), "w") as f:
+              mx = [
+                  {
+                      "slug": e["slug"],
+                      "query": e["query"],
+                      "full_query": e["full_query"],
+                      "priority": e["priority"],
+                  }
+                  for e in entries
+              ]
+              path = os.path.join(
+                  out_dir, f"matrix_subscriptions_{qt}.json")
+              with open(path, "w") as f:
                   json.dump(mx, f, ensure_ascii=False, indent=2)
 
           for qt, entries in [("repo", tr), ("code", tc)]:
-              with open(os.path.join(out_dir, f"queries_tg_proxies_{qt}.txt"), "w") as f:
+              path = os.path.join(
+                  out_dir, f"queries_tg_proxies_{qt}.txt")
+              with open(path, "w") as f:
                   for e in entries:
                       f.write(e["full_query"] + "\n")
-              mx = [{"slug": e["slug"], "query": e["query"], "full_query": e["full_query"], "priority": e["priority"]} for e in entries]
-              with open(os.path.join(out_dir, f"matrix_tg_proxies_{qt}.json"), "w") as f:
+              mx = [
+                  {
+                      "slug": e["slug"],
+                      "query": e["query"],
+                      "full_query": e["full_query"],
+                      "priority": e["priority"],
+                  }
+                  for e in entries
+              ]
+              path = os.path.join(
+                  out_dir, f"matrix_tg_proxies_{qt}.json")
+              with open(path, "w") as f:
                   json.dump(mx, f, ensure_ascii=False, indent=2)
 
           for qt, entries in [("repo", ur), ("code", uc), ("topic", ut)]:
-              with open(os.path.join(out_dir, f"queries_utilities_{qt}.txt"), "w") as f:
+              path = os.path.join(
+                  out_dir, f"queries_utilities_{qt}.txt")
+              with open(path, "w") as f:
                   for e in entries:
                       f.write(e["full_query"] + "\n")
-              mx = [{"slug": e["slug"], "query": e["query"], "full_query": e["full_query"], "priority": e["priority"]} for e in entries]
-              with open(os.path.join(out_dir, f"matrix_utilities_{qt}.json"), "w") as f:
+              mx = [
+                  {
+                      "slug": e["slug"],
+                      "query": e["query"],
+                      "full_query": e["full_query"],
+                      "priority": e["priority"],
+                  }
+                  for e in entries
+              ]
+              path = os.path.join(
+                  out_dir, f"matrix_utilities_{qt}.json")
+              with open(path, "w") as f:
                   json.dump(mx, f, ensure_ascii=False, indent=2)
 
           print("=== Summary ===")
@@ -303,10 +457,13 @@ jobs:
           retention-days: 14
 
       - name: Commit
-        if: ${{ github.event.inputs.dry_run != true && github.event.inputs.commit_generated != false }}
+        if: >-
+          ${{ github.event.inputs.dry_run != true &&
+          github.event.inputs.commit_generated != false }}
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/generated/
           if git diff --staged --quiet; then
             echo "No changes"

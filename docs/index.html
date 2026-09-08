@@ -54,284 +54,191 @@
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-
-        <!-- Header -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-blue-400">REMAININGCONNECTIONS</h1>
-            <p class="text-slate-400 mt-1">Proxy Discovery &amp; Validation Dashboard</p>
-            <p class="text-slate-500 text-sm mt-1" id="generated-at">Loading...</p>
+            <h1 class="text-4xl font-bold mb-2">REMAININGCONNECTIONS</h1>
+            <p class="text-slate-400">Proxy Discovery & Monitoring Dashboard</p>
         </header>
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="card p-5">
-                <h3 class="text-slate-400 text-sm font-medium">Total Proxies</h3>
-                <p class="text-3xl font-bold text-white mt-2" id="stat-total">-</p>
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="card p-6">
+                <div class="text-sm text-muted mb-1">Total Proxies</div>
+                <div class="text-3xl font-bold" id="stat-total">0</div>
             </div>
-            <div class="card p-5">
-                <h3 class="text-slate-400 text-sm font-medium">Verified</h3>
-                <p class="text-3xl font-bold text-green-400 mt-2" id="stat-working">-</p>
+            <div class="card p-6">
+                <div class="text-sm text-muted mb-1">Working Proxies</div>
+                <div class="text-3xl font-bold text-green-400" id="stat-working">0</div>
             </div>
-            <div class="card p-5">
-                <h3 class="text-slate-400 text-sm font-medium">Unverified</h3>
-                <p class="text-3xl font-bold text-yellow-400 mt-2" id="stat-unverified">-</p>
+            <div class="card p-6">
+                <div class="text-sm text-muted mb-1">Success Rate</div>
+                <div class="text-3xl font-bold text-blue-400" id="stat-rate">0%</div>
             </div>
-            <div class="card p-5">
-                <h3 class="text-slate-400 text-sm font-medium">Success Rate</h3>
-                <p class="text-3xl font-bold text-blue-400 mt-2" id="stat-rate">-</p>
+            <div class="card p-6">
+                <div class="text-sm text-muted mb-1">Last Update</div>
+                <div class="text-sm font-medium text-slate-300" id="stat-updated">Never</div>
             </div>
         </div>
 
         <!-- Filters -->
         <div class="card p-4 mb-6">
             <div class="flex flex-wrap gap-3 items-center">
-                <label class="text-sm text-slate-400">Status:</label>
-                <select id="filter-status" class="bg-slate-700 text-slate-200 rounded px-3 py-1 text-sm border border-slate-600">
-                    <option value="">All</option>
-                    <option value="working">Verified</option>
-                    <option value="unverified">Unverified</option>
-                    <option value="offline">Offline</option>
-                </select>
-                <label class="text-sm text-slate-400">Protocol:</label>
-                <select id="filter-protocol" class="bg-slate-700 text-slate-200 rounded px-3 py-1 text-sm border border-slate-600">
-                    <option value="">All</option>
-                    <option value="mtproto">MTProto</option>
-                    <option value="socks5">SOCKS5</option>
-                    <option value="http">HTTP</option>
-                </select>
-                <label class="text-sm text-slate-400">Sort:</label>
-                <select id="sort-by" class="bg-slate-700 text-slate-200 rounded px-3 py-1 text-sm border border-slate-600">
-                    <option value="status">Status</option>
-                    <option value="ping">Ping</option>
-                </select>
-                <input
-                    type="text"
-                    id="filter-search"
-                    placeholder="Search server..."
-                    class="bg-slate-700 text-slate-200 rounded px-3 py-1 text-sm border border-slate-600 flex-1 min-w-[150px]"
-                >
-                <button id="btn-refresh" class="btn btn-primary">Refresh</button>
+                <span class="text-sm text-muted">Filter:</span>
+                <button class="btn btn-secondary btn-sm filter-btn active" data-filter="all">All</button>
+                <button class="btn btn-secondary btn-sm filter-btn" data-filter="working">Working</button>
+                <button class="btn btn-secondary btn-sm filter-btn" data-filter="http">HTTP</button>
+                <button class="btn btn-secondary btn-sm filter-btn" data-filter="https">HTTPS</button>
+                <button class="btn btn-secondary btn-sm filter-btn" data-filter="socks4">SOCKS4</button>
+                <button class="btn btn-secondary btn-sm filter-btn" data-filter="socks5">SOCKS5</button>
+                <input type="text" id="search-input" placeholder="Search by host, port, country..." 
+                       class="ml-auto px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm focus:outline-none focus:border-blue-500">
             </div>
         </div>
 
-        <!-- Proxy Info Bar -->
-        <div class="text-sm text-slate-400 mb-4" id="proxies-info">Loading proxies...</div>
-
-        <!-- Proxy Cards -->
-        <div id="proxy-list" class="space-y-3 mb-8">
-            <div class="card p-6 text-center text-slate-400">Loading...</div>
+        <!-- Proxy List -->
+        <div class="card p-6">
+            <h2 class="text-xl font-semibold mb-4">Proxy List</h2>
+            <div id="proxy-container" class="space-y-3">
+                <!-- Proxies will be inserted here by JS -->
+            </div>
+            <div id="no-results" class="text-center py-8 text-slate-400 hidden">
+                No proxies found matching your criteria.
+            </div>
         </div>
 
-        <!-- Subscriptions Section -->
-        <div class="card p-5 mb-8">
-            <h2 class="text-xl font-bold mb-4">Subscriptions</h2>
-            <div id="subs-info" class="text-slate-400 text-sm">Loading...</div>
-        </div>
-
-        <!-- Utilities Section -->
-        <div class="card p-5 mb-8">
-            <h2 class="text-xl font-bold mb-4">Utilities Summary</h2>
-            <div id="utils-summary" class="text-slate-400 text-sm">Loading...</div>
-        </div>
-
-        <footer class="text-center text-slate-500 text-sm mt-8">
-            <p>REMAININGCONNECTIONS &copy; 2024 | Auto-generated dashboard</p>
+        <footer class="mt-8 text-center text-sm text-faint">
+            <p>Generated by REMAININGCONNECTIONS | <a href="https://t.me/REMAININGCONNECTIONS" class="text-blue-400 hover:underline" target="_blank">Telegram Channel</a></p>
         </footer>
     </div>
 
     <script>
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return String(text || '').replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
+        const CONFIG = {"generated_at": "2026-09-08T18:51:15.875539Z", "total_proxies": 0, "working_proxies": 0, "proxies": [], "utilities_summary": {"total_utilities": 300, "with_release": 250, "without_release": 50, "android": 125, "ios": 90, "windows": 131, "linux": 139, "active": 188, "stale": 26, "outdated": 36, "no_release": 21, "no_release_recent_repo": 29}, "subscriptions_count": 220};
 
-        function getPingClass(ms) {
-            if (ms == null) return 'ping-bad';
-            if (ms < 300) return 'ping-good';
-            if (ms < 1000) return 'ping-ok';
-            return 'ping-bad';
-        }
+        let currentFilter = 'all';
+        let searchQuery = '';
 
-        function getPingText(ms) {
-            if (ms == null) return 'N/A';
-            return ms.toFixed(0) + ' ms';
-        }
-
-        let allProxies = [];
-
-        function renderProxies(proxies) {
-            const listEl = document.getElementById('proxy-list');
-            const infoEl = document.getElementById('proxies-info');
-
-            const statusFilter = document.getElementById('filter-status').value;
-            const protocolFilter = document.getElementById('filter-protocol').value;
-            const sortBy = document.getElementById('sort-by').value;
-            const search = document.getElementById('filter-search').value.toLowerCase();
-
-            let filtered = proxies;
-
-            if (statusFilter) {
-                filtered = filtered.filter(p => p.status === statusFilter);
-            }
-            if (protocolFilter) {
-                filtered = filtered.filter(p => (p.protocol || '').toLowerCase() === protocolFilter);
-            }
-            if (search) {
-                filtered = filtered.filter(p =>
-                    (p.server || '').toLowerCase().includes(search) ||
-                    (p.host || '').toLowerCase().includes(search)
-                );
-            }
-
-            if (sortBy === 'ping') {
-                filtered.sort((a, b) => (a.ping ?? a.latency_ms ?? 999999) - (b.ping ?? b.latency_ms ?? 999999));
-            } else {
-                const rank = s => s === 'working' ? 0 : s === 'unverified' ? 1 : 2;
-                filtered.sort((a, b) => {
-                    const ra = rank(a.status);
-                    const rb = rank(b.status);
-                    if (ra !== rb) return ra - rb;
-                    return (a.ping ?? a.latency_ms ?? 999999) - (b.ping ?? b.latency_ms ?? 999999);
-                });
-            }
-
-            const working = proxies.filter(p => p.status === 'working').length;
-            const unverified = proxies.filter(p => p.status === 'unverified').length;
-            infoEl.textContent = `Total: ${proxies.length} | Verified: ${working} | Unverified: ${unverified} | Shown: ${filtered.length}`;
-
-            if (filtered.length === 0) {
-                listEl.innerHTML = '<div class="card p-6 text-center text-slate-400">No proxies match the current filters.</div>';
-                return;
-            }
-
-            listEl.innerHTML = filtered.map(item => {
-                const ping = item.ping ?? item.latency_ms;
-                const pingClass = getPingClass(ping);
-                const pingText = getPingText(ping);
-                const host = item.host || item.server || 'unknown';
-                const port = item.port || '?';
-                const protocol = (item.protocol || 'unknown').toUpperCase();
-                const copyValue = item.tg_url || item.url || `${host}:${port}`;
-
-                let statusBadge;
-                if (item.status === 'working') {
-                    statusBadge = '<span class="badge badge-success">verified</span>';
-                } else if (item.status === 'unverified') {
-                    statusBadge = '<span class="badge badge-warning">unverified</span>';
-                } else {
-                    statusBadge = `<span class="badge badge-danger">${escapeHtml(item.status || 'offline')}</span>`;
-                }
-
-                const secretInfo = item.verification || item.error || 'not verified';
-                const secretBadge = item.secret_type
-                    ? `<span class="badge badge-platform">${escapeHtml(item.secret_type)}</span>`
-                    : '';
-
-                return `<article class="card p-4">
-                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <h3 class="font-mono font-bold text-base truncate">${escapeHtml(host)}:${escapeHtml(String(port))}</h3>
-                                ${statusBadge}
-                                <span class="badge badge-neutral">${escapeHtml(protocol)}</span>
-                                ${secretBadge}
-                            </div>
-                            <div class="flex items-center gap-2 mt-2 text-sm text-muted">
-                                <span class="ping-dot ${pingClass}"></span>
-                                <span class="font-mono">${pingText}</span>
-                                <span class="text-faint">| ${escapeHtml(secretInfo)}</span>
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="${escapeHtml(item.tg_url || '#')}" target="_blank" class="btn btn-primary">TG</a>
-                            <a href="${escapeHtml(item.tme_url || '#')}" target="_blank" class="btn btn-secondary">T.Me</a>
-                            <button class="btn btn-secondary" onclick="copyToClipboard('${escapeHtml(copyValue)}')">Copy</button>
-                        </div>
-                    </div>
-                </article>`;
-            }).join('');
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Copied: ' + text);
-            }).catch(() => {
-                prompt('Copy manually:', text);
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
 
-        function renderStats(data) {
-            const total = data.checked_count || data.proxies?.length || 0;
-            const working = data.working_count || data.online_count || 0;
-            const unverified = data.unverified_count || 0;
-            const rate = total > 0 ? ((working / total) * 100).toFixed(1) + '%' : '0%';
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-working').textContent = working;
-            document.getElementById('stat-unverified').textContent = unverified;
-            document.getElementById('stat-rate').textContent = rate;
-            document.getElementById('generated-at').textContent = 'Generated: ' + (data.generated_at || 'unknown');
+        function renderStats() {
+            document.getElementById('stat-total').textContent = CONFIG.total_proxies.toLocaleString();
+            document.getElementById('stat-working').textContent = CONFIG.working_proxies.toLocaleString();
+            
+            const rate = CONFIG.total_proxies > 0 
+                ? ((CONFIG.working_proxies / CONFIG.total_proxies) * 100).toFixed(1)
+                : 0;
+            document.getElementById('stat-rate').textContent = rate + '%';
+            
+            document.getElementById('stat-updated').textContent = formatDate(CONFIG.generated_at);
         }
 
-        async function loadData() {
-            try {
-                const resp = await fetch('data/tg_proxies_found.json');
-                if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                const data = await resp.json();
-                allProxies = data.proxies || [];
-                renderStats(data);
-                renderProxies(allProxies);
-            } catch (e) {
-                document.getElementById('proxy-list').innerHTML =
-                    `<div class="card p-6 text-center text-red-400">Failed to load proxy data: ${escapeHtml(e.message)}</div>`;
-                document.getElementById('proxies-info').textContent = 'Error loading data.';
+        function matchesFilter(proxy) {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'working') {
+                return proxy.status === 'working' || proxy.working === true;
             }
+            const protocol = (proxy.protocol || proxy.type || '').toLowerCase();
+            return protocol === currentFilter;
+        }
 
-            try {
-                const subsResp = await fetch('data/subscriptions_found.json');
-                if (subsResp.ok) {
-                    const subsData = await subsResp.json();
-                    const count = subsData.total_subscriptions || (subsData.subscriptions || []).length;
-                    document.getElementById('subs-info').textContent = `Total subscriptions: ${count} | Generated: ${subsData.generated_at || 'unknown'}`;
-                } else {
-                    document.getElementById('subs-info').textContent = 'No subscription data available.';
-                }
-            } catch (e) {
-                document.getElementById('subs-info').textContent = 'Failed to load subscriptions data.';
-            }
+        function matchesSearch(proxy) {
+            if (!searchQuery) return true;
+            const query = searchQuery.toLowerCase();
+            const searchable = [
+                proxy.host || '',
+                String(proxy.port || ''),
+                proxy.country || '',
+                proxy.protocol || proxy.type || '',
+                proxy.source || ''
+            ].join(' ').toLowerCase();
+            return searchable.includes(query);
+        }
 
-            try {
-                const utilsResp = await fetch('data/utils_found.json');
-                if (utilsResp.ok) {
-                    const utilsData = await utilsResp.json();
-                    const s = utilsData.summary || {};
-                    document.getElementById('utils-summary').textContent =
-                        `Total: ${s.total_utilities || 0} | With release: ${s.with_release || 0} | ` +
-                        `Android: ${s.android || 0} | iOS: ${s.ios || 0} | Windows: ${s.windows || 0} | Linux: ${s.linux || 0}`;
-                } else {
-                    document.getElementById('utils-summary').textContent = 'No utilities data available.';
-                }
-            } catch (e) {
-                document.getElementById('utils-summary').textContent = 'Failed to load utilities data.';
+        function getStatusBadge(proxy) {
+            const status = proxy.status || (proxy.working ? 'working' : 'unknown');
+            const badges = {
+                'working': '<span class="badge badge-success">✓ Working</span>',
+                'failed': '<span class="badge badge-danger">✗ Failed</span>',
+                'timeout': '<span class="badge badge-warning">⏱ Timeout</span>',
+                'unknown': '<span class="badge badge-neutral">? Unknown</span>'
+            };
+            return badges[status] || badges.unknown;
+        }
+
+        function getPingIndicator(ping) {
+            if (!ping) return '';
+            let dotClass = 'ping-bad';
+            if (ping < 200) dotClass = 'ping-good';
+            else if (ping < 500) dotClass = 'ping-ok';
+            return `<span class="ping-dot ${dotClass}"></span>${ping}ms`;
+        }
+
+        function renderProxies() {
+            const container = document.getElementById('proxy-container');
+            const noResults = document.getElementById('no-results');
+            
+            const filtered = CONFIG.proxies.filter(p => matchesFilter(p) && matchesSearch(p));
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
             }
+            
+            noResults.classList.add('hidden');
+            container.innerHTML = filtered.map(proxy => {
+                const protocol = (proxy.protocol || proxy.type || 'unknown').toUpperCase();
+                const lastChecked = proxy.last_checked 
+                    ? `<span class="text-xs text-faint">Checked: ${formatDate(proxy.last_checked)}</span>`
+                    : '';
+                const ping = proxy.ping ? getPingIndicator(proxy.ping) : '';
+                const country = proxy.country ? `<span class="badge badge-platform">${proxy.country}</span>` : '';
+                const source = proxy.source ? `<span class="text-xs text-faint">via ${proxy.source}</span>` : '';
+                
+                return `
+                    <div class="border border-slate-700 rounded p-4 hover:border-slate-600 transition-colors">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="font-mono text-lg font-semibold">${proxy.host}:${proxy.port}</span>
+                            <span class="badge badge-platform">${protocol}</span>
+                            ${country}
+                            ${getStatusBadge(proxy)}
+                        </div>
+                        <div class="flex flex-wrap gap-4 text-sm text-slate-400">
+                            ${ping ? `<span>${ping}</span>` : ''}
+                            ${lastChecked}
+                            ${source}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Event listeners
-        document.getElementById('filter-status').addEventListener('change', () => renderProxies(allProxies));
-        document.getElementById('filter-protocol').addEventListener('change', () => renderProxies(allProxies));
-        document.getElementById('sort-by').addEventListener('change', () => renderProxies(allProxies));
-        document.getElementById('filter-search').addEventListener('input', () => renderProxies(allProxies));
-        document.getElementById('btn-refresh').addEventListener('click', loadData);
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderProxies();
+            });
+        });
 
-        // Initial load
-        loadData();
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderProxies();
+        });
+
+        // Initial render
+        renderStats();
+        renderProxies();
     </script>
 </body>
 </html>

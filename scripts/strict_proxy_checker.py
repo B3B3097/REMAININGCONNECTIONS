@@ -63,6 +63,8 @@ def is_valid_host(host: str) -> bool:
         ipaddress.ip_address(host.strip("[]"))
         return True
     except ValueError:
+        if ".." in host or host.startswith(".") or host.endswith("."):
+            return False
         return bool(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?", host))
 
 

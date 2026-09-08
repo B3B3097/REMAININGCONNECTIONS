@@ -24,5 +24,6 @@ services:
     build: .
     volumes:
       - ./data:/app/data
-    command: python scripts/web_crawler.py --start-urls "https://github.com/search" --max-depth 2
+    command: python scripts/web_crawler.py
+      --start-urls "https://github.com/search" --max-depth 2
     restart: "no"

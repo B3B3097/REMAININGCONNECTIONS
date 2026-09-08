@@ -96,7 +96,7 @@ class ConfigManager:
         self.register_setting("NETWORK_PROXY", "", "System proxy URL", str)
         
         # GitHub API Settings
-        self.register_setting("GITHUB_TOKEN", "", "GitHub Personal Access Token", str, sensitive=True)
+        self.register_setting("GITHUB_TOKEN", "", "GitHub Personal Access Token", str, required=True, sensitive=True)
         self.register_setting("GITHUB_OWNER", "B3B3097", "GitHub Owner", str)
         self.register_setting("GITHUB_REPO", "REMAININGCONNECTIONS", "GitHub Repo Name", str)
         self.register_setting("GITHUB_MAX_REPOS_SEARCH", 50, "Max repos to search per query", int)

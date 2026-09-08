@@ -23,47 +23,7 @@ def load_json_safe(filepath, default=None):
     return default
 
 
-def generate_dashboard():
-    """Generate the static HTML dashboard."""
-    print("[*] Starting dashboard generation...")
-
-    # Load data files
-    tg_data = load_json_safe('data/tg_proxies_found.json', {"proxies": []})
-    http_data = load_json_safe('data/http_proxies_found.json', {"proxies": []})
-    socks_data = load_json_safe('data/socks_proxies_found.json', {"proxies": []})
-    utils_data = load_json_safe('data/utils_found.json', {"utilities": [], "summary": {}})
-    health_data = load_json_safe('data/health_metrics.json', {})
-    subs_data = load_json_safe('data/subscriptions_found.json', {"subscriptions": []})
-
-    # Combine all proxies from different sources
-    all_proxies = []
-    all_proxies.extend(tg_data.get('proxies', []))
-    all_proxies.extend(http_data.get('proxies', []))
-    all_proxies.extend(socks_data.get('proxies', []))
-
-    # Support both old 'working' field and new 'status' field
-    working = [p for p in all_proxies if p.get('status') == 'working' or p.get('working', False)]
-    total = len(all_proxies)
-    working_count = len(working)
-
-    print(f"[*] Total proxies: {total}")
-    print(f"[*] Working proxies: {working_count}")
-
-    # Build config data for embedding
-    config_data = {
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
-        "total_proxies": total,
-        "working_proxies": working_count,
-        "proxies": all_proxies[:500],  # Limit to 500 for performance
-        "utilities_summary": utils_data.get('summary', {}),
-        "subscriptions_count": len(subs_data.get('subscriptions', [])),
-    }
-
-    # Sanitize JSON for embedding in JS
-    safe_json = json.dumps(config_data, ensure_ascii=False)
-    safe_json = safe_json.replace('</script>', '<\\/script>')
-
-    html_template = """<!DOCTYPE html>
+HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -308,14 +268,99 @@ def generate_dashboard():
 </body>
 </html>"""
 
-    output_path = os.path.join('docs', 'index.html')
-    os.makedirs('docs', exist_ok=True)
 
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(html_template)
+class DashboardGenerator:
+    """Builds the static HTML dashboard from proxy data files."""
 
-    print(f"[✓] Dashboard generated: {output_path}")
-    print(f"[✓] Total: {total}, Working: {working_count}")
+    def __init__(self, data_dir="data", output_dir="docs"):
+        self.data_dir = data_dir
+        self.output_dir = output_dir
+
+    def load_data(self):
+        """Load all data files and combine them into a single payload."""
+        tg_data = load_json_safe(os.path.join(self.data_dir, 'tg_proxies_found.json'), {"proxies": []})
+        http_data = load_json_safe(os.path.join(self.data_dir, 'http_proxies_found.json'), {"proxies": []})
+        socks_data = load_json_safe(os.path.join(self.data_dir, 'socks_proxies_found.json'), {"proxies": []})
+        subs_data = load_json_safe(os.path.join(self.data_dir, 'subscriptions_found.json'), {"subscriptions": []})
+        utils_data = load_json_safe(os.path.join(self.data_dir, 'utils_found.json'), {"utilities": [], "summary": {}})
+        health_data = load_json_safe(os.path.join(self.data_dir, 'health_metrics.json'), {})
+
+        # Combine all proxies from different sources
+        all_proxies = []
+        all_proxies.extend(tg_data.get('proxies', []))
+        all_proxies.extend(http_data.get('proxies', []))
+        all_proxies.extend(socks_data.get('proxies', []))
+
+        return {
+            "proxies": all_proxies,
+            "subscriptions": subs_data.get('subscriptions', []),
+            "utilities": utils_data,
+            "health": health_data,
+            "build_info": {
+                "generated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                "total_proxies": len(all_proxies),
+            },
+        }
+
+    def generate_html(self, config_data):
+        """Render the HTML template with the embedded config JSON."""
+        build_info = config_data.get("build_info") or {}
+        proxies = config_data.get("proxies", [])
+        utilities = config_data.get("utilities")
+
+        # Support both old 'working' field and new 'status' field
+        working_count = sum(
+            1 for p in proxies
+            if isinstance(p, dict) and (p.get('status') == 'working' or p.get('working') is True)
+        )
+        utilities_summary = (
+            utilities.get("summary", {})
+            if isinstance(utilities, dict) and "summary" in utilities
+            else {}
+        )
+
+        embed = {
+            "generated_at": build_info.get("generated_at") or datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "total_proxies": len(proxies),
+            "working_proxies": working_count,
+            "proxies": proxies[:500],  # Limit to 500 for performance
+            "utilities_summary": utilities_summary,
+            "subscriptions_count": len(config_data.get("subscriptions", [])),
+        }
+
+        # Sanitize JSON for embedding in JS
+        safe_json = json.dumps(embed, ensure_ascii=False)
+        safe_json = safe_json.replace('</script>', '<\\/script>')
+
+        return HTML_TEMPLATE.format(safe_json=safe_json)
+
+    def run(self):
+        """Generate the dashboard HTML and write it to the output directory."""
+        data = self.load_data()
+        html = self.generate_html(data)
+        os.makedirs(self.output_dir, exist_ok=True)
+        output_path = os.path.join(self.output_dir, "index.html")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+        return output_path
+
+
+def generate_dashboard():
+    """CLI wrapper: generate the static HTML dashboard."""
+    print("[*] Starting dashboard generation...")
+
+    generator = DashboardGenerator()
+    data = generator.load_data()
+    working_count = sum(
+        1 for p in data["proxies"]
+        if p.get('status') == 'working' or p.get('working') is True
+    )
+    print(f"[*] Total proxies: {len(data['proxies'])}")
+    print(f"[*] Working proxies: {working_count}")
+
+    output_path = generator.run()
+    print(f"[OK] Dashboard generated: {output_path}")
+    print(f"[OK] Total: {len(data['proxies'])}, Working: {working_count}")
 
 
 if __name__ == "__main__":

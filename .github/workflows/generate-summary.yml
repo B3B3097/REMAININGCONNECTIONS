@@ -1,4 +1,4 @@
- name: Generate Summary Report
+name: Generate Summary Report
 
 on:
   schedule:
@@ -40,7 +40,7 @@ jobs:
             http=$(jq '.categories.http.count' data/summary.json)
             socks=$(jq '.categories.socks.count' data/summary.json)
             utils=$(jq '.categories.utilities.count' data/summary.json)
-            
+
             echo "## 📊 Current Stats" > STATS.md
             echo "" >> STATS.md
             echo "**Total Proxies Found:** ${total}" >> STATS.md
@@ -53,8 +53,9 @@ jobs:
             echo "| SOCKS Proxies | ${socks} |" >> STATS.md
             echo "| Utilities | ${utils} |" >> STATS.md
             echo "" >> STATS.md
-            echo "*Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*" >> STATS.md
-            
+            echo "*Last updated: $(date -u \
+              '+%Y-%m-%d %H:%M:%S UTC')*" >> STATS.md
+
             echo "[+] Stats generated in STATS.md"
           fi
 

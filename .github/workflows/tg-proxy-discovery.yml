@@ -1,4 +1,4 @@
- name: TG Proxy Discovery
+name: TG Proxy Discovery
 
 on:
   schedule:
@@ -48,13 +48,16 @@ jobs:
           set -euo pipefail
           echo "[+] Extracting Telegram proxies from GitHub..."
           python scripts/extract_tg_proxies.py
-          
+
           if [ -f extracted/tg_proxies_extracted.json ]; then
-            extracted_count=$(jq '.total_extracted // 0' extracted/tg_proxies_extracted.json)
+            extracted_count=$(jq '.total_extracted // 0' \
+              extracted/tg_proxies_extracted.json)
             echo "[+] Extracted ${extracted_count} proxies"
           else
             echo "[!] Warning: No proxies extracted"
-            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","total_extracted":0,"proxies":[]}' > extracted/tg_proxies_extracted.json
+            echo '{"generated_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)\
+              '","total_extracted":0,"proxies":[]}' \
+              > extracted/tg_proxies_extracted.json
           fi
 
       - name: Validate extracted proxies
@@ -81,7 +84,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "[*] No changes to commit"
           else
-            git commit -m "chore: update Telegram proxy data [$(date -u +%Y-%m-%d)]"
+            git commit -m \
+              "chore: update Telegram proxy data [$(date -u +%Y-%m-%d)]"
             git push
             echo "[+] Changes committed and pushed"
           fi

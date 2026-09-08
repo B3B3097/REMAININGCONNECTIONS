@@ -23,8 +23,11 @@ class ProxyHealthMonitor:
 
     def __init__(self, data_dir: str = DEFAULT_DATA_DIR):
         self.data_dir = Path(data_dir)
-        self.alert_log_path = Path(ALERT_LOG_PATH)
-        self.metrics_path = Path(HEALTH_METRICS_PATH)
+        self.alert_log_path = self.data_dir / "monitoring_alerts.log"
+        self.metrics_path = self.data_dir / "health_metrics.json"
+        
+        # Make sure the data directory exists before opening the log file
+        self.alert_log_path.parent.mkdir(parents=True, exist_ok=True)
         
         # Setup logging
         self.logger = logging.getLogger("ProxyMonitor")
@@ -57,6 +60,63 @@ class ProxyHealthMonitor:
                 return data.get("subscriptions", [])
         except (OSError, json.JSONDecodeError):
             return []
+
+    def get_latest_proxy_file(self) -> Path | None:
+        """Return the most recently modified JSON data file, or None if there is none."""
+        files = [p for p in self.data_dir.glob("*.json") if p != self.metrics_path]
+        if not files:
+            return None
+        return max(files, key=lambda p: p.stat().st_mtime)
+
+    def analyze_health(self, proxies: list[dict[str, Any]]) -> dict[str, Any]:
+        """Analyze a proxy list and compute health metrics."""
+        total = len(proxies)
+        working = [p for p in proxies if p.get("status") == "working"]
+        working_count = len(working)
+
+        # Average latency across working proxies
+        latencies = []
+        for p in working:
+            lat = p.get("latency_ms") or p.get("tcp_latency_ms")
+            if lat is not None:
+                latencies.append(lat)
+        avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
+
+        # Protocol distribution
+        protocol_distribution = {}
+        for p in proxies:
+            proto = p.get("protocol", "unknown")
+            protocol_distribution[proto] = protocol_distribution.get(proto, 0) + 1
+
+        return {
+            "total_proxies": total,
+            "working_count": working_count,
+            "failed_count": total - working_count,
+            "success_rate": working_count / total if total > 0 else 0.0,
+            "avg_latency_ms": round(avg_latency, 2),
+            "protocol_distribution": protocol_distribution,
+        }
+
+    def check_thresholds(self, metrics: dict[str, Any]) -> list[str]:
+        """Check metrics against alert thresholds and return alert messages."""
+        alerts = []
+
+        success_rate = metrics.get("success_rate", 0.0)
+        if success_rate < THRESHOLD_LOW_SUCCESS_RATE:
+            alerts.append(
+                f"🚨 CRITICAL: Success rate {success_rate:.1%} is below "
+                f"{THRESHOLD_LOW_SUCCESS_RATE:.0%} threshold "
+                f"({metrics.get('working_count', 0)}/{metrics.get('total_proxies', 0)} working)"
+            )
+
+        avg_latency = metrics.get("avg_latency_ms", 0.0)
+        if avg_latency > THRESHOLD_HIGH_LATENCY_MS:
+            alerts.append(
+                f"⚠️ WARNING: High latency: {avg_latency:.0f}ms average "
+                f"exceeds {THRESHOLD_HIGH_LATENCY_MS}ms threshold"
+            )
+
+        return alerts
 
     def calculate_metrics(self, proxies: list[dict[str, Any]]) -> dict[str, Any]:
         """Calculate health metrics from proxy data."""
@@ -136,12 +196,27 @@ class ProxyHealthMonitor:
         return alerts
 
     def save_metrics(self, metrics: dict[str, Any]) -> None:
-        """Save current metrics to file."""
-        metrics["timestamp"] = datetime.utcnow().isoformat() + "Z"
-        
+        """Append current metrics to the metrics history file."""
+        entry = dict(metrics)
+        entry.setdefault("timestamp", datetime.utcnow().isoformat() + "Z")
+
+        history = []
+        if self.metrics_path.exists():
+            try:
+                with open(self.metrics_path, 'r', encoding='utf-8') as f:
+                    loaded = json.load(f)
+                if isinstance(loaded, list):
+                    history = loaded
+                elif isinstance(loaded, dict):
+                    history = [loaded]
+            except (OSError, json.JSONDecodeError):
+                history = []
+
+        history.append(entry)
+
         self.metrics_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.metrics_path, 'w', encoding='utf-8') as f:
-            json.dump(metrics, f, indent=2, ensure_ascii=False)
+            json.dump(history, f, indent=2, ensure_ascii=False)
 
     def load_previous_metrics(self) -> dict[str, Any] | None:
         """Load previous metrics if available."""
@@ -149,9 +224,45 @@ class ProxyHealthMonitor:
             return None
         try:
             with open(self.metrics_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
         except (OSError, json.JSONDecodeError):
             return None
+        # Metrics are stored as a history list; the last entry is the most recent
+        if isinstance(data, list):
+            return data[-1] if data else None
+        return data if isinstance(data, dict) else None
+
+    def run_check(self) -> None:
+        """Check the latest available proxy data file and emit alerts."""
+        self.logger.info("Starting proxy health check")
+
+        proxy_file = self.get_latest_proxy_file()
+        if proxy_file is None:
+            self.logger.warning("No proxy data file found")
+            return
+
+        proxies = self.load_proxy_data(proxy_file)
+        if not proxies:
+            self.logger.warning("No proxies loaded from data file")
+            return
+
+        metrics = self.analyze_health(proxies)
+
+        self.logger.info(f"Total proxies: {metrics['total_proxies']}")
+        self.logger.info(f"Working proxies: {metrics['working_count']}")
+        self.logger.info(f"Success rate: {metrics['success_rate']:.1%}")
+        self.logger.info(f"Average latency: {metrics['avg_latency_ms']:.0f}ms")
+
+        alerts = self.check_thresholds(metrics)
+        if alerts:
+            self.logger.warning("ALERTS TRIGGERED:")
+            for alert in alerts:
+                self.logger.warning(alert)
+        else:
+            self.logger.info("✅ All metrics within normal range")
+
+        self.save_metrics(metrics)
+        self.logger.info("Metrics saved to " + str(self.metrics_path))
 
     def run_monitoring(self) -> None:
         """Run the monitoring check."""

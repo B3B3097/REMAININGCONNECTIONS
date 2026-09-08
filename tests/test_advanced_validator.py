@@ -89,7 +89,7 @@ class TestDeepValidator:
         finally:
             loop.close()
 
-    def test_calculate_score_extreme_latency(self):
+    def test_calculate_score_extreme_latency(self, validator):
         """Score should decrease with high latency."""
         result = ValidationResult(
             config_hash="abc",
@@ -108,8 +108,13 @@ class TestDeepValidator:
 
     def test_batch_validate_empty(self, validator):
         """Batch validation with empty list should return empty."""
-        results = validator.batch_validate([])
-        assert len(results) == 0
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            results = loop.run_until_complete(validator.batch_validate([]))
+            assert len(results) == 0
+        finally:
+            loop.close()
 
 
 class TestValidationConfig:

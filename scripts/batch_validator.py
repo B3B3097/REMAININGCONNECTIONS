@@ -6,13 +6,17 @@ Performs deep validation (TCP, TLS handshake, latency) on a list of proxies.
 
 import asyncio
 import argparse
+import inspect
 import json
 import logging
 import os
 import socket
 import ssl
+import sys
 import time
 from urllib.parse import urlparse
+
+from advanced_validator import DeepValidator, ValidationConfig, Protocol
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,6 +26,14 @@ logger = logging.getLogger(__name__)
 
 TIMEOUT = 8
 MAX_RETRIES = 2
+
+PROTOCOL_MAP = {
+    'vless': Protocol.VLESS,
+    'vmess': Protocol.VMESS,
+    'trojan': Protocol.TROJAN,
+    'ss': Protocol.SHADOWSOCKS,
+    'shadowsocks': Protocol.SHADOWSOCKS,
+}
 
 
 def parse_proxy_uri(uri):
@@ -162,6 +174,103 @@ async def run_validation(proxies, concurrency):
         for idx, proxy in enumerate(proxies)
     ]
     return await asyncio.gather(*tasks)
+
+
+class BatchProcessor:
+    """Process a batch of proxies from a JSON file with deep validation."""
+
+    def __init__(self, concurrency=10, timeout=8.0):
+        self.concurrency = concurrency
+        self.timeout = timeout
+        self._validator = None
+
+    def _get_validator(self):
+        """Lazily create the DeepValidator on first use."""
+        if self._validator is None:
+            self._validator = DeepValidator(
+                concurrency=self.concurrency,
+                timeout=self.timeout,
+            )
+        return self._validator
+
+    async def process_file(self, input_path, output_path):
+        """Deep-validate proxies from input_path and write enriched JSON to output_path.
+
+        Proxies with an unsupported protocol or broken data are passed through
+        unchanged (no deep_score). Must run inside an already-running event loop.
+        """
+        with open(input_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        proxies = data.get('proxies', []) if isinstance(data, dict) else []
+
+        # Build validation configs; keep original index for result mapping
+        # (batch_validate preserves input order, so we map back by position).
+        to_validate = []  # list of (index, proxy, config)
+        for idx, proxy in enumerate(proxies):
+            if not isinstance(proxy, dict):
+                continue
+            protocol = PROTOCOL_MAP.get(str(proxy.get('protocol', '')).lower())
+            server = proxy.get('server')
+            port = proxy.get('port')
+            if not protocol or not server or not port:
+                continue
+            try:
+                config = ValidationConfig(
+                    target_host=str(server),
+                    target_port=int(port),
+                    protocol=protocol,
+                    secret_or_uuid=proxy.get('secret') or proxy.get('uuid') or proxy.get('password'),
+                    sni=proxy.get('sni'),
+                    timeout=self.timeout,
+                )
+            except (TypeError, ValueError):
+                continue
+            to_validate.append((idx, proxy, config))
+
+        # Validate all configs with a single batch_validate call.
+        results = []
+        if to_validate:
+            validator = self._get_validator()
+            outcome = validator.batch_validate([config for _, _, config in to_validate])
+            results = await outcome if inspect.isawaitable(outcome) else outcome
+
+        working_count = 0
+        enriched = {}
+        for (idx, proxy, _config), result in zip(to_validate, results):
+            status = 'working' if result.tcp_success and result.score >= 40 else 'failed'
+            if status == 'working':
+                working_count += 1
+            enriched[idx] = {
+                **proxy,
+                'deep_score': result.score,
+                'status': status,
+                'tcp_latency_ms': result.tcp_latency_ms,
+                'tls_latency_ms': getattr(result, 'tls_latency_ms', None),
+                'tls_cipher': result.tls_cipher,
+                'handshake_success': result.handshake_success,
+            }
+
+        output_proxies = [enriched.get(idx, proxy) for idx, proxy in enumerate(proxies)]
+
+        output = {
+            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "total_checked": len(to_validate),
+            "total_working": working_count,
+            "proxies": output_proxies,
+        }
+
+        output_dir = os.path.dirname(output_path)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
+
+        logger.info(
+            f"Batch validation complete: {working_count}/{len(to_validate)} working, "
+            f"results saved to {output_path}"
+        )
+        return output
 
 
 def main():

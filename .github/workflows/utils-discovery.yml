@@ -1,3 +1,205 @@
+name: Utils Discovery
+
+on:
+  schedule:
+    - cron: '20 * * * *'
+  workflow_dispatch:
+    inputs:
+      max_results:
+        description: 'Max results per query'
+        required: false
+        default: '30'
+      max_probe:
+        description: 'Max utilities to probe'
+        required: false
+        default: '300'
+      min_stars:
+        description: 'Minimum stars filter'
+        required: false
+        default: '0'
+      include_readme:
+        description: 'Scan README for platforms'
+        required: false
+        default: 'true'
+      dry_run:
+        description: 'Skip publishing results'
+        required: false
+        default: 'false'
+
+env:
+  PYTHON_VERSION: '3.11'
+  OUTPUT_DIR: data
+
+permissions:
+  contents: write
+
+jobs:
+  collect-candidates:
+    name: 4 - Collect utility candidates
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create directories
+        run: mkdir -p raw "${OUTPUT_DIR}"
+
+      - name: Collect utility candidates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAX_RESULTS: ${{ github.event.inputs.max_results || '30' }}
+        run: |
+          python <<'PYEOF'
+          import json
+          import os
+          import time
+
+          import requests
+
+          GITHUB_API = "https://api.github.com"
+          TOKEN = os.getenv("GITHUB_TOKEN", "")
+          MAX_RESULTS = int(os.getenv("MAX_RESULTS", "30"))
+          UA = os.getenv("USER_AGENT",
+                         "REMAININGCONNECTIONS/1.0")
+          OUT_FILE = "raw/utils_candidates.jsonl"
+
+          HEADERS = {
+              "Accept": "application/vnd.github+json",
+              "User-Agent": UA,
+          }
+          if TOKEN:
+              HEADERS["Authorization"] = f"Bearer {TOKEN}"
+
+          QUERY_FILES = {
+              "code": ".github/generated/"
+                      "queries_utilities_code.txt",
+              "repo": ".github/generated/"
+                      "queries_utilities_repo.txt",
+              "topic": ".github/generated/"
+                       "queries_utilities_topic.txt",
+          }
+
+
+          def load_queries(slug):
+              path = QUERY_FILES[slug]
+              if not os.path.exists(path):
+                  return []
+              with open(path, "r", encoding="utf-8") as f:
+                  lines = [line.strip() for line in f]
+              return [line for line in lines if line]
+
+
+          def strip_qualifiers(query):
+              terms = []
+              for part in query.split():
+                  if ":" not in part:
+                      terms.append(part)
+              return " ".join(terms)
+
+
+          def search_repos(query):
+              params = {
+                  "q": query,
+                  "sort": "stars",
+                  "order": "desc",
+                  "per_page": 30,
+              }
+              for attempt in range(3):
+                  try:
+                      r = requests.get(
+                          GITHUB_API
+                          + "/search/repositories",
+                          headers=HEADERS,
+                          params=params,
+                          timeout=25,
+                      )
+                  except Exception as exc:
+                      print(f"[!] Search error: {exc}")
+                      return []
+                  if r.status_code == 200:
+                      return r.json().get("items", [])
+                  if r.status_code in (403, 429):
+                      ra = r.headers.get("Retry-After")
+                      if ra and ra.isdigit():
+                          time.sleep(int(ra))
+                      else:
+                          time.sleep(6)
+                      continue
+                  if 500 <= r.status_code < 600:
+                      time.sleep(2 + attempt)
+                      continue
+                  return []
+              return []
+
+
+          def main():
+              candidates = {}
+              query_count = 0
+              for slug in ("code", "repo", "topic"):
+                  for query in load_queries(slug):
+                      query_count += 1
+                      terms = strip_qualifiers(query)
+                      if not terms:
+                          continue
+                      print(f"[*] Searching: {terms}")
+                      kept = 0
+                      for item in search_repos(terms):
+                          if kept >= MAX_RESULTS:
+                              break
+                          full = item.get("full_name", "")
+                          if not full:
+                              continue
+                          if full in candidates:
+                              prev = candidates[full]
+                              slugs = prev["query_slugs"]
+                              if slug not in slugs:
+                                  slugs.append(slug)
+                              continue
+                          kept += 1
+                          desc = item.get("description")
+                          stars = item.get(
+                              "stargazers_count", 0)
+                          forks = item.get(
+                              "forks_count", 0)
+                          topics = item.get("topics") or []
+                          candidates[full] = {
+                              "repo": full,
+                              "name": item.get("name"),
+                              "description": desc,
+                              "stars": stars,
+                              "forks": forks,
+                              "topics": topics,
+                              "url": item.get("html_url"),
+                              "query_slugs": [slug],
+                          }
+                      time.sleep(0.5)
+              os.makedirs("raw", exist_ok=True)
+              with open(OUT_FILE, "w",
+                        encoding="utf-8") as f:
+                  for cand in candidates.values():
+                      line = json.dumps(
+                          cand, ensure_ascii=False)
+                      f.write(line + "\n")
+              print(f"[*] Queries: {query_count}")
+              print(f"[+] Candidates: "
+                    f"{len(candidates)}")
+              print(f"[+] Saved to {OUT_FILE}")
+
+
+          main()
+          PYEOF
+
       - name: Upload candidates
         uses: actions/upload-artifact@v4
         with:
@@ -40,7 +242,9 @@
         env:
           GITHUB_TOKEN: ${{ github.token }}
           MAX_PROBE: ${{ github.event.inputs.max_probe || '300' }}
-          INCLUDE_README: ${{ github.event.inputs.include_readme != false && '1' || '0' }}
+          INCLUDE_README: >-
+            ${{ github.event.inputs.include_readme
+            != false && '1' || '0' }}
           MIN_STARS: ${{ github.event.inputs.min_stars || '0' }}
         run: |
           python <<'PYEOF'
@@ -61,13 +265,34 @@
           session = requests.Session()
           session.headers.update(HEADERS)
 
-          ANDROID_KEYS = ["android", ".apk", ".aab", "apk", "play google", "f-droid", "fdroid", "android app", "android client"]
-          IOS_KEYS = ["ios", "iphone", "ipad", ".ipa", "ipa", "testflight", "app store", "ios app", "ios client"]
-          WINDOWS_KEYS = ["windows", "win64", "win32", "win-arm", ".exe", ".msi", ".msix", ".appx", "portable.exe", "windows app"]
-          LINUX_KEYS = ["linux", "ubuntu", "debian", "fedora", "archlinux", "arch linux", "appimage", ".deb", ".rpm", ".snap", ".flatpak", ".pkg.tar.zst", ".tar.gz", ".tar.xz", ".tar.zst", ".tar.bz2", "linux app"]
+          ANDROID_KEYS = [
+              "android", ".apk", ".aab", "apk",
+              "play google", "f-droid", "fdroid",
+              "android app", "android client",
+          ]
+          IOS_KEYS = [
+              "ios", "iphone", "ipad", ".ipa", "ipa",
+              "testflight", "app store",
+              "ios app", "ios client",
+          ]
+          WINDOWS_KEYS = [
+              "windows", "win64", "win32", "win-arm",
+              ".exe", ".msi", ".msix", ".appx",
+              "portable.exe", "windows app",
+          ]
+          LINUX_KEYS = [
+              "linux", "ubuntu", "debian", "fedora",
+              "archlinux", "arch linux", "appimage",
+              ".deb", ".rpm", ".snap", ".flatpak",
+              ".pkg.tar.zst", ".tar.gz", ".tar.xz",
+              ".tar.zst", ".tar.bz2", "linux app",
+          ]
 
           def now_iso():
-              return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+              now = datetime.datetime.now(
+                  datetime.timezone.utc)
+              return now.isoformat().replace(
+                  "+00:00", "Z")
 
           def parse_date(v):
               if not v:
@@ -84,7 +309,10 @@
           def days_since(dt):
               if not dt:
                   return None
-              return int((datetime.datetime.now(datetime.timezone.utc) - dt).total_seconds() / 86400)
+              delta = datetime.datetime.now(
+                  datetime.timezone.utc) - dt
+              return int(delta.total_seconds()
+                         / 86400)
 
           def fetch_json(url, params=None):
               for attempt in range(3):
@@ -134,17 +362,31 @@
               return flags
 
           def detect_from_asset_name(name):
-              flags = {"android": False, "ios": False, "windows": False, "linux": False}
+              flags = {"android": False,
+                       "ios": False,
+                       "windows": False,
+                       "linux": False}
               if not name:
                   return flags
               n = name.lower()
               if n.endswith((".apk", ".aab")) or "android" in n:
                   flags["android"] = True
-              if n.endswith(".ipa") or "ios" in n or "iphone" in n or "ipad" in n:
+              if (n.endswith(".ipa") or "ios" in n
+                      or "iphone" in n
+                      or "ipad" in n):
                   flags["ios"] = True
-              if n.endswith((".exe", ".msi", ".msix", ".appx")) or "windows" in n or ("win" in n and ("64" in n or "32" in n or "arm" in n)):
+              if (n.endswith((".exe", ".msi",
+                              ".msix", ".appx"))
+                      or "windows" in n
+                      or ("win" in n
+                          and ("64" in n or "32" in n
+                               or "arm" in n))):
                   flags["windows"] = True
-              if n.endswith((".appimage", ".deb", ".rpm", ".snap", ".flatpak", ".pkg.tar.zst")) or "linux" in n:
+              if (n.endswith((".appimage", ".deb",
+                              ".rpm", ".snap",
+                              ".flatpak",
+                              ".pkg.tar.zst"))
+                      or "linux" in n):
                   flags["linux"] = True
               return flags
 
@@ -187,7 +429,9 @@
 
           cands = []
           if os.path.exists("raw/utils_candidates.jsonl"):
-              with open("raw/utils_candidates.jsonl", "r", encoding="utf-8") as f:
+              path = "raw/utils_candidates.jsonl"
+              with open(path, "r",
+                        encoding="utf-8") as f:
                   for line in f:
                       line = line.strip()
                       if not line:
@@ -227,14 +471,23 @@
               pushed_at = rd.get("pushed_at")
               archived = rd.get("archived", False)
 
-              flags = {"android": False, "ios": False, "windows": False, "linux": False}
+              flags = {"android": False,
+                       "ios": False,
+                       "windows": False,
+                       "linux": False}
               detect_from_text(" ".join(topics), flags)
               detect_from_text(name, flags)
               detect_from_text(description, flags)
 
-              release = fetch_json(f"{GITHUB_API}/repos/{repo}/releases/latest")
+              rel_url = (f"{GITHUB_API}/repos/"
+                         f"{repo}/releases/latest")
+              release = fetch_json(rel_url)
               if not release:
-                  rels = fetch_json(f"{GITHUB_API}/repos/{repo}/releases", params={"per_page": 1})
+                  rels_url = (f"{GITHUB_API}/repos/"
+                              f"{repo}/releases")
+                  rels = fetch_json(
+                      rels_url,
+                      params={"per_page": 1})
                   if isinstance(rels, list) and rels:
                       release = rels[0]
 
@@ -251,7 +504,8 @@
                   tag = release.get("tag_name")
                   rname = release.get("name") or release.get("tag_name")
                   rurl = release.get("html_url")
-                  rpub = release.get("published_at") or release.get("created_at")
+                  rpub = (release.get("published_at")
+                          or release.get("created_at"))
                   rage = days_since(parse_date(rpub))
                   for asset in (release.get("assets", []) or [])[:20]:
                       an = asset.get("name")
@@ -263,13 +517,21 @@
                       rassets.append({
                           "name": an,
                           "url": au,
-                          "size_mb": round((asset.get("size") or 0) / (1024 * 1024), 2),
+                          "size_mb": round(
+                              (asset.get("size") or 0)
+                              / (1024 * 1024), 2),
                           "content_type": asset.get("content_type"),
                           "platform_hint": platform_labels(af),
                       })
 
-              if INCLUDE_README and (not any(flags.values()) or not has_release):
-                  rt = fetch_text(f"{GITHUB_API}/repos/{repo}/readme", accept="application/vnd.github.raw")
+              if INCLUDE_README and (
+                      not any(flags.values())
+                      or not has_release):
+                  rm_url = (f"{GITHUB_API}/repos/"
+                            f"{repo}/readme")
+                  rt = fetch_text(
+                      rm_url,
+                      accept="application/vnd.github.raw")
                   if rt:
                       detect_from_text(rt[:80000], flags)
 
@@ -314,16 +576,25 @@
           summary = {
               "total_utilities": len(utilities),
               "with_release": sum(1 for x in utilities if x["has_release"]),
-              "without_release": sum(1 for x in utilities if not x["has_release"]),
+              "without_release": sum(
+                  1 for x in utilities
+                  if not x["has_release"]),
               "android": sum(1 for x in utilities if x["platforms"]["android"]),
               "ios": sum(1 for x in utilities if x["platforms"]["ios"]),
               "windows": sum(1 for x in utilities if x["platforms"]["windows"]),
               "linux": sum(1 for x in utilities if x["platforms"]["linux"]),
               "active": sum(1 for x in utilities if x["status"] == "active"),
               "stale": sum(1 for x in utilities if x["status"] == "stale"),
-              "outdated": sum(1 for x in utilities if x["status"] == "outdated"),
-              "no_release": sum(1 for x in utilities if x["status"] == "no_release"),
-              "no_release_recent_repo": sum(1 for x in utilities if x["status"] == "no_release_recent_repo"),
+              "outdated": sum(
+                  1 for x in utilities
+                  if x["status"] == "outdated"),
+              "no_release": sum(
+                  1 for x in utilities
+                  if x["status"] == "no_release"),
+              "no_release_recent_repo": sum(
+                  1 for x in utilities
+                  if x["status"]
+                  == "no_release_recent_repo"),
           }
 
           payload = {
@@ -367,7 +638,9 @@
     name: 6 - Publish results
     runs-on: ubuntu-latest
     needs: probe-utilities
-    if: ${{ always() && needs.probe-utilities.result == 'success' && github.event.inputs.dry_run != true }}
+    if: >-
+      ${{ always() && needs.probe-utilities.result == 'success'
+      && github.event.inputs.dry_run != true }}
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -388,11 +661,20 @@
       - name: Move result into data directory
         run: |
           set -euo pipefail
-          FOUND_FILE="$(find downloaded -type f -name 'utils_found.json' | head -n 1 || true)"
+          FOUND_FILE="$(find downloaded -type f \
+            -name 'utils_found.json' | head -n 1 || true)"
           if [[ -z "${FOUND_FILE}" ]]; then
             echo "[!] Not found, creating placeholder"
             mkdir -p data
-            echo '{"generated_at":"","generator":"utils-discovery.yml","candidates_checked":0,"summary":{"total_utilities":0,"with_release":0,"without_release":0,"android":0,"ios":0,"windows":0,"linux":0,"active":0,"stale":0,"outdated":0,"no_release":0,"no_release_recent_repo":0},"utilities":[]}' > data/utils_found.json
+            printf '%s' \
+              '{"generated_at":"","generator":"utils-discovery.yml",' \
+              '"candidates_checked":0,"summary":{' \
+              '"total_utilities":0,"with_release":0,' \
+              '"without_release":0,"android":0,"ios":0,' \
+              '"windows":0,"linux":0,"active":0,"stale":0,' \
+              '"outdated":0,"no_release":0,' \
+              '"no_release_recent_repo":0},"utilities":[]}' \
+              > data/utils_found.json
           else
             cp "${FOUND_FILE}" data/utils_found.json
             echo "[+] File copied"
@@ -402,7 +684,8 @@
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin "${GITHUB_REF_NAME}" || true
           git add data/utils_found.json || true
           if git diff --staged --quiet; then
@@ -440,7 +723,8 @@
           echo "=================================================="
           echo " Utility Discovery Pipeline finished"
           echo "=================================================="
-          FILE="$(find utils-report-artifacts -type f -name 'utils_found.json' | head -n 1 || true)"
+          FILE="$(find utils-report-artifacts -type f \
+            -name 'utils_found.json' | head -n 1 || true)"
           if [[ -z "${FILE}" ]]; then
             echo "[!] No results file"
             exit 0
@@ -463,7 +747,11 @@
               print(f"Active: {summary.get('active')}")
               print("\nTop-10 by score:")
               for item in utilities[:10]:
-                  print(f"  - {item.get('name')} | stars: {item.get('stars')} | {item.get('platforms_text')} | release: {item.get('latest_release_tag') or 'none'}")
+                  print(f"  - {item.get('name')}"
+                        f" | stars: {item.get('stars')}"
+                        f" | {item.get('platforms_text')}"
+                        f" | release: "
+                        f"{item.get('latest_release_tag') or 'none'}")
           except Exception as e:
               print(f"[!] Report error: {e}")
           PYEOF
