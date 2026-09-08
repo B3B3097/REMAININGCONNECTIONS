@@ -1,11 +1,80 @@
 {
-  "generated_at": "2026-09-04T10:00:00.000000Z",
-  "generator": "monitoring.yml",
-  "project": "REMAININGCONNECTIONS",
-  "total_proxies_checked": 0,
-  "working_proxies": 0,
-  "failed_proxies": 0,
-  "success_rate": 0.0,
-  "avg_response_time_ms": 0,
-  "proxies": []
+  "timestamp": "2026-09-08T18:21:57.400531+00:00",
+  "overall_status": "error",
+  "checks": {
+    "subscriptions": {
+      "freshness": {
+        "status": "warning",
+        "message": "Age: 137.9h",
+        "fresh": false,
+        "age_hours": 137.9392321613889,
+        "last_update": "2026-09-03T00:25:36.168395+00:00"
+      },
+      "availability": {
+        "status": "warning",
+        "count": 0,
+        "minimum": 10,
+        "sufficient": false
+      }
+    },
+    "telegram": {
+      "freshness": {
+        "status": "warning",
+        "message": "Age: 104.4h",
+        "fresh": false,
+        "age_hours": 104.36594644472223,
+        "last_update": "2026-09-04T10:00:00.000000+00:00"
+      },
+      "availability": {
+        "status": "warning",
+        "count": 0,
+        "minimum": 5,
+        "sufficient": false
+      }
+    },
+    "http": {
+      "freshness": {
+        "status": "warning",
+        "message": "Age: 104.4h",
+        "fresh": false,
+        "age_hours": 104.36594646583333,
+        "last_update": "2026-09-04T10:00:00.000000+00:00"
+      },
+      "availability": {
+        "status": "warning",
+        "count": 0,
+        "minimum": 10,
+        "sufficient": false
+      }
+    },
+    "socks": {
+      "freshness": {
+        "status": "warning",
+        "message": "Age: 104.4h",
+        "fresh": false,
+        "age_hours": 104.36594648333333,
+        "last_update": "2026-09-04T10:00:00.000000+00:00"
+      },
+      "availability": {
+        "status": "warning",
+        "count": 0,
+        "minimum": 5,
+        "sufficient": false
+      }
+    },
+    "summary": {
+      "freshness": {
+        "status": "error",
+        "message": "File not found",
+        "fresh": false
+      },
+      "availability": {
+        "status": "ok",
+        "count": 0,
+        "minimum": 0,
+        "sufficient": true
+      }
+    }
+  },
+  "total_proxies": 0
 }
