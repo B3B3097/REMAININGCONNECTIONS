@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-10T14:52:29.437430+00:00",
-  "overall_status": "error",
+  "timestamp": "2026-09-10T18:09:06.418103+00:00",
+  "overall_status": "warning",
   "checks": {
     "subscriptions": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 182.4h",
+        "message": "Age: 185.7h",
         "fresh": false,
-        "age_hours": 182.4481311272222,
+        "age_hours": 185.72507041499998,
         "last_update": "2026-09-03T00:25:36.168395+00:00"
       },
       "availability": {
@@ -19,11 +19,11 @@
     },
     "telegram": {
       "freshness": {
-        "status": "warning",
-        "message": "Age: 8.9h",
-        "fresh": false,
-        "age_hours": 8.918636990555555,
-        "last_update": "2026-09-10T05:57:22.349482+00:00"
+        "status": "ok",
+        "message": "Age: 1.8h",
+        "fresh": true,
+        "age_hours": 1.779808322222222,
+        "last_update": "2026-09-10T16:22:19.114968+00:00"
       },
       "availability": {
         "status": "warning",
@@ -35,10 +35,10 @@
     "http": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 3.2h",
+        "message": "Age: 0.2h",
         "fresh": true,
-        "age_hours": 3.2407267894444445,
-        "last_update": "2026-09-10T11:38:02.826251+00:00"
+        "age_hours": 0.19696886611111109,
+        "last_update": "2026-09-10T17:57:17.337086+00:00"
       },
       "availability": {
         "status": "warning",
@@ -50,10 +50,10 @@
     "socks": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 3.2h",
+        "message": "Age: 0.2h",
         "fresh": true,
-        "age_hours": 3.2406679655555557,
-        "last_update": "2026-09-10T11:38:03.038051+00:00"
+        "age_hours": 0.19691885722222222,
+        "last_update": "2026-09-10T17:57:17.517183+00:00"
       },
       "availability": {
         "status": "warning",
@@ -64,9 +64,11 @@
     },
     "summary": {
       "freshness": {
-        "status": "error",
-        "message": "File not found",
-        "fresh": false
+        "status": "ok",
+        "message": "Age: 0.2h",
+        "fresh": true,
+        "age_hours": 0.19296964249999998,
+        "last_update": "2026-09-10T17:57:31.734426+00:00"
       },
       "availability": {
         "status": "ok",
