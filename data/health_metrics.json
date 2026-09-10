@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-10T05:48:58.056987+00:00",
+  "timestamp": "2026-09-10T10:45:43.709468+00:00",
   "overall_status": "error",
   "checks": {
     "subscriptions": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 173.4h",
+        "message": "Age: 178.3h",
         "fresh": false,
-        "age_hours": 173.38941447472223,
+        "age_hours": 178.33542894444446,
         "last_update": "2026-09-03T00:25:36.168395+00:00"
       },
       "availability": {
@@ -20,10 +20,10 @@
     "telegram": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 13.2h",
+        "message": "Age: 4.8h",
         "fresh": false,
-        "age_hours": 13.211103003055555,
-        "last_update": "2026-09-09T16:36:18.092512+00:00"
+        "age_hours": 4.805934885,
+        "last_update": "2026-09-10T05:57:22.349482+00:00"
       },
       "availability": {
         "status": "warning",
@@ -35,9 +35,9 @@
     "http": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 0.7h",
+        "message": "Age: 5.7h",
         "fresh": true,
-        "age_hours": 0.7262515622222222,
+        "age_hours": 5.672265929444444,
         "last_update": "2026-09-10T05:05:23.557780+00:00"
       },
       "availability": {
@@ -50,9 +50,9 @@
     "socks": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 0.7h",
+        "message": "Age: 5.7h",
         "fresh": true,
-        "age_hours": 0.7261886894444445,
+        "age_hours": 5.6722030497222224,
         "last_update": "2026-09-10T05:05:23.784195+00:00"
       },
       "availability": {
