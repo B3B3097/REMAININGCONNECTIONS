@@ -94,12 +94,28 @@ async def check_all(
                     normalized.get("secret"),
                     timeout,
                 )
-                result.update(mtproto_result)
-                if mtproto_result.get("mtproto_handshake_valid"):
+                # MTProtoCheckResult dataclass -> plain dict fields
+                result.update({
+                    "mtproto_status": mtproto_result.status,
+                    "mtproto_verification": mtproto_result.verification,
+                    "mtproto_latency_ms": mtproto_result.latency_ms,
+                    "mtproto_error": mtproto_result.error,
+                    "dc_connected": mtproto_result.dc_connected,
+                })
+                if mtproto_result.status == "working":
                     status = "working"
-                    # If it only works via MTProto but not basic check, mark as bypass
+                    # If it only works via MTProto but not basic check, mark bypass
                     if not result.get("telegram_handshake_ok"):
                         bypass_status = "works_with_bypass"
+                elif (
+                    mtproto_result.status in ("timeout", "connection_failed")
+                    and status == "failed"
+                    and result.get("tcp_ok")
+                ):
+                    status = "unverified"
+                    result["verification_note"] = (
+                        "mtproto_check_" + mtproto_result.status
+                    )
 
             result.update({
                 "status": status,

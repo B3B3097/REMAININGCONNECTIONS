@@ -69,7 +69,12 @@ def _enrich_subscriptions(subscriptions):
             "content_sample": sample if isinstance(sample, str) else (sample or ""),
             "valid": bool(sub_url),
         })
-    view.sort(key=lambda x: (0 if x["valid"] else 1, -x["configs_count"]))
+    def _sub_sort_key(item):
+        url = (item.get("subscription_url") or "").lower()
+        is_txt = 0 if url.endswith(".txt") else 1
+        return (0 if item["valid"] else 1, is_txt, -item["configs_count"])
+
+    view.sort(key=_sub_sort_key)
     return view
 
 
@@ -417,6 +422,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     function subCard(s) {
         const title = s.name || s.repo || 'unknown subscription';
         const valid = s.valid === true;
+        const fmt = s.subscription_url ? (s.subscription_url.toLowerCase().endsWith('.txt') ? 'TXT' : (s.subscription_url.toLowerCase().endsWith('.json') ? 'JSON' : 'YAML')) : null;
         const statusKind = SUB_BADGES[s.status] || 'neutral';
         const repoHref = s.url || '#';
         const repoText = s.repo || s.url || '';
@@ -433,7 +439,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         return '<div class="card p-4 flex flex-col ' + (valid ? '' : 'subs-card-muted') + '" data-valid="' + (valid ? '1' : '0') + '" data-search="' + esc(search) + '">'
             + '<div class="flex items-start justify-between gap-2 mb-2">'
             + '<h3 class="font-semibold text-sm break-all leading-snug">' + esc(title) + '</h3>'
-            + '<div class="flex gap-1 flex-shrink-0 flex-wrap justify-end">' + badge(s.status || 'unknown', statusKind) + badge((s.configs_count || 0) + ' configs', 'platform') + '</div>'
+            + '<div class="flex gap-1 flex-shrink-0 flex-wrap justify-end">' (fmt ? badge(fmt, fmt === 'TXT' ? 'success' : 'platform') : '') + + badge(s.status || 'unknown', statusKind) + badge((s.configs_count || 0) + ' configs', 'platform') + '</div>'
             + '</div>'
             + '<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">'
             + '<a class="text-blue-400 hover:underline text-xs break-all" href="' + esc(repoHref) + '" target="_blank" rel="noopener">' + esc(repoText || repoHref) + '</a>'

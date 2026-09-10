@@ -176,9 +176,52 @@ async def check_mtproto_proxy_full(
             error=f"invalid_secret: {str(exc)}",
         )
     
-    # Perform handshake check
+    # Real protocol check: obfuscated2 handshake + req_pq_multi -> resPQ.
+    try:
+        import mtproto_real_checker as _real
+    except ImportError:
+        _real = None
+
+    if _real is not None:
+        import asyncio as _asyncio
+
+        loop = _asyncio.get_running_loop()
+        outcome = await loop.run_in_executor(
+            None,
+            lambda: _real.check_proxy(host, int(port), secret, timeout=timeout),
+        )
+        if outcome.get("ok"):
+            return MTProtoCheckResult(
+                status="working",
+                verification="mtproto_res_pq",
+                latency_ms=outcome.get("rtt_ms"),
+                protocol_version="mtproto",
+                dc_connected=str(outcome.get("dc")),
+            )
+        error = outcome.get("error")
+        if error == "timeout":
+            status = "timeout"
+        elif error == "network_error":
+            status = "connection_failed"
+        else:
+            status = "invalid"
+        return MTProtoCheckResult(
+            status=status,
+            verification="mtproto_res_pq",
+            latency_ms=outcome.get("rtt_ms"),
+            error=outcome.get("detail") or outcome.get("error"),
+            protocol_version="mtproto",
+            dc_connected=(
+                str(outcome.get("dc"))
+                if outcome.get("dc") is not None
+                else None
+            ),
+        )
+
+    # Fallback when the real checker module is unavailable: legacy TCP-only
+    # probe (kept so the checker still works in restricted environments).
     result = await check_mtproto_handshake(host, port, secret_bytes, timeout)
-    
+
     return result
 
 

@@ -181,7 +181,7 @@ jobs:
           python scripts/probe_subscription_configs.py \
             --input extracted/subscriptions_extracted.json \
             --output checked/subscriptions_probed.json \
-            --max-subscriptions ${MAX_PROBE_SUBSCRIPTIONS} \
+            --max-probe ${MAX_PROBE_SUBSCRIPTIONS} \
             --nodes-per-sub ${NODES_PER_SUBSCRIPTION} \
             --timeout ${XRAY_PROBE_TIMEOUT}
 

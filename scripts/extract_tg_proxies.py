@@ -22,6 +22,14 @@ except ImportError:
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
+# Tokenless seed sources: raw proxy lists that do not require the GitHub
+# code search API (which 401s with the Actions GITHUB_TOKEN).
+SEED_LIST_URLS = [
+    'https://raw.githubusercontent.com/Argh94/Proxy-List/main/MTProto.txt',
+    'https://raw.githubusercontent.com/Grim1313/mtproto-for-telegram/master/all_proxies.md',
+    'https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt',
+]
+
 
 class TelegramProxyExtractor:
     """Extract Telegram proxies from GitHub repositories."""
@@ -76,16 +84,22 @@ class TelegramProxyExtractor:
             server_match = re.search(r'server=([^&\s]+)', url)
             port_match = re.search(r'port=(\d+)', url)
             secret_match = re.search(r'secret=([a-fA-F0-9]+)', url)
-            
+
             if not (server_match and port_match and secret_match):
                 return None
-                
+
+            host = server_match.group(1)
+            port = int(port_match.group(1))
+            secret = secret_match.group(1)
+
             return {
-                'host': server_match.group(1),
-                'port': int(port_match.group(1)),
-                'secret': secret_match.group(1),
+                'host': host,
+                'port': port,
+                'secret': secret,
                 'protocol': 'mtproto',
-                'type': 'mtproto'
+                'type': 'mtproto',
+                'tg_url': f"tg://proxy?server={host}&port={port}&secret={secret}",
+                'tme_url': f"https://t.me/proxy?server={host}&port={port}&secret={secret}",
             }
         except Exception as e:
             logger.debug(f"Failed to parse URL {url}: {e}")
@@ -107,13 +121,15 @@ class TelegramProxyExtractor:
                 return None
             if len(secret) < 32 or not re.match(r'^[a-fA-F0-9]+$', secret):
                 return None
-                
+
             return {
                 'host': host,
                 'port': port,
                 'secret': secret,
                 'protocol': 'mtproto',
-                'type': 'mtproto'
+                'type': 'mtproto',
+                'tg_url': f"tg://proxy?server={host}&port={port}&secret={secret}",
+                'tme_url': f"https://t.me/proxy?server={host}&port={port}&secret={secret}",
             }
         except Exception as e:
             logger.debug(f"Failed to parse direct format {text}: {e}")
@@ -208,12 +224,44 @@ class TelegramProxyExtractor:
         
         return all_proxies
     
+    async def fetch_seed_lists(self) -> List[Dict]:
+        """Fetch proxies from public seed lists (no GitHub API required)."""
+        all_proxies = []
+
+        for url in SEED_LIST_URLS:
+            try:
+                logger.info(f"Fetching seed list: {url}")
+                async with self.session.get(
+                    url, timeout=aiohttp.ClientTimeout(total=20)
+                ) as resp:
+                    if resp.status != 200:
+                        logger.warning(f"Seed list {url} returned {resp.status}")
+                        continue
+                    text = await resp.text()
+            except Exception as e:
+                logger.warning(f"Failed to fetch seed list {url}: {e}")
+                continue
+
+            proxies = self.extract_proxies_from_content(text)
+            for proxy in proxies:
+                proxy['source'] = f'seedlist:{url}'
+                proxy['found_at'] = datetime.now(timezone.utc).isoformat()
+            all_proxies.extend(proxies)
+            logger.info(f"Extracted {len(proxies)} proxies from seed list {url}")
+
+        return all_proxies
+
     async def extract_all(self) -> List[Dict]:
         """Extract proxies from all search queries."""
         all_proxies = []
-        
+
         logger.info(f"Starting Telegram proxy extraction with {len(self.SEARCH_QUERIES)} queries")
-        
+
+        # Seed lists first: they work without GitHub code search and make
+        # sure the run is not empty when the search API fails.
+        seed_proxies = await self.fetch_seed_lists()
+        all_proxies.extend(seed_proxies)
+
         for query in self.SEARCH_QUERIES:
             proxies = await self.search_github_code(query, max_pages=3)
             all_proxies.extend(proxies)
@@ -247,7 +295,23 @@ async def main():
     
     async with TelegramProxyExtractor(github_token=github_token, max_results=500) as extractor:
         proxies = await extractor.extract_all()
-    
+
+    # Merge with previously accumulated results before saving: old entries
+    # survive when the new search comes up empty, and fresh data wins on
+    # host:port duplicates.
+    try:
+        with open(output_file, 'r', encoding='utf-8') as f:
+            prev = json.load(f)
+        prev_proxies = prev.get('proxies', [])
+    except Exception:
+        prev_proxies = []
+    # merge: старые + новые, дедуп по host:port, новые приоритетны (их данные свежее)
+    merged = {}
+    for p in prev_proxies + proxies:
+        key = f"{p.get('host')}:{p.get('port')}"
+        merged[key] = p
+    proxies = list(merged.values())
+
     # Save results
     output_data = {
         'generated_at': datetime.now(timezone.utc).isoformat(),

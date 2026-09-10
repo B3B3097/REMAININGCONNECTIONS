@@ -3,6 +3,10 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path as _P
+sys.path.insert(0, str(_P(__file__).resolve().parent))
+
 import argparse
 import asyncio
 import json
