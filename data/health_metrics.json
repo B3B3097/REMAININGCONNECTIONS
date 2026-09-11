@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-11T17:34:26.117689+00:00",
+  "timestamp": "2026-09-11T20:33:38.873499+00:00",
   "overall_status": "warning",
   "checks": {
     "subscriptions": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 209.1h",
+        "message": "Age: 212.1h",
         "fresh": false,
-        "age_hours": 209.14720894861114,
+        "age_hours": 212.13408556666667,
         "last_update": "2026-09-03T00:25:36.168395+00:00"
       },
       "availability": {
@@ -19,25 +19,25 @@
     },
     "telegram": {
       "freshness": {
-        "status": "warning",
-        "message": "Age: 25.2h",
-        "fresh": false,
-        "age_hours": 25.201946754722222,
-        "last_update": "2026-09-10T16:22:19.114968+00:00"
+        "status": "ok",
+        "message": "Age: 0.6h",
+        "fresh": true,
+        "age_hours": 0.5582179877777778,
+        "last_update": "2026-09-11T20:00:09.296048+00:00"
       },
       "availability": {
-        "status": "warning",
-        "count": 0,
+        "status": "ok",
+        "count": 890,
         "minimum": 5,
-        "sufficient": false
+        "sufficient": true
       }
     },
     "http": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 0.8h",
+        "message": "Age: 3.8h",
         "fresh": true,
-        "age_hours": 0.83402852,
+        "age_hours": 3.8209059266666667,
         "last_update": "2026-09-11T16:44:23.620671+00:00"
       },
       "availability": {
@@ -50,9 +50,9 @@
     "socks": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 0.8h",
+        "message": "Age: 3.8h",
         "fresh": true,
-        "age_hours": 0.8339648927777779,
+        "age_hours": 3.8208423019444444,
         "last_update": "2026-09-11T16:44:23.849778+00:00"
       },
       "availability": {
@@ -65,10 +65,10 @@
     "summary": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 0.8h",
+        "message": "Age: 0.6h",
         "fresh": true,
-        "age_hours": 0.8308481236111112,
-        "last_update": "2026-09-11T16:44:35.070215+00:00"
+        "age_hours": 0.5546527533333333,
+        "last_update": "2026-09-11T20:00:22.132208+00:00"
       },
       "availability": {
         "status": "ok",
@@ -78,5 +78,5 @@
       }
     }
   },
-  "total_proxies": 0
+  "total_proxies": 890
 }
