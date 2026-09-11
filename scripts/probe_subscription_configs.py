@@ -81,13 +81,22 @@ async def probe_one(
     probe_results = []
     
     for uri in nodes_to_probe:
-        result = await check_xray_uri(uri, timeout)
-        if result.get("xray_ok"):
+        check_result = await check_xray_uri(uri, timeout)
+        # Convert CheckResult to dict
+        result_dict = check_result.as_dict() if hasattr(check_result, 'as_dict') else {
+            "status": getattr(check_result, 'status', 'unknown'),
+            "verification": getattr(check_result, 'verification', 'unknown'),
+            "latency_ms": getattr(check_result, 'latency_ms', None),
+            "error": getattr(check_result, 'error', None),
+        }
+        
+        xray_ok = result_dict.get("status") == "working"
+        if xray_ok:
             working_count += 1
         probe_results.append({
             "uri": uri[:100],  # Truncate for storage
-            "xray_ok": result.get("xray_ok", False),
-            "error": result.get("error"),
+            "xray_ok": xray_ok,
+            "error": result_dict.get("error"),
         })
     
     item["working_configs"] = working_count
