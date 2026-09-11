@@ -1,5 +1,22 @@
 {
-  "generated_at": "2026-09-10T21:02:41.257583+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-09-11T00:19:57.896208+00:00",
+  "total_extracted": 2,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 1234,
+      "protocol": "http",
+      "type": "http",
+      "source": "strukturag/vlc-2.2",
+      "found_at": "2026-09-11T00:19:11.093489+00:00"
+    },
+    {
+      "host": "239.255.1.2",
+      "port": 5004,
+      "protocol": "http",
+      "type": "http",
+      "source": "strukturag/vlc-2.2",
+      "found_at": "2026-09-11T00:19:11.093506+00:00"
+    }
+  ]
 }
