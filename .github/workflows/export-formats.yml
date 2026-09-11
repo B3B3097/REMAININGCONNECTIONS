@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -26,30 +28,28 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Export to multiple formats
         run: |
           python scripts/export_formats.py
 
+      - name: Ensure exports directory exists
+        run: |
+          mkdir -p exports
+
       - name: Create exports archive
         run: |
-          if [ -d exports ]; then
-            cd exports
-            python -c "import shutil, sys; " \
-            "shutil.make_archive(sys.argv[1], 'zip', '.')" ..
-            cd ..
-            echo "[+] Created exports.zip"
-          fi
+          python -c "import shutil; shutil.make_archive('exports', 'zip', 'exports')"
+          echo "[+] Created exports.zip"
 
       - name: Generate exports README
         run: |
           cat > exports/README.md << 'EOF'
           # 📦 Exported Proxy Data
 
-          This directory contains proxy data exported in various
-          formats for easy integration.
+          This directory contains proxy data exported in various formats for easy integration.
 
           ## 📁 Available Formats
 
@@ -71,8 +71,7 @@ jobs:
 
           ### Special Formats
 
-          - `telegram_links.txt` - Ready-to-use Telegram
-            proxy links (`tg://proxy?...`)
+          - `telegram_links.txt` - Ready-to-use Telegram proxy links (`tg://proxy?...`)
 
           ### Combined Files
 
@@ -97,7 +96,7 @@ jobs:
           **Bash:**
           ```bash
           while IFS= read -r proxy; do
-              curl -x "$proxy" https://example.com
+              curl -x "$proxy" [https://example.com](https://example.com)
           done < http_simple.txt
           ```
 
@@ -141,8 +140,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "[*] No changes to commit"
           else
-            git commit -m \
-              "chore: update exported formats [$(date -u +%Y-%m-%d)]"
+            git commit -m "chore: update exported formats [$(date -u +%Y-%m-%d)]"
+            git pull --rebase origin main || git pull --rebase
             git push
             echo "[+] Exports updated"
           fi
