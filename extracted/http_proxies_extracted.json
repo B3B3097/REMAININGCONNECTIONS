@@ -1,414 +1,22 @@
 {
-  "generated_at": "2026-09-11T16:43:50.710987+00:00",
-  "total_extracted": 184,
+  "generated_at": "2026-09-11T21:08:41.080585+00:00",
+  "total_extracted": 135,
   "proxies": [
-    {
-      "host": "127.0.0.1",
-      "port": 1234,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-09-11T16:39:47.487352+00:00"
-    },
-    {
-      "host": "239.255.1.2",
-      "port": 5004,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-09-11T16:39:47.487367+00:00"
-    },
-    {
-      "host": "175.178.182.178",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:00.861456+00:00"
-    },
-    {
-      "host": "150.230.195.209",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:00.861467+00:00"
-    },
-    {
-      "host": "141.147.161.50",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:00.861469+00:00"
-    },
-    {
-      "host": "155.248.172.106",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:00.861471+00:00"
-    },
-    {
-      "host": "66.42.50.118",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:00.861473+00:00"
-    },
-    {
-      "host": "174.137.58.32",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:02.184290+00:00"
-    },
-    {
-      "host": "104.168.244.47",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-11T16:40:02.184309+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 12333,
-      "protocol": "http",
-      "type": "http",
-      "source": "shenwei356/awesome",
-      "found_at": "2026-09-11T16:40:43.380265+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199768+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 9050,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199780+00:00"
-    },
-    {
-      "host": "1.2.3.4",
-      "port": 5678,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199782+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5678,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199784+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 4554,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199786+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8808,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199787+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 22,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199789+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8084,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199790+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 1441,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199792+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8088,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199794+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8008,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199795+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5667,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199797+00:00"
-    },
     {
       "host": "127.0.0.1",
       "port": 8000,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199799+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8088,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199800+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8089,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199802+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 1234,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199803+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199805+00:00"
-    },
-    {
-      "host": "174.129.224.73",
-      "port": 1080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199807+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8800,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199808+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 4567,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199810+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5445,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199812+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199813+00:00"
-    },
-    {
-      "host": "192.168.0.3",
-      "port": 1025,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199815+00:00"
-    },
-    {
-      "host": "174.129.224.73",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199816+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 1235,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199818+00:00"
+      "source": "bda-research/node-crawler",
+      "found_at": "2026-09-11T21:07:43.282937+00:00"
     },
     {
       "host": "127.0.0.1",
       "port": 1080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199819+00:00"
-    },
-    {
-      "host": "132.148.129.183",
-      "port": 14124,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199821+00:00"
-    },
-    {
-      "host": "255.255.255.255",
-      "port": 65535,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199822+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 23,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-11T16:41:14.199824+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8888,
-      "protocol": "http",
-      "type": "http",
-      "source": "vehre/neo-gpuminer",
-      "found_at": "2026-09-11T16:41:29.610216+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5000,
-      "protocol": "http",
-      "type": "http",
-      "source": "CIRCL/AIL-framework",
-      "found_at": "2026-09-11T16:41:46.377218+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 7700,
-      "protocol": "http",
-      "type": "http",
-      "source": "CIRCL/AIL-framework",
-      "found_at": "2026-09-11T16:41:46.377259+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 1086,
-      "protocol": "http",
-      "type": "http",
-      "source": "vikyd/note",
-      "found_at": "2026-09-11T16:41:47.618708+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 1087,
-      "protocol": "http",
-      "type": "http",
-      "source": "vikyd/note",
-      "found_at": "2026-09-11T16:41:47.618721+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 7860,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975933+00:00"
-    },
-    {
-      "host": "52.13.248.29",
-      "port": 3128,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975945+00:00"
-    },
-    {
-      "host": "35.178.104.4",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975948+00:00"
-    },
-    {
-      "host": "65.1.244.232",
-      "port": 3128,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975950+00:00"
-    },
-    {
-      "host": "13.126.79.133",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975952+00:00"
-    },
-    {
-      "host": "54.212.22.168",
-      "port": 3128,
-      "protocol": "http",
-      "type": "http",
-      "source": "myhhub/stock",
-      "found_at": "2026-09-11T16:42:15.975954+00:00"
-    },
-    {
-      "host": "114.107.150.215",
-      "port": 46213,
-      "protocol": "http",
-      "type": "http",
-      "source": "sukabuliet/ThinkphpRCE",
-      "found_at": "2026-09-11T16:42:24.990806+00:00"
+      "source": "dixudx/tumblr-crawler",
+      "found_at": "2026-09-11T21:07:43.998546+00:00"
     },
     {
       "host": "1.0.132.249",
@@ -416,7 +24,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099297+00:00"
+      "found_at": "2026-09-11T21:07:49.152798+00:00"
     },
     {
       "host": "1.0.136.16",
@@ -424,7 +32,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099309+00:00"
+      "found_at": "2026-09-11T21:07:49.152811+00:00"
     },
     {
       "host": "1.0.136.99",
@@ -432,7 +40,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099311+00:00"
+      "found_at": "2026-09-11T21:07:49.152813+00:00"
     },
     {
       "host": "1.4.148.10",
@@ -440,7 +48,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099314+00:00"
+      "found_at": "2026-09-11T21:07:49.152815+00:00"
     },
     {
       "host": "1.4.195.114",
@@ -448,7 +56,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099316+00:00"
+      "found_at": "2026-09-11T21:07:49.152817+00:00"
     },
     {
       "host": "1.9.164.242",
@@ -456,7 +64,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099317+00:00"
+      "found_at": "2026-09-11T21:07:49.152821+00:00"
     },
     {
       "host": "1.20.95.95",
@@ -464,7 +72,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099319+00:00"
+      "found_at": "2026-09-11T21:07:49.152823+00:00"
     },
     {
       "host": "1.20.137.82",
@@ -472,7 +80,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099321+00:00"
+      "found_at": "2026-09-11T21:07:49.152825+00:00"
     },
     {
       "host": "1.20.227.66",
@@ -480,7 +88,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099322+00:00"
+      "found_at": "2026-09-11T21:07:49.152826+00:00"
     },
     {
       "host": "1.20.235.153",
@@ -488,7 +96,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099324+00:00"
+      "found_at": "2026-09-11T21:07:49.152828+00:00"
     },
     {
       "host": "1.120.134.30",
@@ -496,7 +104,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099325+00:00"
+      "found_at": "2026-09-11T21:07:49.152830+00:00"
     },
     {
       "host": "1.179.148.9",
@@ -504,7 +112,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099327+00:00"
+      "found_at": "2026-09-11T21:07:49.152832+00:00"
     },
     {
       "host": "1.179.151.165",
@@ -512,7 +120,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099329+00:00"
+      "found_at": "2026-09-11T21:07:49.152834+00:00"
     },
     {
       "host": "3.141.13.98",
@@ -520,7 +128,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099330+00:00"
+      "found_at": "2026-09-11T21:07:49.152836+00:00"
     },
     {
       "host": "5.8.18.244",
@@ -528,7 +136,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099332+00:00"
+      "found_at": "2026-09-11T21:07:49.152837+00:00"
     },
     {
       "host": "5.34.74.234",
@@ -536,7 +144,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099333+00:00"
+      "found_at": "2026-09-11T21:07:49.152842+00:00"
     },
     {
       "host": "5.44.254.40",
@@ -544,7 +152,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099335+00:00"
+      "found_at": "2026-09-11T21:07:49.152843+00:00"
     },
     {
       "host": "5.58.47.25",
@@ -552,7 +160,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099337+00:00"
+      "found_at": "2026-09-11T21:07:49.152845+00:00"
     },
     {
       "host": "5.135.1.146",
@@ -560,7 +168,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099338+00:00"
+      "found_at": "2026-09-11T21:07:49.152847+00:00"
     },
     {
       "host": "5.178.204.235",
@@ -568,7 +176,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099340+00:00"
+      "found_at": "2026-09-11T21:07:49.152849+00:00"
     },
     {
       "host": "5.178.217.227",
@@ -576,7 +184,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099341+00:00"
+      "found_at": "2026-09-11T21:07:49.152851+00:00"
     },
     {
       "host": "5.188.64.79",
@@ -584,7 +192,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099343+00:00"
+      "found_at": "2026-09-11T21:07:49.152852+00:00"
     },
     {
       "host": "8.17.28.139",
@@ -592,7 +200,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099345+00:00"
+      "found_at": "2026-09-11T21:07:49.152854+00:00"
     },
     {
       "host": "8.39.228.35",
@@ -600,7 +208,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099346+00:00"
+      "found_at": "2026-09-11T21:07:49.152856+00:00"
     },
     {
       "host": "8.42.68.197",
@@ -608,7 +216,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099348+00:00"
+      "found_at": "2026-09-11T21:07:49.152857+00:00"
     },
     {
       "host": "8.42.68.249",
@@ -616,7 +224,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099350+00:00"
+      "found_at": "2026-09-11T21:07:49.152859+00:00"
     },
     {
       "host": "8.210.76.150",
@@ -624,7 +232,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099351+00:00"
+      "found_at": "2026-09-11T21:07:49.152861+00:00"
     },
     {
       "host": "8.210.200.44",
@@ -632,7 +240,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099353+00:00"
+      "found_at": "2026-09-11T21:07:49.152863+00:00"
     },
     {
       "host": "12.11.59.114",
@@ -640,7 +248,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099355+00:00"
+      "found_at": "2026-09-11T21:07:49.152864+00:00"
     },
     {
       "host": "12.131.183.66",
@@ -648,7 +256,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099357+00:00"
+      "found_at": "2026-09-11T21:07:49.152866+00:00"
     },
     {
       "host": "12.158.87.26",
@@ -656,7 +264,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099358+00:00"
+      "found_at": "2026-09-11T21:07:49.152868+00:00"
     },
     {
       "host": "1.12.55.136",
@@ -664,7 +272,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099360+00:00"
+      "found_at": "2026-09-11T21:07:49.152869+00:00"
     },
     {
       "host": "1.180.0.162",
@@ -672,7 +280,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099361+00:00"
+      "found_at": "2026-09-11T21:07:49.152871+00:00"
     },
     {
       "host": "1.180.49.222",
@@ -680,7 +288,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099363+00:00"
+      "found_at": "2026-09-11T21:07:49.152873+00:00"
     },
     {
       "host": "5.56.124.176",
@@ -688,7 +296,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099364+00:00"
+      "found_at": "2026-09-11T21:07:49.152876+00:00"
     },
     {
       "host": "5.189.159.215",
@@ -696,7 +304,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099366+00:00"
+      "found_at": "2026-09-11T21:07:49.152878+00:00"
     },
     {
       "host": "8.142.3.145",
@@ -704,7 +312,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099368+00:00"
+      "found_at": "2026-09-11T21:07:49.152879+00:00"
     },
     {
       "host": "8.210.253.223",
@@ -712,7 +320,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099369+00:00"
+      "found_at": "2026-09-11T21:07:49.152881+00:00"
     },
     {
       "host": "8.218.160.143",
@@ -720,7 +328,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099371+00:00"
+      "found_at": "2026-09-11T21:07:49.152882+00:00"
     },
     {
       "host": "18.163.25.217",
@@ -728,7 +336,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099373+00:00"
+      "found_at": "2026-09-11T21:07:49.152884+00:00"
     },
     {
       "host": "23.253.253.26",
@@ -736,7 +344,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099374+00:00"
+      "found_at": "2026-09-11T21:07:49.152885+00:00"
     },
     {
       "host": "24.249.199.4",
@@ -744,7 +352,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099376+00:00"
+      "found_at": "2026-09-11T21:07:49.152887+00:00"
     },
     {
       "host": "24.249.199.12",
@@ -752,7 +360,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099378+00:00"
+      "found_at": "2026-09-11T21:07:49.152888+00:00"
     },
     {
       "host": "31.41.90.142",
@@ -760,7 +368,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099379+00:00"
+      "found_at": "2026-09-11T21:07:49.152890+00:00"
     },
     {
       "host": "31.43.203.100",
@@ -768,7 +376,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099381+00:00"
+      "found_at": "2026-09-11T21:07:49.152892+00:00"
     },
     {
       "host": "31.202.25.190",
@@ -776,7 +384,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099382+00:00"
+      "found_at": "2026-09-11T21:07:49.152893+00:00"
     },
     {
       "host": "34.79.91.3",
@@ -784,7 +392,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099384+00:00"
+      "found_at": "2026-09-11T21:07:49.152895+00:00"
     },
     {
       "host": "37.44.238.2",
@@ -792,7 +400,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099385+00:00"
+      "found_at": "2026-09-11T21:07:49.152896+00:00"
     },
     {
       "host": "37.192.118.80",
@@ -800,7 +408,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099387+00:00"
+      "found_at": "2026-09-11T21:07:49.152898+00:00"
     },
     {
       "host": "37.230.114.48",
@@ -808,7 +416,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099388+00:00"
+      "found_at": "2026-09-11T21:07:49.152899+00:00"
     },
     {
       "host": "39.170.85.129",
@@ -816,7 +424,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099390+00:00"
+      "found_at": "2026-09-11T21:07:49.152901+00:00"
     },
     {
       "host": "42.193.23.91",
@@ -824,7 +432,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099391+00:00"
+      "found_at": "2026-09-11T21:07:49.152903+00:00"
     },
     {
       "host": "43.132.238.17",
@@ -832,7 +440,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099393+00:00"
+      "found_at": "2026-09-11T21:07:49.152904+00:00"
     },
     {
       "host": "44.202.62.60",
@@ -840,7 +448,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099395+00:00"
+      "found_at": "2026-09-11T21:07:49.152906+00:00"
     },
     {
       "host": "44.202.243.108",
@@ -848,7 +456,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099396+00:00"
+      "found_at": "2026-09-11T21:07:49.152909+00:00"
     },
     {
       "host": "45.32.114.246",
@@ -856,7 +464,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099398+00:00"
+      "found_at": "2026-09-11T21:07:49.152911+00:00"
     },
     {
       "host": "45.76.32.8",
@@ -864,7 +472,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099399+00:00"
+      "found_at": "2026-09-11T21:07:49.152912+00:00"
     },
     {
       "host": "45.233.85.205",
@@ -872,7 +480,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099401+00:00"
+      "found_at": "2026-09-11T21:07:49.152914+00:00"
     },
     {
       "host": "1.0.205.87",
@@ -880,7 +488,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099403+00:00"
+      "found_at": "2026-09-11T21:07:49.152915+00:00"
     },
     {
       "host": "1.1.189.58",
@@ -888,7 +496,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099404+00:00"
+      "found_at": "2026-09-11T21:07:49.152917+00:00"
     },
     {
       "host": "1.1.220.63",
@@ -896,7 +504,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099406+00:00"
+      "found_at": "2026-09-11T21:07:49.152918+00:00"
     },
     {
       "host": "1.4.214.178",
@@ -904,7 +512,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099407+00:00"
+      "found_at": "2026-09-11T21:07:49.152920+00:00"
     },
     {
       "host": "1.9.83.210",
@@ -912,7 +520,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099409+00:00"
+      "found_at": "2026-09-11T21:07:49.152922+00:00"
     },
     {
       "host": "1.10.141.115",
@@ -920,7 +528,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099411+00:00"
+      "found_at": "2026-09-11T21:07:49.152925+00:00"
     },
     {
       "host": "1.20.225.123",
@@ -928,7 +536,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099412+00:00"
+      "found_at": "2026-09-11T21:07:49.152927+00:00"
     },
     {
       "host": "1.85.52.250",
@@ -936,7 +544,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099414+00:00"
+      "found_at": "2026-09-11T21:07:49.152929+00:00"
     },
     {
       "host": "1.179.144.41",
@@ -944,7 +552,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099416+00:00"
+      "found_at": "2026-09-11T21:07:49.152930+00:00"
     },
     {
       "host": "2.58.217.1",
@@ -952,7 +560,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099417+00:00"
+      "found_at": "2026-09-11T21:07:49.152932+00:00"
     },
     {
       "host": "3.20.236.208",
@@ -960,7 +568,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099419+00:00"
+      "found_at": "2026-09-11T21:07:49.152933+00:00"
     },
     {
       "host": "3.89.73.90",
@@ -968,7 +576,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099420+00:00"
+      "found_at": "2026-09-11T21:07:49.152935+00:00"
     },
     {
       "host": "3.215.177.148",
@@ -976,7 +584,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099422+00:00"
+      "found_at": "2026-09-11T21:07:49.152937+00:00"
     },
     {
       "host": "4.16.68.158",
@@ -984,7 +592,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099424+00:00"
+      "found_at": "2026-09-11T21:07:49.152938+00:00"
     },
     {
       "host": "5.9.118.41",
@@ -992,7 +600,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099425+00:00"
+      "found_at": "2026-09-11T21:07:49.152942+00:00"
     },
     {
       "host": "5.56.92.25",
@@ -1000,7 +608,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099427+00:00"
+      "found_at": "2026-09-11T21:07:49.152945+00:00"
     },
     {
       "host": "5.104.174.199",
@@ -1008,7 +616,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099428+00:00"
+      "found_at": "2026-09-11T21:07:49.152963+00:00"
     },
     {
       "host": "5.160.175.226",
@@ -1016,7 +624,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099430+00:00"
+      "found_at": "2026-09-11T21:07:49.152965+00:00"
     },
     {
       "host": "5.187.9.10",
@@ -1024,7 +632,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099432+00:00"
+      "found_at": "2026-09-11T21:07:49.152967+00:00"
     },
     {
       "host": "8.219.115.145",
@@ -1032,7 +640,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099433+00:00"
+      "found_at": "2026-09-11T21:07:49.152968+00:00"
     },
     {
       "host": "8.242.190.119",
@@ -1040,7 +648,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099435+00:00"
+      "found_at": "2026-09-11T21:07:49.152970+00:00"
     },
     {
       "host": "8.242.205.41",
@@ -1048,7 +656,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099437+00:00"
+      "found_at": "2026-09-11T21:07:49.152971+00:00"
     },
     {
       "host": "12.36.95.132",
@@ -1056,7 +664,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099438+00:00"
+      "found_at": "2026-09-11T21:07:49.152973+00:00"
     },
     {
       "host": "12.88.29.66",
@@ -1064,7 +672,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099440+00:00"
+      "found_at": "2026-09-11T21:07:49.152975+00:00"
     },
     {
       "host": "14.102.51.185",
@@ -1072,7 +680,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099442+00:00"
+      "found_at": "2026-09-11T21:07:49.152976+00:00"
     },
     {
       "host": "14.139.57.195",
@@ -1080,7 +688,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099444+00:00"
+      "found_at": "2026-09-11T21:07:49.152978+00:00"
     },
     {
       "host": "14.161.26.100",
@@ -1088,7 +696,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099445+00:00"
+      "found_at": "2026-09-11T21:07:49.152980+00:00"
     },
     {
       "host": "14.161.31.192",
@@ -1096,7 +704,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099447+00:00"
+      "found_at": "2026-09-11T21:07:49.152981+00:00"
     },
     {
       "host": "14.161.33.150",
@@ -1104,7 +712,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099449+00:00"
+      "found_at": "2026-09-11T21:07:49.152983+00:00"
     },
     {
       "host": "1.0.171.213",
@@ -1112,7 +720,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099450+00:00"
+      "found_at": "2026-09-11T21:07:49.152985+00:00"
     },
     {
       "host": "1.20.207.99",
@@ -1120,7 +728,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099452+00:00"
+      "found_at": "2026-09-11T21:07:49.152986+00:00"
     },
     {
       "host": "2.138.28.204",
@@ -1128,7 +736,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099454+00:00"
+      "found_at": "2026-09-11T21:07:49.152988+00:00"
     },
     {
       "host": "3.94.253.49",
@@ -1136,7 +744,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099455+00:00"
+      "found_at": "2026-09-11T21:07:49.152989+00:00"
     },
     {
       "host": "5.8.53.7",
@@ -1144,7 +752,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099457+00:00"
+      "found_at": "2026-09-11T21:07:49.152991+00:00"
     },
     {
       "host": "5.9.180.204",
@@ -1152,7 +760,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099458+00:00"
+      "found_at": "2026-09-11T21:07:49.152993+00:00"
     },
     {
       "host": "5.54.186.76",
@@ -1160,7 +768,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099460+00:00"
+      "found_at": "2026-09-11T21:07:49.152997+00:00"
     },
     {
       "host": "5.75.144.136",
@@ -1168,7 +776,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099461+00:00"
+      "found_at": "2026-09-11T21:07:49.152998+00:00"
     },
     {
       "host": "5.78.40.148",
@@ -1176,7 +784,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099463+00:00"
+      "found_at": "2026-09-11T21:07:49.153000+00:00"
     },
     {
       "host": "5.78.42.62",
@@ -1184,7 +792,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099465+00:00"
+      "found_at": "2026-09-11T21:07:49.153001+00:00"
     },
     {
       "host": "5.78.42.170",
@@ -1192,7 +800,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099466+00:00"
+      "found_at": "2026-09-11T21:07:49.153003+00:00"
     },
     {
       "host": "5.78.45.181",
@@ -1200,7 +808,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099468+00:00"
+      "found_at": "2026-09-11T21:07:49.153005+00:00"
     },
     {
       "host": "5.78.65.102",
@@ -1208,7 +816,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099470+00:00"
+      "found_at": "2026-09-11T21:07:49.153006+00:00"
     },
     {
       "host": "5.78.65.154",
@@ -1216,7 +824,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099471+00:00"
+      "found_at": "2026-09-11T21:07:49.153008+00:00"
     },
     {
       "host": "5.78.66.187",
@@ -1224,7 +832,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099473+00:00"
+      "found_at": "2026-09-11T21:07:49.153009+00:00"
     },
     {
       "host": "5.78.67.98",
@@ -1232,7 +840,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099475+00:00"
+      "found_at": "2026-09-11T21:07:49.153011+00:00"
     },
     {
       "host": "5.78.74.216",
@@ -1240,7 +848,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099477+00:00"
+      "found_at": "2026-09-11T21:07:49.153013+00:00"
     },
     {
       "host": "1.0.133.89",
@@ -1248,7 +856,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099478+00:00"
+      "found_at": "2026-09-11T21:07:49.153014+00:00"
     },
     {
       "host": "1.0.133.100",
@@ -1256,7 +864,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099480+00:00"
+      "found_at": "2026-09-11T21:07:49.153018+00:00"
     },
     {
       "host": "1.0.136.28",
@@ -1264,7 +872,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099481+00:00"
+      "found_at": "2026-09-11T21:07:49.153019+00:00"
     },
     {
       "host": "1.0.136.49",
@@ -1272,7 +880,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099483+00:00"
+      "found_at": "2026-09-11T21:07:49.153021+00:00"
     },
     {
       "host": "1.0.136.138",
@@ -1280,7 +888,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099484+00:00"
+      "found_at": "2026-09-11T21:07:49.153022+00:00"
     },
     {
       "host": "1.0.136.221",
@@ -1288,7 +896,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099486+00:00"
+      "found_at": "2026-09-11T21:07:49.153024+00:00"
     },
     {
       "host": "1.0.137.61",
@@ -1296,7 +904,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099487+00:00"
+      "found_at": "2026-09-11T21:07:49.153025+00:00"
     },
     {
       "host": "1.0.141.70",
@@ -1304,7 +912,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099489+00:00"
+      "found_at": "2026-09-11T21:07:49.153027+00:00"
     },
     {
       "host": "1.0.141.132",
@@ -1312,7 +920,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099491+00:00"
+      "found_at": "2026-09-11T21:07:49.153030+00:00"
     },
     {
       "host": "1.0.144.43",
@@ -1320,7 +928,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099492+00:00"
+      "found_at": "2026-09-11T21:07:49.153032+00:00"
     },
     {
       "host": "1.0.146.166",
@@ -1328,7 +936,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099494+00:00"
+      "found_at": "2026-09-11T21:07:49.153033+00:00"
     },
     {
       "host": "1.0.150.180",
@@ -1336,7 +944,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099495+00:00"
+      "found_at": "2026-09-11T21:07:49.153035+00:00"
     },
     {
       "host": "1.0.153.37",
@@ -1344,7 +952,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099497+00:00"
+      "found_at": "2026-09-11T21:07:49.153036+00:00"
     },
     {
       "host": "1.0.157.96",
@@ -1352,7 +960,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099499+00:00"
+      "found_at": "2026-09-11T21:07:49.153038+00:00"
     },
     {
       "host": "1.0.160.29",
@@ -1360,7 +968,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099500+00:00"
+      "found_at": "2026-09-11T21:07:49.153039+00:00"
     },
     {
       "host": "1.0.160.38",
@@ -1368,7 +976,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099502+00:00"
+      "found_at": "2026-09-11T21:07:49.153041+00:00"
     },
     {
       "host": "1.0.161.47",
@@ -1376,7 +984,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099503+00:00"
+      "found_at": "2026-09-11T21:07:49.153042+00:00"
     },
     {
       "host": "1.0.161.232",
@@ -1384,7 +992,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099505+00:00"
+      "found_at": "2026-09-11T21:07:49.153044+00:00"
     },
     {
       "host": "1.0.162.225",
@@ -1392,7 +1000,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099506+00:00"
+      "found_at": "2026-09-11T21:07:49.153045+00:00"
     },
     {
       "host": "1.0.163.158",
@@ -1400,7 +1008,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099508+00:00"
+      "found_at": "2026-09-11T21:07:49.153047+00:00"
     },
     {
       "host": "1.0.170.50",
@@ -1408,7 +1016,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099509+00:00"
+      "found_at": "2026-09-11T21:07:49.153048+00:00"
     },
     {
       "host": "1.0.208.68",
@@ -1416,7 +1024,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099511+00:00"
+      "found_at": "2026-09-11T21:07:49.153050+00:00"
     },
     {
       "host": "1.0.208.108",
@@ -1424,7 +1032,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099512+00:00"
+      "found_at": "2026-09-11T21:07:49.153051+00:00"
     },
     {
       "host": "1.0.208.111",
@@ -1432,7 +1040,7 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099514+00:00"
+      "found_at": "2026-09-11T21:07:49.153053+00:00"
     },
     {
       "host": "1.0.208.131",
@@ -1440,7 +1048,15 @@
       "protocol": "http",
       "type": "http",
       "source": "jetkai/proxy-list",
-      "found_at": "2026-09-11T16:42:50.099516+00:00"
+      "found_at": "2026-09-11T21:07:49.153054+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 7860,
+      "protocol": "http",
+      "type": "http",
+      "source": "KevinStreetCoder/harvestr",
+      "found_at": "2026-09-11T21:08:04.816133+00:00"
     },
     {
       "host": "127.0.0.1",
@@ -1448,7 +1064,7 @@
       "protocol": "http",
       "type": "http",
       "source": "KevinStreetCoder/harvestr",
-      "found_at": "2026-09-11T16:43:03.789661+00:00"
+      "found_at": "2026-09-11T21:08:04.816145+00:00"
     },
     {
       "host": "127.0.0.1",
@@ -1456,7 +1072,7 @@
       "protocol": "http",
       "type": "http",
       "source": "rahgozar94725/MTProto-Checker",
-      "found_at": "2026-09-11T16:43:22.043748+00:00"
+      "found_at": "2026-09-11T21:08:23.122199+00:00"
     },
     {
       "host": "127.0.0.1",
@@ -1464,15 +1080,7 @@
       "protocol": "http",
       "type": "http",
       "source": "linera-io/linera-protocol",
-      "found_at": "2026-09-11T16:43:22.684173+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 4317,
-      "protocol": "http",
-      "type": "http",
-      "source": "sepehrbayat/sandwich-download-manager",
-      "found_at": "2026-09-11T16:43:43.201303+00:00"
+      "found_at": "2026-09-11T21:08:23.841677+00:00"
     }
   ]
 }
