@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-11T08:38:42.531274+00:00",
+  "timestamp": "2026-09-11T13:18:10.295185+00:00",
   "overall_status": "warning",
   "checks": {
     "subscriptions": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 200.2h",
+        "message": "Age: 204.9h",
         "fresh": false,
-        "age_hours": 200.21843516444446,
+        "age_hours": 204.87614731333335,
         "last_update": "2026-09-03T00:25:36.168395+00:00"
       },
       "availability": {
@@ -20,9 +20,9 @@
     "telegram": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 16.3h",
+        "message": "Age: 20.9h",
         "fresh": false,
-        "age_hours": 16.27317305472222,
+        "age_hours": 20.930885159722223,
         "last_update": "2026-09-10T16:22:19.114968+00:00"
       },
       "availability": {
@@ -34,11 +34,11 @@
     },
     "http": {
       "freshness": {
-        "status": "warning",
-        "message": "Age: 8.3h",
-        "fresh": false,
-        "age_hours": 8.312335814999999,
-        "last_update": "2026-09-11T00:19:58.129116+00:00"
+        "status": "ok",
+        "message": "Age: 1.6h",
+        "fresh": true,
+        "age_hours": 1.62553591,
+        "last_update": "2026-09-11T11:40:38.372351+00:00"
       },
       "availability": {
         "status": "warning",
@@ -49,11 +49,11 @@
     },
     "socks": {
       "freshness": {
-        "status": "warning",
-        "message": "Age: 8.3h",
-        "fresh": false,
-        "age_hours": 8.312271172222223,
-        "last_update": "2026-09-11T00:19:58.361904+00:00"
+        "status": "ok",
+        "message": "Age: 1.6h",
+        "fresh": true,
+        "age_hours": 1.6254668469444444,
+        "last_update": "2026-09-11T11:40:38.621051+00:00"
       },
       "availability": {
         "status": "warning",
@@ -65,10 +65,10 @@
     "summary": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 2.7h",
+        "message": "Age: 1.6h",
         "fresh": true,
-        "age_hours": 2.677453883333333,
-        "last_update": "2026-09-11T05:58:03.704221+00:00"
+        "age_hours": 1.6216798858333332,
+        "last_update": "2026-09-11T11:40:52.254189+00:00"
       },
       "availability": {
         "status": "ok",
