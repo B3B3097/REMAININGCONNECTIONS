@@ -59,15 +59,27 @@ async def check_all(
         normalized = normalize_proxy(proxy)
         async with semaphore:
             # First try standard Telegram proxy check
-            result = await check_telegram_proxy(normalized, timeout)
+            check_result = await check_telegram_proxy(normalized, timeout)
+            # Convert CheckResult dataclass to dict
+            result = check_result.as_dict() if hasattr(check_result, 'as_dict') else {
+                "status": getattr(check_result, 'status', 'unknown'),
+                "verification": getattr(check_result, 'verification', 'unknown'),
+                "latency_ms": getattr(check_result, 'latency_ms', None),
+                "error": getattr(check_result, 'error', None),
+                "detail": getattr(check_result, 'detail', None),
+            }
             
             # Determine status and bypass status
-            status = "failed"
+            status = result.get("status", "failed")
             bypass_status = None
             
-            if result.get("tcp_ok") or result.get("socket_connected"):
+            # Map CheckResult status to simple tcp_ok/socket_connected flags for compatibility
+            tcp_ok = status in ("working", "unverified")
+            telegram_handshake_ok = status == "working"
+            
+            if tcp_ok or result.get("tcp_ok"):
                 # Basic connectivity works
-                if result.get("telegram_handshake_ok"):
+                if telegram_handshake_ok or result.get("telegram_handshake_ok"):
                     status = "working"
                 else:
                     # TCP works but handshake fails - might need bypass
@@ -78,9 +90,14 @@ async def check_all(
             if enable_xray and normalized.get("url"):
                 parsed = parse_xray_uri(normalized["url"])
                 if parsed:
-                    xray_result = await check_xray_uri(normalized["url"], timeout)
+                    xray_check_result = await check_xray_uri(normalized["url"], timeout)
+                    xray_result = xray_check_result.as_dict() if hasattr(xray_check_result, 'as_dict') else {
+                        "status": getattr(xray_check_result, 'status', 'unknown'),
+                        "verification": getattr(xray_check_result, 'verification', 'unknown'),
+                        "latency_ms": getattr(xray_check_result, 'latency_ms', None),
+                    }
                     result.update(xray_result)
-                    if xray_result.get("xray_ok"):
+                    if xray_result.get("status") == "working":
                         # Xray works - this means it works with bypass
                         if status == "failed":
                             status = "working"
@@ -105,12 +122,12 @@ async def check_all(
                 if mtproto_result.status == "working":
                     status = "working"
                     # If it only works via MTProto but not basic check, mark bypass
-                    if not result.get("telegram_handshake_ok"):
+                    if not telegram_handshake_ok:
                         bypass_status = "works_with_bypass"
                 elif (
                     mtproto_result.status in ("timeout", "connection_failed")
                     and status == "failed"
-                    and result.get("tcp_ok")
+                    and tcp_ok
                 ):
                     status = "unverified"
                     result["verification_note"] = (
