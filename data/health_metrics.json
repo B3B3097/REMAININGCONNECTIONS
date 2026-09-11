@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-11T13:18:10.295185+00:00",
+  "timestamp": "2026-09-11T17:34:26.117689+00:00",
   "overall_status": "warning",
   "checks": {
     "subscriptions": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 204.9h",
+        "message": "Age: 209.1h",
         "fresh": false,
-        "age_hours": 204.87614731333335,
+        "age_hours": 209.14720894861114,
         "last_update": "2026-09-03T00:25:36.168395+00:00"
       },
       "availability": {
@@ -20,9 +20,9 @@
     "telegram": {
       "freshness": {
         "status": "warning",
-        "message": "Age: 20.9h",
+        "message": "Age: 25.2h",
         "fresh": false,
-        "age_hours": 20.930885159722223,
+        "age_hours": 25.201946754722222,
         "last_update": "2026-09-10T16:22:19.114968+00:00"
       },
       "availability": {
@@ -35,10 +35,10 @@
     "http": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 1.6h",
+        "message": "Age: 0.8h",
         "fresh": true,
-        "age_hours": 1.62553591,
-        "last_update": "2026-09-11T11:40:38.372351+00:00"
+        "age_hours": 0.83402852,
+        "last_update": "2026-09-11T16:44:23.620671+00:00"
       },
       "availability": {
         "status": "warning",
@@ -50,10 +50,10 @@
     "socks": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 1.6h",
+        "message": "Age: 0.8h",
         "fresh": true,
-        "age_hours": 1.6254668469444444,
-        "last_update": "2026-09-11T11:40:38.621051+00:00"
+        "age_hours": 0.8339648927777779,
+        "last_update": "2026-09-11T16:44:23.849778+00:00"
       },
       "availability": {
         "status": "warning",
@@ -65,10 +65,10 @@
     "summary": {
       "freshness": {
         "status": "ok",
-        "message": "Age: 1.6h",
+        "message": "Age: 0.8h",
         "fresh": true,
-        "age_hours": 1.6216798858333332,
-        "last_update": "2026-09-11T11:40:52.254189+00:00"
+        "age_hours": 0.8308481236111112,
+        "last_update": "2026-09-11T16:44:35.070215+00:00"
       },
       "availability": {
         "status": "ok",
