@@ -1,0 +1,48 @@
+name: Export Code to TXT
+
+on:
+  workflow_dispatch: # Позволяет запускать воркфлоу вручную из вкладки Actions
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Code TXT
+        run: |
+          OUTPUT_FILE="combined_code.txt"
+          
+          # Очищаем файл, если он уже существовал
+          > "$OUTPUT_FILE"
+          
+          echo "=== REPOSITORY CODE EXPORT ===" >> "$OUTPUT_FILE"
+          echo "Generated on: $(date)" >> "$OUTPUT_FILE"
+          echo -e "================================\n\n" >> "$OUTPUT_FILE"
+
+          # Ищем все файлы в репозитории, исключая служебные
+          find . -type f \
+            ! -path "*/.git/*" \
+            ! -path "./.git" \
+            ! -path "./$OUTPUT_FILE" \
+            ! -name "*.png" \
+            ! -name "*.jpg" \
+            ! -name "*.zip" \
+            ! -name "*.tar.gz" | sort | while read -r file; do
+              
+              echo "--------------------------------------------------" >> "$OUTPUT_FILE"
+              echo "FILE: $file" >> "$OUTPUT_FILE"
+              echo "--------------------------------------------------" >> "$OUTPUT_FILE"
+              cat "$file" >> "$OUTPUT_FILE"
+              echo -e "\n\n" >> "$OUTPUT_FILE"
+          done
+
+          echo "Export completed: $OUTPUT_FILE"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-code-txt
+          path: combined_code.txt
