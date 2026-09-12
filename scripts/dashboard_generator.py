@@ -439,7 +439,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         return '<div class="card p-4 flex flex-col ' + (valid ? '' : 'subs-card-muted') + '" data-valid="' + (valid ? '1' : '0') + '" data-search="' + esc(search) + '">'
             + '<div class="flex items-start justify-between gap-2 mb-2">'
             + '<h3 class="font-semibold text-sm break-all leading-snug">' + esc(title) + '</h3>'
-            + '<div class="flex gap-1 flex-shrink-0 flex-wrap justify-end">' (fmt ? badge(fmt, fmt === 'TXT' ? 'success' : 'platform') : '') + + badge(s.status || 'unknown', statusKind) + badge((s.configs_count || 0) + ' configs', 'platform') + '</div>'
+            + '<div class="flex gap-1 flex-shrink-0 flex-wrap justify-end">' + (fmt ? badge(fmt, fmt === 'TXT' ? 'success' : 'platform') : '') + badge(s.status || 'unknown', statusKind) + badge((s.configs_count || 0) + ' configs', 'platform') + '</div>'
             + '</div>'
             + '<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">'
             + '<a class="text-blue-400 hover:underline text-xs break-all" href="' + esc(repoHref) + '" target="_blank" rel="noopener">' + esc(repoText || repoHref) + '</a>'
