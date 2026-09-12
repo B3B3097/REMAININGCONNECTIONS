@@ -6,7 +6,10 @@
   Ошибок не найдено ✅
 
 --- Файл: ./.github/workflows/export-formats.yml ---
-  Ошибок не найдено ✅
+Последние 3 ошибки:
+  ./.github/workflows/export-formats.yml:52:81: [error] line too long (94 > 80 characters) (line-length)
+  ./.github/workflows/export-formats.yml:74:81: [error] line too long (87 > 80 characters) (line-length)
+  ./.github/workflows/export-formats.yml:143:81: [error] line too long (81 > 80 characters) (line-length)
 
 --- Файл: ./.github/workflows/generate-summary.yml ---
   Ошибок не найдено ✅
