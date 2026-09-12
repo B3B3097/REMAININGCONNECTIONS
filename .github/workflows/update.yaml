@@ -1,0 +1,39 @@
+name: Update Connections Data
+
+on:
+  schedule:
+    - cron: '0 */4 * * *' # Запуск каждые 4 часа
+  workflow_dispatch: # Возможность ручного запуска
+
+permissions:
+  contents: write # КРИТИЧЕСКИ ВАЖНО: дает право боту записывать файлы в репозиторий
+
+jobs:
+  update-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install aiohttp; fi
+
+      - name: Run main proxy script
+        run: |
+          python main.py
+
+      - name: Commit and push changes if updated
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto: Update remaining connections data [skip ci]"
+          branch: main
+          file_pattern: "output/*" # Укажите вашу директорию с результатами
+          skip_ci: true
