@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from strict_proxy_checker import check_xray_uri, utc_timestamp
+from strict_proxy_checker import check_xray_uri, utc_timestamp, CheckResult
 from subscription_validator import validate_subscription
 
 
@@ -81,7 +81,10 @@ async def probe_one(
     probe_results = []
     
     for uri in nodes_to_probe:
-        check_result = await check_xray_uri(uri, timeout)
+        try:
+            check_result = await check_xray_uri(uri, timeout)
+        except Exception as exc:
+            check_result = CheckResult("invalid", "xray_config", None, f"probe_error_{type(exc).__name__}")
         # Convert CheckResult to dict
         result_dict = check_result.as_dict() if hasattr(check_result, 'as_dict') else {
             "status": getattr(check_result, 'status', 'unknown'),

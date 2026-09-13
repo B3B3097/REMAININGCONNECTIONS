@@ -63,12 +63,14 @@ def _valid_uri(value: str) -> tuple[str, str] | None:
         return None
     if protocol == "vmess":
         return protocol, value
-    if not parsed.hostname and protocol not in {"wireguard", "wg"}:
-        return None
     try:
-        if parsed.port is not None and not 1 <= parsed.port <= 65535:
-            return None
-    except ValueError:
+        raw_host = parsed.hostname
+        raw_port = parsed.port
+    except (ValueError, AttributeError):
+        return None
+    if not raw_host and protocol not in {"wireguard", "wg"}:
+        return None
+    if raw_port is not None and not 1 <= raw_port <= 65535:
         return None
     return protocol, value
 

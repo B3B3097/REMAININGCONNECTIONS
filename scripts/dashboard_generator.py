@@ -903,33 +903,54 @@ class DashboardGenerator:
         self.data_dir = data_dir
         self.output_dir = output_dir
 
+    @staticmethod
+    def _is_real_host(h):
+        if not h or not isinstance(h, str):
+            return False
+        h = h.strip().lower()
+        if h in {"your.domain.com", "localhost", "127.0.0.1", "0.0.0.0", "example.com"}:
+            return False
+        if h.startswith("172.17.") or h.startswith("192.168.") or h.startswith("10."):
+            return False
+        return True
+
     def _load_tg_view(self):
         """
         Resolve the TG proxy source for the dashboard.
-
-        Preferred source: data/tg_proxies_found.json (proxies as-is).
-        If that list is empty, fall back to checked/tg_proxies_checked.json
-        (repo root = parent of data_dir) and keep only status == 'working'.
-
-        Returns (cards, stats, source_label). Stats are full counters over
-        every proxy in the chosen source file (all statuses).
+        Prefers verified working proxies and filters out local/dummy host templates.
         """
         found = load_json_safe(
             os.path.join(self.data_dir, 'tg_proxies_found.json'), {"proxies": []}
         )
         found_proxies = found.get("proxies", []) if isinstance(found, dict) else []
-        if found_proxies:
-            source = "data/tg_proxies_found.json"
+        repo_root = os.path.dirname(os.path.normpath(self.data_dir)) or "."
+        checked_path = os.path.join(repo_root, "checked", "tg_proxies_checked.json")
+        checked = load_json_safe(checked_path, {"proxies": []})
+        checked_proxies = checked.get("proxies", []) if isinstance(checked, dict) else []
+
+        working_found = [p for p in found_proxies if isinstance(p, dict) and (p.get("status") == "working" or p.get("working") is True)]
+        working_checked = [p for p in checked_proxies if isinstance(p, dict) and (p.get("status") == "working" or p.get("working") is True)]
+
+        if working_found:
             all_proxies = [p for p in found_proxies if isinstance(p, dict)]
-            selected = all_proxies
+            source = "data/tg_proxies_found.json"
+        elif working_checked:
+            all_proxies = [p for p in checked_proxies if isinstance(p, dict)]
+            source = "checked/tg_proxies_checked.json"
+        elif found_proxies:
+            all_proxies = [p for p in found_proxies if isinstance(p, dict)]
+            source = "data/tg_proxies_found.json"
         else:
-            repo_root = os.path.dirname(os.path.normpath(self.data_dir)) or "."
-            checked_path = os.path.join(repo_root, "checked", "tg_proxies_checked.json")
-            checked = load_json_safe(checked_path, {"proxies": []})
-            all_proxies = checked.get("proxies", []) if isinstance(checked, dict) else []
-            all_proxies = [p for p in all_proxies if isinstance(p, dict)]
+            all_proxies = [p for p in checked_proxies if isinstance(p, dict)]
             source = "checked/tg_proxies_checked.json (fallback)"
-            selected = [p for p in all_proxies if p.get("status") == "working"]
+
+        all_proxies = [p for p in all_proxies if self._is_real_host(p.get("host") or p.get("server"))]
+
+        working_proxies = [p for p in all_proxies if p.get("status") == "working" or p.get("working") is True]
+        if working_proxies:
+            selected = working_proxies
+        else:
+            selected = [p for p in all_proxies if p.get("status") != "failed"] or all_proxies
 
         by_status = {}
         for p in all_proxies:
@@ -939,10 +960,9 @@ class DashboardGenerator:
         cards = [_tg_card(p) for p in selected]
         cards.sort(key=_tg_sort_key)
         cards = cards[:1000]
-
         stats = {
             "total": len(all_proxies),
-            "working": by_status.get("working", 0),
+            "working": len(working_proxies),
             "by_status": by_status,
         }
         return cards, stats, source

@@ -19,10 +19,14 @@ def load_json_safe(filepath: str) -> Dict:
     return {}
 
 def count_proxies(data: Dict) -> int:
-    """Count proxies in data structure."""
+    """Count proxies in data structure across all supported categories."""
     if isinstance(data.get('proxies'), list):
         return len(data['proxies'])
-    return data.get('total_working', 0) or data.get('total_extracted', 0) or 0
+    if isinstance(data.get('subscriptions'), list):
+        return len(data['subscriptions'])
+    if isinstance(data.get('utilities'), list):
+        return len(data['utilities'])
+    return data.get('total_working', 0) or data.get('total_extracted', 0) or data.get('candidates_checked', 0) or 0
 
 def main():
     """Generate summary of all proxy data."""

@@ -140,7 +140,22 @@ async def check_all(
                 "working": status == "working",  # Keep for backward compatibility
                 "checked_at": utc_timestamp(),
             })
-            return result
+            proxy_copy = dict(proxy)
+            proxy_copy.update(result)
+            proxy_copy.update({
+                "host": normalized.get("host") or proxy.get("host") or proxy.get("server"),
+                "server": normalized.get("host") or proxy.get("server") or proxy.get("host"),
+                "port": normalized.get("port") or proxy.get("port"),
+                "secret": normalized.get("secret") or proxy.get("secret"),
+                "protocol": normalized.get("protocol") or proxy.get("protocol"),
+                "tg_url": normalized.get("tg_url") or proxy.get("tg_url"),
+                "tme_url": normalized.get("tme_url") or proxy.get("tme_url"),
+                "status": status,
+                "bypass_status": bypass_status,
+                "working": status == "working",
+                "checked_at": utc_timestamp(),
+            })
+            return proxy_copy
 
     tasks = [check_one(p) for p in proxies]
     return await asyncio.gather(*tasks)
@@ -152,18 +167,23 @@ def merge_results(
 ) -> list[dict[str, Any]]:
     by_key = {}
     for p in existing:
-        key = (p.get("host") or p.get("server"), p.get("port"))
-        by_key[key] = p
+        host = p.get("host") or p.get("server")
+        port = p.get("port")
+        if host and port is not None:
+            key = (str(host).strip().lower(), str(port).strip())
+            by_key[key] = p
+        else:
+            by_key[id(p)] = p
 
     for checked_proxy in checked:
-        key = (
-            checked_proxy.get("host") or checked_proxy.get("server"),
-            checked_proxy.get("port"),
-        )
-        if key in by_key:
-            by_key[key].update(checked_proxy)
-        else:
-            by_key[key] = checked_proxy
+        host = checked_proxy.get("host") or checked_proxy.get("server")
+        port = checked_proxy.get("port")
+        if host and port is not None:
+            key = (str(host).strip().lower(), str(port).strip())
+            if key in by_key:
+                by_key[key].update(checked_proxy)
+            else:
+                by_key[key] = checked_proxy
 
     return list(by_key.values())
 

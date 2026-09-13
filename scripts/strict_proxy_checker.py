@@ -166,7 +166,10 @@ def parse_xray_uri(uri: str) -> tuple[str, dict[str, Any]] | None:
     uri = uri.strip()
     if not uri or len(uri) > 8192:
         return None
-    parsed = urlparse(uri)
+    try:
+        parsed = urlparse(uri)
+    except Exception:
+        return None
     scheme = parsed.scheme.lower()
     if scheme not in SUPPORTED_XRAY_PROTOCOLS:
         return None
@@ -198,7 +201,12 @@ def parse_xray_uri(uri: str) -> tuple[str, dict[str, Any]] | None:
             return None
 
     query = parse_qs(parsed.query, keep_blank_values=True)
-    host_port = parse_host_port(parsed.hostname, parsed.port)
+    try:
+        raw_hostname = parsed.hostname
+        raw_port = parsed.port
+    except (ValueError, AttributeError):
+        return None
+    host_port = parse_host_port(raw_hostname, raw_port)
     if not host_port:
         return None
     host, port = host_port
@@ -287,7 +295,10 @@ async def wait_local_listener(port: int, process: subprocess.Popen[str], timeout
 
 
 async def check_xray_uri(uri: str, timeout: float) -> CheckResult:
-    parsed = parse_xray_uri(uri)
+    try:
+        parsed = parse_xray_uri(uri)
+    except Exception as exc:
+        return CheckResult("invalid", "xray_config", None, f"parse_error_{type(exc).__name__}")
     if not parsed:
         return CheckResult("invalid", "xray_config", None, "unsupported_or_invalid_uri")
     xray = find_xray_binary()
@@ -326,7 +337,10 @@ async def check_xray_uri(uri: str, timeout: float) -> CheckResult:
 
 
 def parse_telegram_proxy_url(value: str) -> dict[str, Any] | None:
-    parsed = urlparse(value.strip())
+    try:
+        parsed = urlparse(value.strip())
+    except Exception:
+        return None
     scheme = parsed.scheme.lower()
     query = parse_qs(parsed.query, keep_blank_values=True)
     if scheme in {"tg", "http", "https"} and (scheme == "tg" or parsed.netloc.lower() == "t.me"):
@@ -344,10 +358,18 @@ def parse_telegram_proxy_url(value: str) -> dict[str, Any] | None:
             return {"protocol": "mtproto", "host": host, "port": port, "secret": secret}
         return {"protocol": "socks5", "host": host, "port": port}
     if scheme in {"socks5", "socks"}:
-        host_port = parse_host_port(parsed.hostname, parsed.port)
+        try:
+            h, p = parsed.hostname, parsed.port
+        except (ValueError, AttributeError):
+            return None
+        host_port = parse_host_port(h, p)
         return {"protocol": "socks5", "host": host_port[0], "port": host_port[1]} if host_port else None
     if scheme in {"http", "https"}:
-        host_port = parse_host_port(parsed.hostname, parsed.port)
+        try:
+            h, p = parsed.hostname, parsed.port
+        except (ValueError, AttributeError):
+            return None
+        host_port = parse_host_port(h, p)
         return {"protocol": "http", "host": host_port[0], "port": host_port[1]} if host_port else None
     return None
 
