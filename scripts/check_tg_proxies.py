@@ -121,7 +121,9 @@ async def check_all(
                 })
                 if mtproto_result.status == "working":
                     status = "working"
-                    # If it only works via MTProto but not basic check, mark bypass
+                    if mtproto_result.latency_ms is not None:
+                        result["latency_ms"] = mtproto_result.latency_ms
+                    result["verification"] = mtproto_result.verification
                     if not telegram_handshake_ok:
                         bypass_status = "works_with_bypass"
                 elif (

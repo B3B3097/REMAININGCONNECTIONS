@@ -1,259 +1,109 @@
- # 🌐 REMAININGCONNECTIONS
+# 🌐 REMAININGCONNECTIONS
 
-> **Автоматизированный комплекс для поиска, валидации и мониторинга прокси-соединений из открытых источников GitHub.**
+> **Автоматизированный комплекс для непрерывного поиска, криптографической валидации и 24/7 мониторинга Telegram MTProto прокси и сетевых подписок V2Ray/Xray.**
 
-Проект предназначен для глубокого анализа сетевой инфраструктуры, автоматического извлечения прокси-конфигураций из публичных репозиториев GitHub, их валидации и мониторинга производительности. Система полностью автоматизирована и работает 24/7 через GitHub Actions.
+Система автоматически сканирует открытые репозитории GitHub, извлекает сетевые конфигурации, проводит глубокое тестирование протоколов на уровне рукопожатия Telegram DC и формирует готовые к использованию списки прокси во всех популярных форматах.
 
 ---
 
-## 🔗 Официальные ресурсы
+## 🔗 Быстрый доступ и ресурсы
 
 <p align="center">
+  <a href="https://b3b3097.github.io/REMAININGCONNECTIONS/" target="_blank">
+    <img src="https://img.shields.io/badge/Live_Dashboard-GitHub_Pages-22c55e?style=for-the-badge&logo=github&logoColor=white" alt="Live Dashboard"/>
+  </a>
   <a href="https://t.me/REMAININGCONNECTIONS" target="_blank">
-    <img src="https://img.shields.io/badge/Telegram-%40REMAININGCONNECTIONS-blue?style=for-the-badge&logo=telegram" alt="Telegram"/>
+    <img src="https://img.shields.io/badge/Telegram-Канал_Прокси-0284c7?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram"/>
   </a>
   <a href="https://remainconnected.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/Web_Mirror-remainconnected-vercel?style=for-the-badge&logo=vercel" alt="Web Mirror"/>
+    <img src="https://img.shields.io/badge/Web_Mirror-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Mirror"/>
   </a>
-  <a href="https://b3b3097.github.io/REMAININGCONNECTIONS/" target="_blank">
-     <img src="https://img.shields.io/badge/Dashboard-GitHub_Pages-green?style=for-the-badge&logo=github" alt="Dashboard"/>
-  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/actions/workflow/status/B3B3097/REMAININGCONNECTIONS/tg-proxy-discovery.yml?label=TG%20Proxy%20Discovery&style=flat-square" alt="TG Proxy Discovery"/>
+  <img src="https://img.shields.io/github/actions/workflow/status/B3B3097/REMAININGCONNECTIONS/subscription-discovery.yml?label=Subscriptions%20Discovery&style=flat-square" alt="Subscriptions Discovery"/>
+  <img src="https://img.shields.io/github/actions/workflow/status/B3B3097/REMAININGCONNECTIONS/deploy.yml?label=Dashboard%20Deploy&style=flat-square" alt="Dashboard Deploy"/>
+  <img src="https://img.shields.io/badge/Data%20Update-Every%20Hour-blue?style=flat-square" alt="Update Frequency"/>
 </p>
 
 ---
 
-## ✨ Ключевые возможности
+## ⚡ Ключевые возможности
 
-### 🔍 Автоматическое обнаружение
+### 🔐 Глубокая криптографическая проверка MTProto
+- **Obfuscated2 + FakeTLS**: Полная эмуляция TLS 1.3 ClientHello с корректным расчётом HMAC и поддержкой SNI-доменов (Cloudflare, Google, Yandex и др.).
+- **Telegram DC Handshake**: Отправка `req_pq_multi` непосредственно в дата-центры Telegram (DC 1, DC 2, DC 4, DC 5) с валидацией ответа `resPQ` (`0x05162463`).
+- **Быстрый TCP Pre-check**: Моментальное отсечение недоступных хостов без зависаний тайм-аута.
+- **Поддержка всех типов секретов**: Обычный 16-байтный hex, `dd`-префиксы (secure mode), `ee`-префиксы (FakeTLS + домен), а также Base64 / Base64URL форматы.
 
-*   **GitHub Code Search**: Автоматический поиск прокси-конфигураций в публичных репозиториях
-*   **Multi-Protocol Support**: VLESS, VMess, Trojan, Shadowsocks, HTTP, HTTPS, SOCKS4/5, Telegram MTProto
-*   **Smart Extraction**: Парсинг различных форматов (subscription links, base64, JSON, plain text)
-*   **Deduplication**: Интеллектуальное устранение дубликатов
+### 📡 Подписки V2Ray / Xray / VPN
+- Сканирование и парсинг публичных подписок GitHub.
+- Поддержка протоколов: `vless://`, `vmess://`, `trojan://`, `ss://`, `ssr://`, `hysteria://`.
+- Контроль дубликатов и очистка от нерабочих конфигураций.
 
-### ✅ Глубокая валидация
-
-*   **Real Connection Testing**: Проверка фактической доступности через прямое подключение
-*   **Protocol Verification**: Валидация специфичных протоколов (MTProto, SOCKS)
-*   **Latency Measurement**: Измерение времени отклика для каждого прокси
-*   **Rate Limiting**: Контроль нагрузки при валидации
-
-### 📊 Мониторинг и аналитика
-
-*   **Real-time Stats**: Динамическое обновление статистики каждые 1-6 часов
-*   **Success Rate Tracking**: Отслеживание процента работающих прокси
-*   **Source Attribution**: Информация об источнике каждого прокси
-*   **Historical Data**: Сохранение результатов проверок для анализа трендов
-
-### 🤖 Полная автоматизация
-
-*   **GitHub Actions Workflows**: 6 независимых pipeline для разных типов прокси
-*   **Scheduled Runs**: Автоматический запуск по расписанию
-*   **Auto-commit**: Автоматическая фиксация результатов в репозиторий
-*   **Error Handling**: Graceful degradation при ошибках
+### 📦 Экспорт в 1 клик
+Все списки регулярно обновляются в папке [`exports/`](./exports/):
+| Формат | Файл | Описание |
+|---|---|---|
+| 🔗 **Telegram Links** | [`exports/telegram_links.txt`](./exports/telegram_links.txt) | Прямые ссылки `tg://proxy?server=...` для подключения в 1 клик |
+| 📋 **Simple List** | [`exports/telegram_simple.txt`](./exports/telegram_simple.txt) | Список формата `host:port:secret` |
+| 🏷️ **Protocol Format** | [`exports/telegram_protocol.txt`](./exports/telegram_protocol.txt) | Список формата `mtproto://secret@host:port` |
+| 📊 **CSV Report** | [`exports/telegram_proxies.csv`](./exports/telegram_proxies.csv) | Таблица с задержками (latency), DC и статусом |
+| 📄 **Full Details** | [`exports/telegram_detailed.txt`](./exports/telegram_detailed.txt) | Детальный отчёт с метаданными валидации |
 
 ---
 
-## 🛠 Технический стек
+## 📊 Структура данных
 
-*   **Backend**: Python 3.11+ (Asyncio, AIOHTTP, aiohttp-socks)
-*   **Validation**: Custom TCP/TLS Validators, Xray-core compatibility
-*   **Data Processing**: JSON, Base64, YAML parsing
-*   **CI/CD**: GitHub Actions (6 workflows), scheduled cron jobs
-*   **Frontend**: Static site generation (TailwindCSS, Chart.js)
-
----
-
-## 📂 Структура проекта
-
-```
-REMAININGCONNECTIONS/
-├── .github/workflows/          # GitHub Actions workflows
-│   ├── subscription-discovery.yml    # VLESS/VMess/Trojan discovery
-│   ├── tg-proxy-discovery.yml        # Telegram MTProto discovery
-│   ├── http-socks-discovery.yml      # HTTP/SOCKS discovery
-│   ├── utils-discovery.yml           # Utilities discovery
-│   ├── generate-summary.yml          # Summary generation
-│   └── validate-data.yml             # Data validation
-├── scripts/                    # Extraction and validation scripts
-│   ├── extract_tg_proxies.py         # Telegram proxy extractor
-│   ├── extract_http_socks_proxies.py # HTTP/SOCKS extractor
-│   ├── validate_http_socks_proxies.py # HTTP/SOCKS validator
-│   ├── check_tg_proxies.py           # Telegram validator
-│   ├── generate_summary.py           # Summary generator
-│   └── strict_proxy_checker.py       # Xray protocol validator
-├── data/                       # Output data (auto-updated)
-│   ├── subscriptions_found.json      # VLESS/VMess/Trojan proxies
-│   ├── tg_proxies_found.json         # Telegram proxies
-│   ├── http_proxies_found.json       # HTTP/HTTPS proxies
-│   ├── socks_proxies_found.json      # SOCKS4/5 proxies
-│   ├── utils_found.json              # Utility configurations
-│   └── summary.json                  # Overall statistics
-├── extracted/                  # Raw extracted data
-└── checked/                    # Validation results
-```
+Результаты проверок хранятся в формате JSON в директории `data/`:
+- `data/tg_proxies_found.json` — Все найденные и протестированные Telegram MTProto прокси с параметрами `status`, `latency_ms`, `dc_connected`, `verification`.
+- `data/subscriptions_found.json` — Обнаруженные подписки и узлы Xray/V2Ray.
+- `data/summary.json` — Агрегированная сводка по всем категориям и общее количество активных прокси.
 
 ---
 
-## 🚀 Быстрый старт
+## 🚀 Использование прокси в Telegram
 
-### Локальный запуск
+1. Откройте [`exports/telegram_links.txt`](./exports/telegram_links.txt) или зайдите на [онлайн-дашборд](https://b3b3097.github.io/REMAININGCONNECTIONS/).
+2. Нажмите на ссылку любого активного прокси (зелёный статус, низкий пинг).
+3. В открывшемся Telegram нажмите **«Включить прокси» (Enable Proxy)**.
+
+---
+
+## 🤖 GitHub Actions Автоматизация
+
+Сбор и валидация выполняются независимыми воркфлоу по расписанию:
+- **`TG Proxy Discovery`** (`.github/workflows/tg-proxy-discovery.yml`): Каждый час — извлечение новых прокси, строгая валидация MTProto рукопожатия и коммит результатов.
+- **`Subscription Discovery`** (`.github/workflows/subscription-discovery.yml`): Поиск и проверка V2Ray подписок.
+- **`Generate Summary Report`** (`.github/workflows/generate-summary.yml`): Сборка единого файла статистики `data/summary.json`.
+- **`Export Proxy Formats`** (`.github/workflows/export-formats.yml`): Генерация файлов в папке `exports/`.
+- **`Deploy to GitHub Pages`** (`.github/workflows/deploy.yml`): Сборка дашборда и публикация на GitHub Pages.
+
+---
+
+## 💻 Локальный запуск и разработка
 
 ```bash
-# Клонировать репозиторий
+# Клонирование репозитория
 git clone https://github.com/B3B3097/REMAININGCONNECTIONS.git
 cd REMAININGCONNECTIONS
 
-# Установить зависимости
+# Установка зависимостей
 pip install -r requirements.txt
 
-# Извлечь Telegram прокси
-export GITHUB_TOKEN=your_github_token
-python scripts/extract_tg_proxies.py
+# Проверка конкретного MTProto прокси
+python scripts/mtproto_real_checker.py --host 109.107.166.49 --port 443 --secret a4bc6821c58eee9b48038b104950504a
 
-# Валидировать прокси
-python scripts/validate_http_socks_proxies.py \
-  --input extracted/http_proxies_extracted.json \
-  --output data/http_proxies_found.json \
-  --protocols http https \
-  --concurrency 50
+# Полная валидация извлеченных прокси
+python scripts/check_tg_proxies.py --input extracted/tg_proxies_extracted.json --output checked/tg_proxies_checked.json --enable-mtproto
 
-# Сгенерировать сводку
-python scripts/generate_summary.py
-```
-
-### Автоматический режим (GitHub Actions)
-
-Все воркфлоу настроены на автоматический запуск:
-
-- **Subscription Discovery**: каждый час (`:40`)
-- **TG Proxy Discovery**: каждый час (`:10`)
-- **HTTP/SOCKS Discovery**: каждые 2 часа (`:25`)
-- **Utils Discovery**: каждые 4 часа (`:55`)
-- **Summary Generation**: каждые 6 часов + после каждого discovery
-- **Data Validation**: ежедневно в 00:00 UTC
-
-Также доступен ручной запуск через `workflow_dispatch`.
-
----
-
-## 📊 Форматы данных
-
-### Структура output JSON
-
-```json
-{
-  "generated_at": "2024-01-15T12:00:00Z",
-  "total_working": 150,
-  "total_checked": 500,
-  "success_rate": 30.0,
-  "proxies": [
-    {
-      "host": "192.168.1.1",
-      "port": 1080,
-      "protocol": "socks5",
-      "type": "socks5",
-      "latency_ms": 125.5,
-      "status": "working",
-      "verified_at": "2024-01-15T12:00:00Z",
-      "source": "owner/repo"
-    }
-  ]
-}
+# Экспорт форматов
+python scripts/export_formats.py
 ```
 
 ---
 
-## 🔧 Конфигурация
+## 📄 Лицензия
 
-### Переменные окружения
-
-- `GITHUB_TOKEN` - токен для доступа к GitHub API (опционально, но рекомендуется)
-- `CONCURRENCY_LIMIT` - лимит параллельных проверок (default: 30-50)
-- `MAX_CHECK_PROXIES` - максимум прокси для проверки (default: 1000-2000)
-
-### Настройка workflow
-
-Все параметры можно передать через `workflow_dispatch` inputs:
-
-```yaml
-workflow_dispatch:
-  inputs:
-    max_check:
-      description: 'Max proxies to check'
-      default: '1000'
-    concurrency_limit:
-      description: 'Concurrency limit'
-      default: '50'
-```
-
----
-
-## 📈 Мониторинг
-
-### Просмотр статистики
-
-```bash
-# Вывести сводку
-cat data/summary.json | jq
-
-# Проверить количество работающих прокси
-jq '.total_working' data/http_proxies_found.json
-
-# Найти самые быстрые прокси
-jq '.proxies | sort_by(.latency_ms) | .[0:10]' data/socks_proxies_found.json
-```
-
-### GitHub Actions
-
-Все запуски можно отслеживать в разделе Actions репозитория:
-https://github.com/B3B3097/REMAININGCONNECTIONS/actions
-
----
-
-## 🤝 Вклад в проект
-
-Приветствуются:
-- Новые источники прокси
-- Улучшения алгоритмов валидации
-- Оптимизация производительности
-- Документация и примеры
-
-### Как добавить новый источник
-
-1. Добавьте поисковый запрос в `SEARCH_QUERIES` в соответствующем extractor
-2. Протестируйте локально
-3. Создайте Pull Request
-
----
-
-## 📝 Лицензия
-
-MIT License - см. [LICENSE](LICENSE)
-
----
-
-## ⚠️ Disclaimer
-
-Этот проект создан исключительно для образовательных целей и исследования публично доступных данных. Пользователи несут полную ответственность за соблюдение законов и правил использования прокси-серверов в своих юрисдикциях.
-
-**Использование прокси может нарушать:**
-- Условия использования некоторых сервисов
-- Местное законодательство о конфиденциальности
-- Правила обхода блокировок
-
-Автор не несет ответственности за использование этого инструмента в незаконных целях.
-
----
-
-## 📞 Контакты
-
-- **Telegram**: [@REMAININGCONNECTIONS](https://t.me/REMAININGCONNECTIONS)
-- **GitHub Issues**: [Сообщить о проблеме](https://github.com/B3B3097/REMAININGCONNECTIONS/issues)
-- **GitHub Discussions**: [Обсудить проект](https://github.com/B3B3097/REMAININGCONNECTIONS/discussions)
-
----
-
-<p align="center">
-  <sub>Разработано с ❤️ для сообщества</sub>
-</p>
+Проект распространяется под лицензией MIT. Исходные коды открыты для свободного использования и модификации.

@@ -51,11 +51,19 @@ def export_to_csv(proxies: List[Dict], output: str):
         writer.writerows(proxies)
 
 def export_telegram_links(proxies: List[Dict], output: str):
-    """Export Telegram proxy links."""
-    with open(output, 'w', encoding='utf-8') as f:
+    """Export Telegram proxy links (tg://proxy and https://t.me/proxy)."""
+    with open(output, "w", encoding="utf-8") as f:
         for proxy in proxies:
-            if 'tg_link' in proxy:
-                f.write(f"{proxy['tg_link']}\n")
+            link = proxy.get("tg_url") or proxy.get("tme_url") or proxy.get("tg_link")
+            if not link:
+                host = proxy.get("host") or proxy.get("server")
+                port = proxy.get("port")
+                secret = proxy.get("secret")
+                if host and port:
+                    secret_param = f"&secret={secret}" if secret else ""
+                    link = f"tg://proxy?server={host}&port={port}{secret_param}"
+            if link:
+                f.write(link + "\n")
 
 def export_pac_file(proxies: List[Dict], output: str):
     """Export PAC (Proxy Auto-Config) file."""

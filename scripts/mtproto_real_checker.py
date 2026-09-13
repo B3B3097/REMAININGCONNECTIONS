@@ -413,25 +413,56 @@ def check_once(host, port, secret_str, dc_id, mode, connect_timeout, response_ti
                 pass
 
 
-def check_proxy(host, port, secret, timeout=8.0, dcs=DEFAULT_DCS):
+def check_proxy(host, port, secret, timeout=8.0, dcs=None):
     try:
         parsed = parse_secret(secret)
     except ValueError as exc:
         return {"ok": False, "rtt_ms": None, "error": "invalid_secret",
                 "detail": str(exc), "dc": None, "mode": None, "server_nonce": None}
+
+    # Fast TCP connectivity pre-check to eliminate dead hosts instantly
+    tcp_timeout = min(timeout, 2.5)
+    try:
+        s = socket.create_connection((host, int(port)), timeout=tcp_timeout)
+        s.close()
+    except socket.timeout:
+        return {"ok": False, "rtt_ms": None, "error": "timeout",
+                "detail": f"TCP connection timed out after {tcp_timeout}s",
+                "dc": None, "mode": None, "server_nonce": None}
+    except (OSError, ConnectionError) as exc:
+        return {"ok": False, "rtt_ms": None, "error": "network_error",
+                "detail": f"{type(exc).__name__}: {exc}",
+                "dc": None, "mode": None, "server_nonce": None}
+
     if parsed["kind"] == "faketls":
         modes = ("faketls",)
     elif parsed["kind"] == "dd":
         modes = ("secure",)
     else:
         modes = ("secure", "abridged", "intermediate")
+
+    if dcs is None:
+        dcs = (2, 4, 1, 5)
+
+    deadline = time.monotonic() + timeout
     result = None
     for dc_id in dcs:
         for mode in modes:
-            result = check_once(host, port, secret, dc_id, mode, timeout, timeout)
-            if result["ok"]:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0.4:
+                break
+            step_timeout = min(remaining, 3.0)
+            result = check_once(host, port, secret, dc_id, mode, step_timeout, step_timeout)
+            if result.get("ok"):
+                if parsed.get("domain"):
+                    result["domain"] = parsed["domain"]
                 return result
-    return result
+
+    if result is not None and parsed.get("domain"):
+        result["domain"] = parsed["domain"]
+    return result or {"ok": False, "rtt_ms": None, "error": "timeout",
+                     "detail": "All DC attempts timed out",
+                     "dc": None, "mode": None, "server_nonce": None}
 
 
 def main():

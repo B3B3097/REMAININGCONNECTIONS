@@ -36,27 +36,43 @@ class MTProtoCheckResult:
 
 
 def decode_mtproto_secret(secret: str) -> bytes:
-    """Decode MTProto secret from hex string."""
-    secret = secret.lower().strip()
-    if not secret:
+    """Decode MTProto secret from hex, dd/ee prefixed hex, or base64/base64url."""
+    if not secret or not isinstance(secret, str):
         raise ValueError("Empty secret")
-    
-    # Remove common prefixes
-    if secret.startswith("dd"):
-        secret = secret[2:]
-    elif secret.startswith("ee"):
-        secret = secret[2:]
-    
-    # Validate hex
-    if not all(c in "0123456789abcdef" for c in secret):
-        raise ValueError("Invalid hex secret")
-    
-    # Must be at least 32 hex chars (16 bytes)
-    if len(secret) < 32:
-        raise ValueError("Secret too short")
-    
-    return bytes.fromhex(secret)
+    s = secret.strip()
+    try:
+        from mtproto_real_checker import parse_secret
+        return parse_secret(s)["raw"]
+    except Exception:
+        pass
 
+    lower = s.lower()
+    if lower.startswith("ee") or lower.startswith("dd"):
+        if len(lower) >= 34:
+            try:
+                return bytes.fromhex(lower[2:34])
+            except ValueError:
+                pass
+    try:
+        raw = bytes.fromhex(lower)
+        if len(raw) >= 16:
+            return raw[:16]
+    except ValueError:
+        pass
+
+    import base64
+    b64 = s.replace("-", "+").replace("_", "/")
+    b64 += "=" * ((4 - len(b64) % 4) % 4)
+    try:
+        raw = base64.b64decode(b64, validate=False)
+        if len(raw) >= 16:
+            if len(raw) >= 17 and raw[0] in (0xEE, 0xDD):
+                return raw[1:17]
+            return raw[:16]
+    except Exception:
+        pass
+
+    raise ValueError("Invalid secret format")
 
 def generate_mtproto_handshake(secret: bytes) -> tuple[bytes, bytes]:
     """
@@ -163,19 +179,16 @@ async def check_mtproto_proxy_full(
     timeout: float,
 ) -> MTProtoCheckResult:
     """
-    Full MTProto proxy check with secret validation.
+    Full MTProto proxy check with real cryptographic protocol handshake (resPQ).
     """
-    # Validate and decode secret
-    try:
-        secret_bytes = decode_mtproto_secret(secret)
-    except ValueError as exc:
+    if not host or not port or not secret:
         return MTProtoCheckResult(
             status="invalid",
-            verification="secret_validation",
+            verification="input_validation",
             latency_ms=None,
-            error=f"invalid_secret: {str(exc)}",
+            error="missing_host_port_or_secret",
         )
-    
+
     # Real protocol check: obfuscated2 handshake + req_pq_multi -> resPQ.
     try:
         import mtproto_real_checker as _real
@@ -184,11 +197,10 @@ async def check_mtproto_proxy_full(
 
     if _real is not None:
         import asyncio as _asyncio
-
         loop = _asyncio.get_running_loop()
         outcome = await loop.run_in_executor(
             None,
-            lambda: _real.check_proxy(host, int(port), secret, timeout=timeout),
+            lambda: _real.check_proxy(str(host), int(port), str(secret), timeout=timeout),
         )
         if outcome.get("ok"):
             return MTProtoCheckResult(
@@ -203,8 +215,11 @@ async def check_mtproto_proxy_full(
             status = "timeout"
         elif error == "network_error":
             status = "connection_failed"
-        else:
+        elif error == "invalid_secret":
             status = "invalid"
+        else:
+            status = "invalid" if "invalid" in str(error) else "connection_failed"
+
         return MTProtoCheckResult(
             status=status,
             verification="mtproto_res_pq",
@@ -218,12 +233,19 @@ async def check_mtproto_proxy_full(
             ),
         )
 
-    # Fallback when the real checker module is unavailable: legacy TCP-only
-    # probe (kept so the checker still works in restricted environments).
-    result = await check_mtproto_handshake(host, port, secret_bytes, timeout)
+    # Fallback when the real checker module is unavailable: legacy TCP probe
+    try:
+        secret_bytes = decode_mtproto_secret(secret)
+    except ValueError as exc:
+        return MTProtoCheckResult(
+            status="invalid",
+            verification="secret_validation",
+            latency_ms=None,
+            error=f"invalid_secret: {str(exc)}",
+        )
 
+    result = await check_mtproto_handshake(host, int(port), secret_bytes, timeout)
     return result
-
 
 async def check_mtproto_dc_connectivity(
     host: str,
