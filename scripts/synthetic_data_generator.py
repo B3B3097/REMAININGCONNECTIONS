@@ -13,6 +13,7 @@ import os
 import sys
 import random
 import string
+import base64
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
