@@ -69,8 +69,16 @@ SUB_PROTOCOLS = [
     "hy2",
     "tuic",
     "wireguard",
-    "proxy",
-    "vpn",
+]
+
+SUB_SCHEMES = [
+    "vless://",
+    "vmess://",
+    "ss://",
+    "trojan://",
+    "hysteria2://",
+    "hy2://",
+    "tuic://",
 ]
 
 TG_PROTOCOLS = [
@@ -78,12 +86,10 @@ TG_PROTOCOLS = [
     "mtproxy",
     "telegram proxy",
     "tg proxy",
-    "t.me proxy",
+    "t.me/proxy",
     "tg://proxy",
     "mtproto secret",
     "mtproxy secret",
-    "dd secret",
-    "ee secret",
 ]
 
 UTIL_PROTOCOLS = [
@@ -102,9 +108,31 @@ UTIL_PROTOCOLS = [
     "hysteria2",
     "tuic",
     "wireguard",
-    "proxy",
-    "vpn",
-    "subscription",
+]
+
+UTIL_TOOLS = [
+    "v2rayn",
+    "v2rayng",
+    "nekoray",
+    "nekobox",
+    "hiddify",
+    "clash-verge",
+    "clash-nyanpasu",
+    "flclash",
+    "sing-box-gui",
+    "sing-box-client",
+    "box4proxy",
+    "streisand",
+    "karing",
+    "shadowrocket",
+    "amnezia-vpn",
+    "outline-client",
+    "matsuridayo",
+    "clashx",
+    "v2ray-desktop",
+    "geph",
+    "psiphon",
+    "hysteria-client",
 ]
 
 PLATFORMS = [
@@ -324,25 +352,89 @@ TOPICS = [
     "clash-meta",
     "mihomo",
     "shadowsocks",
+    "shadowsocks-rust",
     "trojan",
     "hysteria",
     "hysteria2",
     "tuic",
     "wireguard",
-    "proxy",
-    "vpn",
+    "censorship-circumvention",
+    "anti-censorship",
+    "gfw",
+    "circumvention",
+]
+
+SUB_TOPICS = [
+    "v2ray",
+    "xray",
+    "vless",
+    "vmess",
+    "reality",
+    "sing-box",
+    "singbox",
+    "clash",
+    "clash-meta",
+    "mihomo",
+    "shadowsocks",
+    "trojan",
+    "hysteria",
+    "hysteria2",
+    "tuic",
+    "wireguard",
+    "v2ray-subscription",
+    "clash-subscription",
+    "free-nodes",
+    "proxy-subscription",
     "subscription",
     "subscriptions",
-    "android",
-    "ios",
-    "windows",
-    "linux",
-    "gui",
-    "client",
+    "censorship-circumvention",
+    "anti-censorship",
+]
+
+TG_TOPICS = [
     "mtproto",
     "mtproxy",
-    "telegram",
+    "telegram-proxy",
+    "tg-proxy",
+    "mtproto-proxy",
+]
+
+UTIL_TOPICS = [
+    "v2ray",
+    "xray",
+    "vless",
+    "vmess",
+    "sing-box",
+    "singbox",
+    "clash",
+    "clash-meta",
+    "mihomo",
+    "shadowsocks",
+    "trojan",
+    "hysteria",
+    "hysteria2",
+    "tuic",
+    "wireguard",
     "censorship-circumvention",
+    "anti-censorship",
+    "gfw",
+    "v2ray-client",
+    "clash-client",
+    "sing-box-client",
+    "shadowsocks-client",
+    "proxy-client",
+    "vpn-client",
+    "proxy-gui",
+    "nekoray",
+    "nekobox",
+    "hiddify",
+    "v2rayn",
+    "v2rayng",
+    "clash-verge",
+    "clash-nyanpasu",
+    "flclash",
+    "box4proxy",
+    "karing",
 ]
 
 LANGUAGES = [
@@ -481,6 +573,15 @@ def build_query(*parts) -> str:
     return collapse_spaces(" ".join(cleaned))
 
 
+def safe_int(val, default: int) -> int:
+    try:
+        if val is None or str(val).strip() == "":
+            return default
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+
 def make_entry(category: str, qtype: str, query: str, priority: int, reason: str, qualifiers=None) -> dict:
     query = collapse_spaces(query)
 
@@ -553,6 +654,30 @@ def finalize_entries(entries, limit: int, category: str, qtype: str):
 # 3. Автоадаптация по уже найденным данным
 # =========================================================
 
+JUNK_TERMS = {
+    # File formats & packaging
+    "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx",
+    "tar", "gz", "tgz", "zip", "7z", "rar", "bz2", "xz", "zst",
+    "dmg", "pkg", "deb", "rpm", "apk", "exe", "msi", "appimage", "iso", "img", "bin",
+    "dvd", "rom", "dylib", "dll", "so", "aar",
+    "sha256", "sha512", "md5", "sig", "asc", "blockmap",
+    # Programming languages & web dev noise
+    "javascript", "typescript", "python", "html", "css", "scss",
+    "java", "rust", "react", "vue", "angular", "photoshop", "excel",
+    "autocad", "cad", "claude", "mcp", "llm", "agent", "agents",
+    "antigravity", "electron", "hacktoberfest", "docker", "nodejs",
+    "api", "cli", "terminal", "pro", "tool", "framework",
+    # Arch noise
+    "amd64", "arm64", "aarch64", "x86_64", "x86", "i386", "armv7",
+    "linux_amd64", "linux-arm64", "linux-x86_64",
+    # Generic descriptors that lead to broad non-proxy queries
+    "web", "app", "apps", "desktop", "mobile", "manager", "dashboard", "gui",
+    "release", "releases", "binary", "binaries", "cross-platform", "open-source",
+    "linux", "windows", "macos", "android", "ios", "native", "data", "code",
+    "visual", "more", "security", "self-hosted", "application",
+}
+
+
 def harvest_value(value, counter: Counter):
     if value is None:
         return
@@ -563,10 +688,14 @@ def harvest_value(value, counter: Counter):
         for word in words:
             word = word.strip()
 
-            if len(word) < 3:
+            if len(word) < 3 or len(word) > 24:
                 continue
 
-            if word in STOPWORDS:
+            if word in STOPWORDS or word in JUNK_TERMS:
+                continue
+
+            # Skip words with numbers unless recognized protocols/versions
+            if any(char.isdigit() for char in word) and word not in {"hy2", "hysteria2", "socks5", "v2ray", "trojan-go"}:
                 continue
 
             counter[word] += 1
@@ -918,30 +1047,53 @@ def generate_subscription_code_queries(extra_terms=None):
     entries = []
     extra_terms = extra_terms or []
 
-    terms = SUB_PROTOCOLS + SUB_INTENTS_EN + extra_terms
+    # Direct URI schemes (highest signal for free nodes/subs)
+    for scheme in SUB_SCHEMES:
+        entries.append(
+            make_entry(
+                category="subscriptions",
+                qtype="code",
+                query=scheme,
+                priority=98,
+                reason="direct uri scheme",
+            )
+        )
+        for fn in ["sub.txt", "nodes.txt", "list.txt", "clash.yaml", "sing-box.json"]:
+            entries.append(
+                make_entry(
+                    category="subscriptions",
+                    qtype="code",
+                    query=f"{scheme} filename:{fn}",
+                    priority=95,
+                    reason="scheme+filename",
+                )
+            )
 
-    for term in terms:
+    # Specific protocol + filename
+    for proto in SUB_PROTOCOLS:
         for filename in SUB_FILENAMES:
             entries.append(
                 make_entry(
                     category="subscriptions",
                     qtype="code",
-                    query=build_query(term, f"filename:{filename}"),
+                    query=build_query(proto, f"filename:{filename}"),
                     priority=86,
-                    reason="term+filename",
+                    reason="proto+filename",
                 )
             )
 
-    for term in terms[:80]:
-        entries.append(
-            make_entry(
-                category="subscriptions",
-                qtype="code",
-                query=build_query(term, "in:file"),
-                priority=60,
-                reason="term+infile",
+    # Adaptive terms + subscription filenames
+    for term in extra_terms[:20]:
+        for fn in ["sub.txt", "nodes.txt", "config.yaml", "clash.yaml"]:
+            entries.append(
+                make_entry(
+                    category="subscriptions",
+                    qtype="code",
+                    query=build_query(term, f"filename:{fn}"),
+                    priority=75,
+                    reason="adaptive+filename",
+                )
             )
-        )
 
     return entries
 
@@ -949,7 +1101,7 @@ def generate_subscription_code_queries(extra_terms=None):
 def generate_subscription_topic_queries():
     entries = []
 
-    for topic in TOPICS:
+    for topic in SUB_TOPICS:
         entries.append(
             make_entry(
                 category="subscriptions",
@@ -1092,9 +1244,40 @@ def generate_tg_proxy_code_queries(extra_terms=None):
     entries = []
     extra_terms = extra_terms or []
 
-    terms = TG_PROTOCOLS + TG_INTENTS_EN + extra_terms
+    patterns = [
+        "tg://proxy",
+        "t.me/proxy",
+        "https://t.me/proxy",
+        "tg://proxy?server",
+        "t.me/proxy?server",
+        "server port secret mtproto",
+        "mtproxy secret",
+        "mtproto secret",
+        "dd secret telegram",
+        "ee secret mtproto",
+    ]
 
-    for term in terms:
+    for pattern in patterns:
+        entries.append(
+            make_entry(
+                category="tg_proxies",
+                qtype="code",
+                query=pattern,
+                priority=95,
+                reason="tg exact pattern",
+            )
+        )
+
+    tg_specific_terms = [
+        "mtproto",
+        "mtproxy",
+        "telegram proxy",
+        "tg proxy",
+        "t.me/proxy",
+        "tg://proxy",
+    ]
+
+    for term in tg_specific_terms:
         for filename in TG_FILENAMES:
             entries.append(
                 make_entry(
@@ -1106,25 +1289,21 @@ def generate_tg_proxy_code_queries(extra_terms=None):
                 )
             )
 
-    patterns = [
-        "tg://proxy",
-        "t.me/proxy",
-        "https://t.me/proxy",
-        "tg://proxy?server",
-        "t.me/proxy?server",
-        "server port secret",
-        "mtproxy secret",
-        "mtproto secret",
-    ]
+    return entries
 
-    for pattern in patterns:
+
+def generate_tg_proxy_topic_queries():
+    entries = []
+
+    for topic in TG_TOPICS:
         entries.append(
             make_entry(
                 category="tg_proxies",
-                qtype="code",
-                query=pattern,
-                priority=95,
-                reason="tg exact pattern",
+                qtype="topic",
+                query=f"topic:{topic}",
+                priority=85,
+                reason="tg topic",
+                qualifiers=["fork:true", "archived:false"],
             )
         )
 
@@ -1159,6 +1338,30 @@ def generate_utilities_repo_queries(extra_terms=None, target_terms=None):
     entries = []
     extra_terms = extra_terms or []
     target_terms = target_terms or []
+
+    # Known circumvention clients and tools
+    for tool in UTIL_TOOLS:
+        entries.append(
+            make_entry(
+                category="utilities",
+                qtype="repo",
+                query=build_query(tool),
+                priority=96,
+                reason="util known tool",
+                qualifiers=["fork:true", "archived:false"],
+            )
+        )
+        for intent in ["client", "gui", "release"]:
+            entries.append(
+                make_entry(
+                    category="utilities",
+                    qtype="repo",
+                    query=build_query(tool, intent),
+                    priority=93,
+                    reason="util tool+intent",
+                    qualifiers=["fork:true", "archived:false"],
+                )
+            )
 
     for protocol in UTIL_PROTOCOLS:
         for intent in UTIL_INTENTS_EN:
@@ -1272,17 +1475,17 @@ def generate_utilities_code_queries(extra_terms=None):
     entries = []
     extra_terms = extra_terms or []
 
-    terms = UTIL_PROTOCOLS + UTIL_INTENTS_EN + extra_terms
-
-    for term in terms[:120]:
-        for filename in UTIL_FILENAMES:
+    # Require tool or protocol to avoid generic code searches
+    targets = UTIL_TOOLS[:15] + [f"{p} client" for p in UTIL_PROTOCOLS[:10]] + [f"{p} gui" for p in UTIL_PROTOCOLS[:10]]
+    for target in targets:
+        for filename in ["README.md", "package.json", "Cargo.toml", "go.mod", "pubspec.yaml", "build.gradle"]:
             entries.append(
                 make_entry(
                     category="utilities",
                     qtype="code",
-                    query=build_query(term, f"filename:{filename}"),
-                    priority=70,
-                    reason="util term+filename",
+                    query=build_query(target, f"filename:{filename}"),
+                    priority=75,
+                    reason="util target+filename",
                 )
             )
 
@@ -1292,18 +1495,7 @@ def generate_utilities_code_queries(extra_terms=None):
 def generate_utilities_topic_queries():
     entries = []
 
-    util_topics = TOPICS + [
-        "client",
-        "gui",
-        "app",
-        "application",
-        "desktop",
-        "mobile",
-        "release",
-        "releases",
-    ]
-
-    for topic in util_topics:
+    for topic in UTIL_TOPICS:
         entries.append(
             make_entry(
                 category="utilities",
@@ -1439,10 +1631,12 @@ def generate_all(args):
     # TG PROXIES
     tg_repo_raw = generate_tg_proxy_repo_queries(adaptive_terms, target_terms)
     tg_code_raw = generate_tg_proxy_code_queries(adaptive_terms)
+    tg_topic_raw = generate_tg_proxy_topic_queries()
     tg_gitverse_raw = generate_tg_proxy_gitverse_queries(adaptive_terms)
 
     tg_repo = finalize_entries(tg_repo_raw, args.max_repo_queries, "tg_proxies", "repo")
     tg_code = finalize_entries(tg_code_raw, args.max_code_queries, "tg_proxies", "code")
+    tg_topic = finalize_entries(tg_topic_raw, args.max_topic_queries, "tg_proxies", "topic")
     tg_gitverse = finalize_entries(tg_gitverse_raw, args.max_gitverse_queries, "tg_proxies", "gitverse")
 
     # UTILITIES
@@ -1475,6 +1669,7 @@ def generate_all(args):
             "tg_proxies": {
                 "repo": tg_repo,
                 "code": tg_code,
+                "topic": tg_topic,
                 "gitverse": tg_gitverse,
             },
             "utilities": {
@@ -1492,6 +1687,7 @@ def generate_all(args):
             "subscriptions_gitverse": len(sub_gitverse),
             "tg_proxies_repo": len(tg_repo),
             "tg_proxies_code": len(tg_code),
+            "tg_proxies_topic": len(tg_topic),
             "tg_proxies_gitverse": len(tg_gitverse),
             "utilities_repo": len(util_repo),
             "utilities_code": len(util_code),
@@ -1545,42 +1741,42 @@ def main():
 
     parser.add_argument(
         "--adaptive-terms",
-        type=int,
+        type=lambda v: safe_int(v, 80),
         default=80,
         help="Сколько адаптивных терминов брать из существующих данных",
     )
 
     parser.add_argument(
         "--max-repo-queries",
-        type=int,
+        type=lambda v: safe_int(v, 900),
         default=900,
         help="Лимит запросов для репозиториев на категорию",
     )
 
     parser.add_argument(
         "--max-code-queries",
-        type=int,
+        type=lambda v: safe_int(v, 600),
         default=600,
         help="Лимит запросов для кода на категорию",
     )
 
     parser.add_argument(
         "--max-topic-queries",
-        type=int,
+        type=lambda v: safe_int(v, 250),
         default=250,
         help="Лимит запросов для тем",
     )
 
     parser.add_argument(
         "--max-gitverse-queries",
-        type=int,
+        type=lambda v: safe_int(v, 600),
         default=600,
         help="Лимит запросов для Gitverse",
     )
 
     parser.add_argument(
         "--seed",
-        type=int,
+        type=lambda v: safe_int(v, 1337),
         default=1337,
         help="Seed для воспроизводимой генерации",
     )
@@ -1626,7 +1822,7 @@ def main():
         )
 
     # ТГ прокси
-    for qtype in ["repo", "code", "gitverse"]:
+    for qtype in ["repo", "code", "topic", "gitverse"]:
         entries = payload["categories"]["tg_proxies"][qtype]
 
         write_txt(

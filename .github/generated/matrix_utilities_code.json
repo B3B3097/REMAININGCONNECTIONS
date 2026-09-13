@@ -1,128 +1,1472 @@
 [
   {
     "slug": "utilities-code-0001",
-    "query": "gui filename:README.md",
-    "full_query": "gui filename:README.md",
-    "priority": 70
+    "query": "flclash filename:pubspec.yaml",
+    "full_query": "flclash filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0002",
-    "query": "vpn filename:README.md",
-    "full_query": "vpn filename:README.md",
-    "priority": 70
+    "query": "singbox gui filename:README.md",
+    "full_query": "singbox gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0003",
-    "query": "xray filename:README.md",
-    "full_query": "xray filename:README.md",
-    "priority": 70
+    "query": "karing filename:pubspec.yaml",
+    "full_query": "karing filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0004",
-    "query": "dashboard filename:README.md",
-    "full_query": "dashboard filename:README.md",
-    "priority": 70
+    "query": "clash client filename:Cargo.toml",
+    "full_query": "clash client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0005",
-    "query": "trojan filename:README.md",
-    "full_query": "trojan filename:README.md",
-    "priority": 70
+    "query": "flclash filename:README.md",
+    "full_query": "flclash filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0006",
-    "query": "manager filename:README.md",
-    "full_query": "manager filename:README.md",
-    "priority": 70
+    "query": "vmess client filename:pubspec.yaml",
+    "full_query": "vmess client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0007",
-    "query": "mihomo filename:README.md",
-    "full_query": "mihomo filename:README.md",
-    "priority": 70
+    "query": "mihomo client filename:pubspec.yaml",
+    "full_query": "mihomo client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0008",
-    "query": "vless filename:README.md",
-    "full_query": "vless filename:README.md",
-    "priority": 70
+    "query": "mihomo client filename:package.json",
+    "full_query": "mihomo client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0009",
-    "query": "vmess filename:README.md",
-    "full_query": "vmess filename:README.md",
-    "priority": 70
+    "query": "clash-nyanpasu filename:README.md",
+    "full_query": "clash-nyanpasu filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0010",
-    "query": "sing-box filename:README.md",
-    "full_query": "sing-box filename:README.md",
-    "priority": 70
+    "query": "sing-box gui filename:package.json",
+    "full_query": "sing-box gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0011",
-    "query": "proxy filename:README.md",
-    "full_query": "proxy filename:README.md",
-    "priority": 70
+    "query": "xray client filename:Cargo.toml",
+    "full_query": "xray client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0012",
-    "query": "hysteria filename:README.md",
-    "full_query": "hysteria filename:README.md",
-    "priority": 70
+    "query": "vless gui filename:build.gradle",
+    "full_query": "vless gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0013",
-    "query": "wireguard filename:README.md",
-    "full_query": "wireguard filename:README.md",
-    "priority": 70
+    "query": "xray gui filename:package.json",
+    "full_query": "xray gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0014",
-    "query": "desktop filename:README.md",
-    "full_query": "desktop filename:README.md",
-    "priority": 70
+    "query": "sing-box client filename:go.mod",
+    "full_query": "sing-box client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0015",
-    "query": "release filename:README.md",
-    "full_query": "release filename:README.md",
-    "priority": 70
+    "query": "clash-nyanpasu filename:build.gradle",
+    "full_query": "clash-nyanpasu filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0016",
-    "query": "mobile filename:README.md",
-    "full_query": "mobile filename:README.md",
-    "priority": 70
+    "query": "v2rayng filename:build.gradle",
+    "full_query": "v2rayng filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0017",
-    "query": "v2ray filename:README.md",
-    "full_query": "v2ray filename:README.md",
-    "priority": 70
+    "query": "xray client filename:go.mod",
+    "full_query": "xray client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0018",
-    "query": "shadowsocks filename:README.md",
-    "full_query": "shadowsocks filename:README.md",
-    "priority": 70
+    "query": "vmess gui filename:pubspec.yaml",
+    "full_query": "vmess gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0019",
-    "query": "clash filename:README.md",
-    "full_query": "clash filename:README.md",
-    "priority": 70
+    "query": "vless gui filename:README.md",
+    "full_query": "vless gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0020",
-    "query": "app filename:README.md",
-    "full_query": "app filename:README.md",
-    "priority": 70
+    "query": "sing-box-client filename:README.md",
+    "full_query": "sing-box-client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
   },
   {
     "slug": "utilities-code-0021",
-    "query": "client filename:README.md",
-    "full_query": "client filename:README.md",
-    "priority": 70
+    "query": "box4proxy filename:go.mod",
+    "full_query": "box4proxy filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0022",
+    "query": "v2ray gui filename:build.gradle",
+    "full_query": "v2ray gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0023",
+    "query": "mihomo gui filename:README.md",
+    "full_query": "mihomo gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0024",
+    "query": "vmess gui filename:build.gradle",
+    "full_query": "vmess gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0025",
+    "query": "clash client filename:build.gradle",
+    "full_query": "clash client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0026",
+    "query": "vmess client filename:Cargo.toml",
+    "full_query": "vmess client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0027",
+    "query": "clash-verge filename:Cargo.toml",
+    "full_query": "clash-verge filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0028",
+    "query": "shadowrocket filename:README.md",
+    "full_query": "shadowrocket filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0029",
+    "query": "mihomo gui filename:go.mod",
+    "full_query": "mihomo gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0030",
+    "query": "clash-nyanpasu filename:go.mod",
+    "full_query": "clash-nyanpasu filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0031",
+    "query": "sing-box-client filename:go.mod",
+    "full_query": "sing-box-client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0032",
+    "query": "shadowsocks gui filename:README.md",
+    "full_query": "shadowsocks gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0033",
+    "query": "mihomo client filename:README.md",
+    "full_query": "mihomo client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0034",
+    "query": "hiddify filename:Cargo.toml",
+    "full_query": "hiddify filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0035",
+    "query": "shadowsocks client filename:go.mod",
+    "full_query": "shadowsocks client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0036",
+    "query": "sing-box-gui filename:pubspec.yaml",
+    "full_query": "sing-box-gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0037",
+    "query": "clash-meta client filename:README.md",
+    "full_query": "clash-meta client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0038",
+    "query": "shadowrocket filename:pubspec.yaml",
+    "full_query": "shadowrocket filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0039",
+    "query": "v2ray client filename:pubspec.yaml",
+    "full_query": "v2ray client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0040",
+    "query": "amnezia-vpn filename:package.json",
+    "full_query": "amnezia-vpn filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0041",
+    "query": "mihomo client filename:build.gradle",
+    "full_query": "mihomo client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0042",
+    "query": "v2ray gui filename:package.json",
+    "full_query": "v2ray gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0043",
+    "query": "vless client filename:Cargo.toml",
+    "full_query": "vless client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0044",
+    "query": "shadowrocket filename:build.gradle",
+    "full_query": "shadowrocket filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0045",
+    "query": "v2rayn filename:package.json",
+    "full_query": "v2rayn filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0046",
+    "query": "shadowsocks client filename:pubspec.yaml",
+    "full_query": "shadowsocks client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0047",
+    "query": "sing-box client filename:pubspec.yaml",
+    "full_query": "sing-box client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0048",
+    "query": "sing-box gui filename:build.gradle",
+    "full_query": "sing-box gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0049",
+    "query": "vmess client filename:go.mod",
+    "full_query": "vmess client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0050",
+    "query": "vless client filename:pubspec.yaml",
+    "full_query": "vless client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0051",
+    "query": "sing-box client filename:package.json",
+    "full_query": "sing-box client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0052",
+    "query": "vmess client filename:build.gradle",
+    "full_query": "vmess client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0053",
+    "query": "box4proxy filename:Cargo.toml",
+    "full_query": "box4proxy filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0054",
+    "query": "clash-meta gui filename:pubspec.yaml",
+    "full_query": "clash-meta gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0055",
+    "query": "singbox client filename:README.md",
+    "full_query": "singbox client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0056",
+    "query": "v2rayng filename:README.md",
+    "full_query": "v2rayng filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0057",
+    "query": "amnezia-vpn filename:build.gradle",
+    "full_query": "amnezia-vpn filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0058",
+    "query": "shadowsocks client filename:Cargo.toml",
+    "full_query": "shadowsocks client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0059",
+    "query": "box4proxy filename:package.json",
+    "full_query": "box4proxy filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0060",
+    "query": "nekoray filename:build.gradle",
+    "full_query": "nekoray filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0061",
+    "query": "mihomo client filename:go.mod",
+    "full_query": "mihomo client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0062",
+    "query": "sing-box gui filename:go.mod",
+    "full_query": "sing-box gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0063",
+    "query": "streisand filename:Cargo.toml",
+    "full_query": "streisand filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0064",
+    "query": "shadowrocket filename:package.json",
+    "full_query": "shadowrocket filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0065",
+    "query": "mihomo client filename:Cargo.toml",
+    "full_query": "mihomo client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0066",
+    "query": "singbox client filename:pubspec.yaml",
+    "full_query": "singbox client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0067",
+    "query": "sing-box-client filename:pubspec.yaml",
+    "full_query": "sing-box-client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0068",
+    "query": "clash gui filename:build.gradle",
+    "full_query": "clash gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0069",
+    "query": "xray gui filename:Cargo.toml",
+    "full_query": "xray gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0070",
+    "query": "clash-meta client filename:pubspec.yaml",
+    "full_query": "clash-meta client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0071",
+    "query": "v2ray client filename:package.json",
+    "full_query": "v2ray client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0072",
+    "query": "sing-box-gui filename:package.json",
+    "full_query": "sing-box-gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0073",
+    "query": "hiddify filename:go.mod",
+    "full_query": "hiddify filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0074",
+    "query": "clash-verge filename:go.mod",
+    "full_query": "clash-verge filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0075",
+    "query": "sing-box client filename:Cargo.toml",
+    "full_query": "sing-box client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0076",
+    "query": "shadowsocks gui filename:Cargo.toml",
+    "full_query": "shadowsocks gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0077",
+    "query": "shadowsocks client filename:package.json",
+    "full_query": "shadowsocks client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0078",
+    "query": "vmess client filename:package.json",
+    "full_query": "vmess client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0079",
+    "query": "sing-box-gui filename:build.gradle",
+    "full_query": "sing-box-gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0080",
+    "query": "karing filename:README.md",
+    "full_query": "karing filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0081",
+    "query": "sing-box gui filename:Cargo.toml",
+    "full_query": "sing-box gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0082",
+    "query": "amnezia-vpn filename:pubspec.yaml",
+    "full_query": "amnezia-vpn filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0083",
+    "query": "xray gui filename:README.md",
+    "full_query": "xray gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0084",
+    "query": "karing filename:build.gradle",
+    "full_query": "karing filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0085",
+    "query": "shadowsocks client filename:build.gradle",
+    "full_query": "shadowsocks client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0086",
+    "query": "shadowsocks gui filename:pubspec.yaml",
+    "full_query": "shadowsocks gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0087",
+    "query": "clash-meta gui filename:go.mod",
+    "full_query": "clash-meta gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0088",
+    "query": "clash-meta gui filename:package.json",
+    "full_query": "clash-meta gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0089",
+    "query": "nekobox filename:build.gradle",
+    "full_query": "nekobox filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0090",
+    "query": "sing-box gui filename:README.md",
+    "full_query": "sing-box gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0091",
+    "query": "clash-meta gui filename:README.md",
+    "full_query": "clash-meta gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0092",
+    "query": "clash gui filename:go.mod",
+    "full_query": "clash gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0093",
+    "query": "nekoray filename:package.json",
+    "full_query": "nekoray filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0094",
+    "query": "clash-meta client filename:package.json",
+    "full_query": "clash-meta client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0095",
+    "query": "flclash filename:Cargo.toml",
+    "full_query": "flclash filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0096",
+    "query": "mihomo gui filename:Cargo.toml",
+    "full_query": "mihomo gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0097",
+    "query": "xray gui filename:pubspec.yaml",
+    "full_query": "xray gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0098",
+    "query": "karing filename:go.mod",
+    "full_query": "karing filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0099",
+    "query": "clash-verge filename:pubspec.yaml",
+    "full_query": "clash-verge filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0100",
+    "query": "sing-box-client filename:Cargo.toml",
+    "full_query": "sing-box-client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0101",
+    "query": "nekoray filename:Cargo.toml",
+    "full_query": "nekoray filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0102",
+    "query": "clash-verge filename:build.gradle",
+    "full_query": "clash-verge filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0103",
+    "query": "clash gui filename:pubspec.yaml",
+    "full_query": "clash gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0104",
+    "query": "streisand filename:go.mod",
+    "full_query": "streisand filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0105",
+    "query": "clash-meta gui filename:Cargo.toml",
+    "full_query": "clash-meta gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0106",
+    "query": "clash-nyanpasu filename:pubspec.yaml",
+    "full_query": "clash-nyanpasu filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0107",
+    "query": "hiddify filename:pubspec.yaml",
+    "full_query": "hiddify filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0108",
+    "query": "clash gui filename:Cargo.toml",
+    "full_query": "clash gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0109",
+    "query": "sing-box-client filename:package.json",
+    "full_query": "sing-box-client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0110",
+    "query": "singbox client filename:package.json",
+    "full_query": "singbox client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0111",
+    "query": "nekobox filename:package.json",
+    "full_query": "nekobox filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0112",
+    "query": "hiddify filename:build.gradle",
+    "full_query": "hiddify filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0113",
+    "query": "nekoray filename:README.md",
+    "full_query": "nekoray filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0114",
+    "query": "v2rayn filename:build.gradle",
+    "full_query": "v2rayn filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0115",
+    "query": "sing-box client filename:build.gradle",
+    "full_query": "sing-box client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0116",
+    "query": "singbox gui filename:pubspec.yaml",
+    "full_query": "singbox gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0117",
+    "query": "xray gui filename:build.gradle",
+    "full_query": "xray gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0118",
+    "query": "streisand filename:pubspec.yaml",
+    "full_query": "streisand filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0119",
+    "query": "xray client filename:package.json",
+    "full_query": "xray client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0120",
+    "query": "sing-box-gui filename:go.mod",
+    "full_query": "sing-box-gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0121",
+    "query": "clash-meta gui filename:build.gradle",
+    "full_query": "clash-meta gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0122",
+    "query": "xray gui filename:go.mod",
+    "full_query": "xray gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0123",
+    "query": "clash-verge filename:package.json",
+    "full_query": "clash-verge filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0124",
+    "query": "v2ray client filename:build.gradle",
+    "full_query": "v2ray client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0125",
+    "query": "clash gui filename:package.json",
+    "full_query": "clash gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0126",
+    "query": "shadowsocks client filename:README.md",
+    "full_query": "shadowsocks client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0127",
+    "query": "vmess gui filename:go.mod",
+    "full_query": "vmess gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0128",
+    "query": "streisand filename:package.json",
+    "full_query": "streisand filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0129",
+    "query": "v2ray client filename:README.md",
+    "full_query": "v2ray client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0130",
+    "query": "singbox gui filename:package.json",
+    "full_query": "singbox gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0131",
+    "query": "xray client filename:pubspec.yaml",
+    "full_query": "xray client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0132",
+    "query": "singbox client filename:go.mod",
+    "full_query": "singbox client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0133",
+    "query": "clash-verge filename:README.md",
+    "full_query": "clash-verge filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0134",
+    "query": "clash client filename:package.json",
+    "full_query": "clash client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0135",
+    "query": "amnezia-vpn filename:go.mod",
+    "full_query": "amnezia-vpn filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0136",
+    "query": "v2rayn filename:pubspec.yaml",
+    "full_query": "v2rayn filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0137",
+    "query": "nekoray filename:pubspec.yaml",
+    "full_query": "nekoray filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0138",
+    "query": "clash client filename:pubspec.yaml",
+    "full_query": "clash client filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0139",
+    "query": "v2ray gui filename:pubspec.yaml",
+    "full_query": "v2ray gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0140",
+    "query": "box4proxy filename:README.md",
+    "full_query": "box4proxy filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0141",
+    "query": "amnezia-vpn filename:Cargo.toml",
+    "full_query": "amnezia-vpn filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0142",
+    "query": "vmess gui filename:README.md",
+    "full_query": "vmess gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0143",
+    "query": "vless client filename:go.mod",
+    "full_query": "vless client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0144",
+    "query": "shadowsocks gui filename:go.mod",
+    "full_query": "shadowsocks gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0145",
+    "query": "nekobox filename:go.mod",
+    "full_query": "nekobox filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0146",
+    "query": "v2ray gui filename:README.md",
+    "full_query": "v2ray gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0147",
+    "query": "vless client filename:build.gradle",
+    "full_query": "vless client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0148",
+    "query": "xray client filename:README.md",
+    "full_query": "xray client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0149",
+    "query": "singbox gui filename:Cargo.toml",
+    "full_query": "singbox gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0150",
+    "query": "vmess gui filename:package.json",
+    "full_query": "vmess gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0151",
+    "query": "box4proxy filename:build.gradle",
+    "full_query": "box4proxy filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0152",
+    "query": "hiddify filename:README.md",
+    "full_query": "hiddify filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0153",
+    "query": "v2ray client filename:go.mod",
+    "full_query": "v2ray client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0154",
+    "query": "vless gui filename:go.mod",
+    "full_query": "vless gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0155",
+    "query": "shadowrocket filename:go.mod",
+    "full_query": "shadowrocket filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0156",
+    "query": "v2ray gui filename:go.mod",
+    "full_query": "v2ray gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0157",
+    "query": "flclash filename:package.json",
+    "full_query": "flclash filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0158",
+    "query": "hiddify filename:package.json",
+    "full_query": "hiddify filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0159",
+    "query": "v2rayn filename:Cargo.toml",
+    "full_query": "v2rayn filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0160",
+    "query": "shadowrocket filename:Cargo.toml",
+    "full_query": "shadowrocket filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0161",
+    "query": "v2rayng filename:pubspec.yaml",
+    "full_query": "v2rayng filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0162",
+    "query": "singbox client filename:Cargo.toml",
+    "full_query": "singbox client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0163",
+    "query": "vless client filename:README.md",
+    "full_query": "vless client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0164",
+    "query": "singbox gui filename:go.mod",
+    "full_query": "singbox gui filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0165",
+    "query": "mihomo gui filename:package.json",
+    "full_query": "mihomo gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0166",
+    "query": "sing-box-client filename:build.gradle",
+    "full_query": "sing-box-client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0167",
+    "query": "clash-nyanpasu filename:Cargo.toml",
+    "full_query": "clash-nyanpasu filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0168",
+    "query": "mihomo gui filename:pubspec.yaml",
+    "full_query": "mihomo gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0169",
+    "query": "sing-box-gui filename:README.md",
+    "full_query": "sing-box-gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0170",
+    "query": "flclash filename:build.gradle",
+    "full_query": "flclash filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0171",
+    "query": "singbox client filename:build.gradle",
+    "full_query": "singbox client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0172",
+    "query": "clash gui filename:README.md",
+    "full_query": "clash gui filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0173",
+    "query": "vless gui filename:pubspec.yaml",
+    "full_query": "vless gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0174",
+    "query": "box4proxy filename:pubspec.yaml",
+    "full_query": "box4proxy filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0175",
+    "query": "amnezia-vpn filename:README.md",
+    "full_query": "amnezia-vpn filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0176",
+    "query": "v2ray client filename:Cargo.toml",
+    "full_query": "v2ray client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0177",
+    "query": "shadowsocks gui filename:build.gradle",
+    "full_query": "shadowsocks gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0178",
+    "query": "v2rayn filename:go.mod",
+    "full_query": "v2rayn filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0179",
+    "query": "streisand filename:README.md",
+    "full_query": "streisand filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0180",
+    "query": "clash-nyanpasu filename:package.json",
+    "full_query": "clash-nyanpasu filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0181",
+    "query": "nekobox filename:Cargo.toml",
+    "full_query": "nekobox filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0182",
+    "query": "v2rayng filename:package.json",
+    "full_query": "v2rayng filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0183",
+    "query": "sing-box client filename:README.md",
+    "full_query": "sing-box client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0184",
+    "query": "vless gui filename:package.json",
+    "full_query": "vless gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0185",
+    "query": "clash-meta client filename:build.gradle",
+    "full_query": "clash-meta client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0186",
+    "query": "nekobox filename:README.md",
+    "full_query": "nekobox filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0187",
+    "query": "xray client filename:build.gradle",
+    "full_query": "xray client filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0188",
+    "query": "vless client filename:package.json",
+    "full_query": "vless client filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0189",
+    "query": "nekobox filename:pubspec.yaml",
+    "full_query": "nekobox filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0190",
+    "query": "karing filename:Cargo.toml",
+    "full_query": "karing filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0191",
+    "query": "clash-meta client filename:go.mod",
+    "full_query": "clash-meta client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0192",
+    "query": "nekoray filename:go.mod",
+    "full_query": "nekoray filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0193",
+    "query": "sing-box gui filename:pubspec.yaml",
+    "full_query": "sing-box gui filename:pubspec.yaml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0194",
+    "query": "clash client filename:go.mod",
+    "full_query": "clash client filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0195",
+    "query": "v2rayng filename:go.mod",
+    "full_query": "v2rayng filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0196",
+    "query": "vmess gui filename:Cargo.toml",
+    "full_query": "vmess gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0197",
+    "query": "streisand filename:build.gradle",
+    "full_query": "streisand filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0198",
+    "query": "karing filename:package.json",
+    "full_query": "karing filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0199",
+    "query": "v2rayn filename:README.md",
+    "full_query": "v2rayn filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0200",
+    "query": "mihomo gui filename:build.gradle",
+    "full_query": "mihomo gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0201",
+    "query": "vless gui filename:Cargo.toml",
+    "full_query": "vless gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0202",
+    "query": "clash client filename:README.md",
+    "full_query": "clash client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0203",
+    "query": "clash-meta client filename:Cargo.toml",
+    "full_query": "clash-meta client filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0204",
+    "query": "shadowsocks gui filename:package.json",
+    "full_query": "shadowsocks gui filename:package.json",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0205",
+    "query": "flclash filename:go.mod",
+    "full_query": "flclash filename:go.mod",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0206",
+    "query": "vmess client filename:README.md",
+    "full_query": "vmess client filename:README.md",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0207",
+    "query": "v2ray gui filename:Cargo.toml",
+    "full_query": "v2ray gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0208",
+    "query": "sing-box-gui filename:Cargo.toml",
+    "full_query": "sing-box-gui filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0209",
+    "query": "singbox gui filename:build.gradle",
+    "full_query": "singbox gui filename:build.gradle",
+    "priority": 75,
+    "reason": "util target+filename"
+  },
+  {
+    "slug": "utilities-code-0210",
+    "query": "v2rayng filename:Cargo.toml",
+    "full_query": "v2rayng filename:Cargo.toml",
+    "priority": 75,
+    "reason": "util target+filename"
   }
 ]
