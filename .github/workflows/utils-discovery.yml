@@ -692,7 +692,22 @@ jobs:
             echo "[*] No changes"
           else
             git commit -m "chore(data): update utils_found.json [skip ci]"
-            git push origin "${GITHUB_REF_NAME}"
+            push_ok=0
+            for i in 1 2 3; do
+              git rebase --abort 2>/dev/null || true
+              if git pull --rebase -X theirs --autostash origin ${GITHUB_REF_NAME} \
+                  && git push origin HEAD:${GITHUB_REF_NAME}; then
+                push_ok=1
+                echo "[+] Pushed (attempt $i)"
+                break
+              fi
+              echo "[!] Push attempt $i failed, retrying in $((i * 15))s..."
+              sleep $((i * 15))
+            done
+            if [ "$push_ok" -ne 1 ]; then
+              echo "[!] Failed to push after 3 attempts"
+              exit 1
+            fi
             echo "[+] Committed"
           fi
 

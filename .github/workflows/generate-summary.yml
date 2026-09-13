@@ -68,7 +68,21 @@ jobs:
             echo "[*] No changes to commit"
           else
             git commit -m "chore: update summary report [$(date -u +%Y-%m-%d)]"
-            git pull --rebase origin "${GITHUB_REF_NAME}" || true
-            git push
+            push_ok=0
+            for i in 1 2 3; do
+              git rebase --abort 2>/dev/null || true
+              if git pull --rebase -X theirs --autostash origin ${GITHUB_REF_NAME} \
+                  && git push origin HEAD:${GITHUB_REF_NAME}; then
+                push_ok=1
+                echo "[+] Pushed (attempt $i)"
+                break
+              fi
+              echo "[!] Push attempt $i failed, retrying in $((i * 15))s..."
+              sleep $((i * 15))
+            done
+            if [ "$push_ok" -ne 1 ]; then
+              echo "[!] Failed to push after 3 attempts"
+              exit 1
+            fi
             echo "[+] Summary updated"
           fi
