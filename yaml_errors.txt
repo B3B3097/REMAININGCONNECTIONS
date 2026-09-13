@@ -11,6 +11,12 @@
   ./.github/workflows/export-formats.yml:74:81: [error] line too long (87 > 80 characters) (line-length)
   ./.github/workflows/export-formats.yml:143:81: [error] line too long (81 > 80 characters) (line-length)
 
+--- Файл: ./.github/workflows/export.yaml ---
+Последние 3 ошибки:
+  ./.github/workflows/export.yaml:42:1: [error] trailing spaces (trailing-spaces)
+  ./.github/workflows/export.yaml:43:81: [error] line too long (89 > 80 characters) (line-length)
+  ./.github/workflows/export.yaml:45:81: [error] line too long (89 > 80 characters) (line-length)
+
 --- Файл: ./.github/workflows/generate-summary.yml ---
   Ошибок не найдено ✅
 
@@ -31,6 +37,11 @@
 
 --- Файл: ./.github/workflows/tg-proxy-discovery.yml ---
   Ошибок не найдено ✅
+
+--- Файл: ./.github/workflows/update.yaml ---
+Последние 3 ошибки:
+  ./.github/workflows/update.yaml:9:81: [error] line too long (84 > 80 characters) (line-length)
+  ./.github/workflows/update.yaml:27:81: [error] line too long (104 > 80 characters) (line-length)
 
 --- Файл: ./.github/workflows/utils-discovery.yml ---
   Ошибок не найдено ✅
