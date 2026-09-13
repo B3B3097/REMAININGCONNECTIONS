@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-09-13T17:52:49.656989Z",
+  "generated_at": "2026-09-13T18:04:19.573631+00:00",
   "generator": "utils-discovery.yml",
   "project": "REMAININGCONNECTIONS dashboard",
   "telegram_channel": "https://t.me/REMAININGCONNECTIONS",
-  "candidates_checked": 300,
+  "candidates_checked": 365,
   "summary": {
-    "total_utilities": 300,
-    "with_release": 251,
+    "total_utilities": 365,
+    "with_release": 316,
     "without_release": 49,
-    "android": 90,
-    "ios": 75,
-    "windows": 171,
-    "linux": 168,
-    "active": 191,
+    "android": 97,
+    "ios": 79,
+    "windows": 179,
+    "linux": 225,
+    "active": 256,
     "stale": 23,
     "outdated": 37,
     "no_release": 19,
@@ -24645,6 +24645,2890 @@
       "release_assets": [],
       "status": "no_release_recent_repo",
       "score": 10019
+    },
+    {
+      "id": 301,
+      "name": "spinnaker",
+      "full_name": "spinnaker/spinnaker",
+      "url": "https://github.com/spinnaker/spinnaker",
+      "description": "Spinnaker is an open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.",
+      "language": "Go",
+      "topics": [
+        "continuous-delivery",
+        "continuous-deployment",
+        "spinnaker"
+      ],
+      "stars": 9786,
+      "forks": 1272,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571591+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "spinnaker Release",
+      "latest_release_url": "https://github.com/spinnaker/spinnaker/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571638+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10786
+    },
+    {
+      "id": 302,
+      "name": "website",
+      "full_name": "agefanscom/website",
+      "url": "https://github.com/agefanscom/website",
+      "description": "AGE animation official website URL release page（AGE动漫官网网址发布页）",
+      "language": "Go",
+      "topics": [
+        "age",
+        "agedm",
+        "agefans"
+      ],
+      "stars": 9614,
+      "forks": 221,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571676+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "website Release",
+      "latest_release_url": "https://github.com/agefanscom/website/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571682+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10614
+    },
+    {
+      "id": 303,
+      "name": "oclif",
+      "full_name": "oclif/oclif",
+      "url": "https://github.com/oclif/oclif",
+      "description": "CLI for generating, building, and releasing oclif CLIs. Built by Salesforce.",
+      "language": "Go",
+      "topics": [
+        "cli",
+        "nodejs",
+        "oclif",
+        "typescript"
+      ],
+      "stars": 9591,
+      "forks": 363,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571697+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "oclif Release",
+      "latest_release_url": "https://github.com/oclif/oclif/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571700+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10591
+    },
+    {
+      "id": 304,
+      "name": "domain-list-community",
+      "full_name": "v2fly/domain-list-community",
+      "url": "https://github.com/v2fly/domain-list-community",
+      "description": "Community managed domain list. Generate geosite.dat for V2Ray.",
+      "language": "Go",
+      "topics": [
+        "geosite",
+        "v2ray"
+      ],
+      "stars": 9486,
+      "forks": 1422,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571712+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "domain-list-community Release",
+      "latest_release_url": "https://github.com/v2fly/domain-list-community/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571715+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10486
+    },
+    {
+      "id": 305,
+      "name": "clashmi",
+      "full_name": "KaringX/clashmi",
+      "url": "https://github.com/KaringX/clashmi",
+      "description": "Clash Mihomo for iOS/MacOS/Android/Windows/Linux",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clashmi",
+        "mihomo"
+      ],
+      "stars": 9301,
+      "forks": 577,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571728+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "clashmi Release",
+      "latest_release_url": "https://github.com/KaringX/clashmi/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571731+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": true,
+        "windows": true,
+        "linux": true
+      },
+      "platform_labels": [
+        "Android",
+        "iOS",
+        "Windows",
+        "Linux"
+      ],
+      "platforms_text": "Android, iOS, Windows, Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10301
+    },
+    {
+      "id": 306,
+      "name": "get_subscribe",
+      "full_name": "ermaozi/get_subscribe",
+      "url": "https://github.com/ermaozi/get_subscribe",
+      "description": "✈️ 白嫖免费机场  / 免费VPN -> 自动获取免 clash/v2ray/trojan/sr/ssr 订阅链接，持续更新 | 科学上网 | 翻墙",
+      "language": "Go",
+      "topics": [
+        "android",
+        "clash",
+        "sr",
+        "ssr",
+        "trojan",
+        "trojan-go",
+        "v2ray",
+        "vpn"
+      ],
+      "stars": 9278,
+      "forks": 673,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571745+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "get_subscribe Release",
+      "latest_release_url": "https://github.com/ermaozi/get_subscribe/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571747+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [
+        "Android"
+      ],
+      "platforms_text": "Android",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10278
+    },
+    {
+      "id": 307,
+      "name": "Hiddify-Manager",
+      "full_name": "hiddify/Hiddify-Manager",
+      "url": "https://github.com/hiddify/Hiddify-Manager",
+      "description": "Multi-user anti-filtering panel, with an effortless installation and supporting more than 20 protocols to circumvent filtering plus the telegram proxy. ",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clashforwindows",
+        "clashmeta",
+        "ech",
+        "hiddify",
+        "hysteria",
+        "hysteria2",
+        "reality",
+        "shadowsocks",
+        "shadowtls"
+      ],
+      "stars": 9277,
+      "forks": 1018,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571763+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Hiddify-Manager Release",
+      "latest_release_url": "https://github.com/hiddify/Hiddify-Manager/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571765+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": false
+      },
+      "platform_labels": [
+        "Windows"
+      ],
+      "platforms_text": "Windows",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10277
+    },
+    {
+      "id": 308,
+      "name": "Xray_onekey",
+      "full_name": "wulabing/Xray_onekey",
+      "url": "https://github.com/wulabing/Xray_onekey",
+      "description": "Xray 基于 Nginx 的 VLESS + XTLS 一键安装脚本 ",
+      "language": "Go",
+      "topics": [
+        "nginx",
+        "tls",
+        "v2ray",
+        "vless",
+        "vmess",
+        "websocket",
+        "xray",
+        "xtls"
+      ],
+      "stars": 9254,
+      "forks": 3464,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571786+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Xray_onekey Release",
+      "latest_release_url": "https://github.com/wulabing/Xray_onekey/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571789+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10254
+    },
+    {
+      "id": 309,
+      "name": "outline-apps",
+      "full_name": "OutlineFoundation/outline-apps",
+      "url": "https://github.com/OutlineFoundation/outline-apps",
+      "description": "Outline Client and Manager. Outline Manager makes it easy to create your own VPN server. Outline Client lets you share access to your VPN with anyone in your network, giving them access to the free and open internet.",
+      "language": "Go",
+      "topics": [
+        "android",
+        "chromeos",
+        "cordova",
+        "electron",
+        "ios",
+        "linux",
+        "macos",
+        "outline",
+        "outline-vpn",
+        "shadowsocks"
+      ],
+      "stars": 9247,
+      "forks": 1456,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571801+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "outline-apps Release",
+      "latest_release_url": "https://github.com/OutlineFoundation/outline-apps/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571804+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": true,
+        "windows": true,
+        "linux": true
+      },
+      "platform_labels": [
+        "Android",
+        "iOS",
+        "Windows",
+        "Linux"
+      ],
+      "platforms_text": "Android, iOS, Windows, Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10247
+    },
+    {
+      "id": 310,
+      "name": "firezone",
+      "full_name": "firezone/firezone",
+      "url": "https://github.com/firezone/firezone",
+      "description": "Blazing-fast remote access",
+      "language": "Go",
+      "topics": [
+        "cloud",
+        "devsecops",
+        "elixir",
+        "elixir-lang",
+        "liveview",
+        "network",
+        "network-security",
+        "networking",
+        "phoenix",
+        "rust-lang"
+      ],
+      "stars": 9090,
+      "forks": 456,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571820+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "firezone Release",
+      "latest_release_url": "https://github.com/firezone/firezone/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571823+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10090
+    },
+    {
+      "id": 311,
+      "name": "release-it",
+      "full_name": "release-it/release-it",
+      "url": "https://github.com/release-it/release-it",
+      "description": "🚀 Automate versioning and package publishing",
+      "language": "Go",
+      "topics": [
+        "automation",
+        "bump",
+        "changelog",
+        "ci-mode",
+        "cli",
+        "continuous-delivery",
+        "git",
+        "github",
+        "gitlab",
+        "gitlab-releases"
+      ],
+      "stars": 9054,
+      "forks": 572,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571850+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "release-it Release",
+      "latest_release_url": "https://github.com/release-it/release-it/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571853+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10054
+    },
+    {
+      "id": 312,
+      "name": "gh-proxy",
+      "full_name": "hunshcn/gh-proxy",
+      "url": "https://github.com/hunshcn/gh-proxy",
+      "description": "github release、archive以及项目文件的加速项目",
+      "language": "Go",
+      "topics": [],
+      "stars": 9011,
+      "forks": 2396,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571865+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "gh-proxy Release",
+      "latest_release_url": "https://github.com/hunshcn/gh-proxy/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571868+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 10011
+    },
+    {
+      "id": 313,
+      "name": "WARP-Clash-API",
+      "full_name": "vvbbnn00/WARP-Clash-API",
+      "url": "https://github.com/vvbbnn00/WARP-Clash-API",
+      "description": "该项目可以让你通过订阅的方式使用Cloudflare WARP+，自动获取流量。This project enables you to use Cloudflare WARP+ through subscription, automatically acquiring traffic.",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "cloudflare",
+        "docker",
+        "docker-compose",
+        "flask",
+        "shadowrocket",
+        "warp",
+        "warp-plus"
+      ],
+      "stars": 8821,
+      "forks": 1142,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571882+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "WARP-Clash-API Release",
+      "latest_release_url": "https://github.com/vvbbnn00/WARP-Clash-API/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571885+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9821
+    },
+    {
+      "id": 314,
+      "name": "wgcf",
+      "full_name": "ViRb3/wgcf",
+      "url": "https://github.com/ViRb3/wgcf",
+      "description": "🚤 Cross-platform, unofficial CLI for Cloudflare Warp",
+      "language": "Go",
+      "topics": [
+        "client",
+        "cloudflare",
+        "plus",
+        "security",
+        "vpn",
+        "warp",
+        "wireguard"
+      ],
+      "stars": 8695,
+      "forks": 869,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571897+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "wgcf Release",
+      "latest_release_url": "https://github.com/ViRb3/wgcf/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571916+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9695
+    },
+    {
+      "id": 315,
+      "name": "websocat",
+      "full_name": "vi/websocat",
+      "url": "https://github.com/vi/websocat",
+      "description": "Command-line client for WebSockets, like netcat (or curl) for ws:// with advanced socat-like functions",
+      "language": "Go",
+      "topics": [
+        "cli",
+        "command-line",
+        "command-line-tool",
+        "curl",
+        "netcat",
+        "proxy",
+        "rfc-6455",
+        "socat",
+        "websocket-client",
+        "websocket-server"
+      ],
+      "stars": 8691,
+      "forks": 329,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571935+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "websocat Release",
+      "latest_release_url": "https://github.com/vi/websocat/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571939+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9691
+    },
+    {
+      "id": 316,
+      "name": "vpn-configs-for-russia",
+      "full_name": "igareck/vpn-configs-for-russia",
+      "url": "https://github.com/igareck/vpn-configs-for-russia",
+      "description": "🗽Бесплатные и проверенные VPN конфигурации, работающие в РФ ⚪ Белые списки / обход белых списков ⚪ Free and checked VPN configurations that work in Russia ⚪ Whitelists bypass",
+      "language": "Go",
+      "topics": [
+        "free-vpn-key",
+        "free-vpn-keys",
+        "free-vpn-russia",
+        "roskomnadzor",
+        "russia-vpn",
+        "shadowsocks",
+        "shadowsocks-free",
+        "v2ray",
+        "vless",
+        "vless-reality"
+      ],
+      "stars": 8600,
+      "forks": 429,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.571972+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "vpn-configs-for-russia Release",
+      "latest_release_url": "https://github.com/igareck/vpn-configs-for-russia/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.571977+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9600
+    },
+    {
+      "id": 317,
+      "name": "clash",
+      "full_name": "clashbk/clash",
+      "url": "https://github.com/clashbk/clash",
+      "description": "Clash官网各版本Clash下载地址及备份下载地址",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clash-core",
+        "clashmeta",
+        "mihomo"
+      ],
+      "stars": 8504,
+      "forks": 1518,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572003+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "clash Release",
+      "latest_release_url": "https://github.com/clashbk/clash/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572009+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9504
+    },
+    {
+      "id": 318,
+      "name": "xray",
+      "full_name": "atom-archive/xray",
+      "url": "https://github.com/atom-archive/xray",
+      "description": "An experimental next-generation Electron-based text editor",
+      "language": "Go",
+      "topics": [],
+      "stars": 8420,
+      "forks": 229,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572031+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "xray Release",
+      "latest_release_url": "https://github.com/atom-archive/xray/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572036+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9420
+    },
+    {
+      "id": 319,
+      "name": "trojan-go",
+      "full_name": "p4gefau1t/trojan-go",
+      "url": "https://github.com/p4gefau1t/trojan-go",
+      "description": "Go实现的Trojan代理，支持多路复用/路由功能/CDN中转/Shadowsocks混淆插件，多平台，无依赖。A Trojan proxy written in Go. An unidentifiable mechanism that helps you bypass GFW. https://p4gefau1t.github.io/trojan-go/",
+      "language": "Go",
+      "topics": [
+        "anticensorship",
+        "china",
+        "gfw",
+        "go",
+        "golang",
+        "network",
+        "privacy",
+        "proxy",
+        "tls",
+        "transparent-proxy"
+      ],
+      "stars": 8386,
+      "forks": 1765,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572055+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "trojan-go Release",
+      "latest_release_url": "https://github.com/p4gefau1t/trojan-go/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572058+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9386
+    },
+    {
+      "id": 320,
+      "name": "nodejs-argo",
+      "full_name": "eooce/nodejs-argo",
+      "url": "https://github.com/eooce/nodejs-argo",
+      "description": "nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持多种代理协议(VLESS、VMess、Trojan)等，有直连协议(Socks5、Hysteria2、Reality)可选开启，并集成了哪吒探针功能",
+      "language": "Go",
+      "topics": [
+        "argo",
+        "cfip",
+        "trojan-ws-tls",
+        "tunnel",
+        "vless-ws-tls",
+        "vmess-ws-tls",
+        "xray"
+      ],
+      "stars": 8358,
+      "forks": 13509,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572071+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "nodejs-argo Release",
+      "latest_release_url": "https://github.com/eooce/nodejs-argo/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572074+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9358
+    },
+    {
+      "id": 321,
+      "name": "oblivion-desktop",
+      "full_name": "bepass-org/oblivion-desktop",
+      "url": "https://github.com/bepass-org/oblivion-desktop",
+      "description": "Oblivion Desktop - Unofficial Warp Client for Windows/Mac/Linux",
+      "language": "Go",
+      "topics": [
+        "anticensorship",
+        "cloudflare",
+        "desktop",
+        "endpoint",
+        "gool",
+        "linux",
+        "mac",
+        "masque",
+        "oblivion",
+        "proxy"
+      ],
+      "stars": 8340,
+      "forks": 903,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572086+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "oblivion-desktop Release",
+      "latest_release_url": "https://github.com/bepass-org/oblivion-desktop/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572089+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": true
+      },
+      "platform_labels": [
+        "Windows",
+        "Linux"
+      ],
+      "platforms_text": "Windows, Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9340
+    },
+    {
+      "id": 322,
+      "name": "V2ray-for-Doprax",
+      "full_name": "hiifeng/V2ray-for-Doprax",
+      "url": "https://github.com/hiifeng/V2ray-for-Doprax",
+      "description": "The tool can install v2ray on the Doprax, including VMess and VLess protocols, it will automatically switch IP, you need to fork this projects, read readme.md and run it. Create By ifeng.",
+      "language": "Go",
+      "topics": [
+        "docker",
+        "doprax",
+        "v2ray",
+        "vless",
+        "vmess"
+      ],
+      "stars": 8328,
+      "forks": 21559,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572113+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "V2ray-for-Doprax Release",
+      "latest_release_url": "https://github.com/hiifeng/V2ray-for-Doprax/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572119+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9328
+    },
+    {
+      "id": 323,
+      "name": "lamda",
+      "full_name": "firerpa/lamda",
+      "url": "https://github.com/firerpa/lamda",
+      "description": "Android Full-Stack Device Control Platform: WebRTC/H.264 remote desktop, UI/OCR/image-matching automation, one-click MITM, built-in Frida, proxy/VPN/frp/P2P networking, MCP/Agent, 160+ APIs, designed for multi-device clusters and engineered deployments.",
+      "language": "Go",
+      "topics": [
+        "adb",
+        "agents",
+        "ai",
+        "ai-agents",
+        "android",
+        "appium",
+        "automation",
+        "dynamic-analysis",
+        "frida",
+        "magisk"
+      ],
+      "stars": 8296,
+      "forks": 1114,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572141+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "lamda Release",
+      "latest_release_url": "https://github.com/firerpa/lamda/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572145+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [
+        "Android"
+      ],
+      "platforms_text": "Android",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9296
+    },
+    {
+      "id": 324,
+      "name": "GUI.for.SingBox",
+      "full_name": "GUI-for-Cores/GUI.for.SingBox",
+      "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox",
+      "description": "Modern, lightweight desktop app built with Wails (Go) and Vue 3. Efficient, cross-platform, and fast.",
+      "language": "Go",
+      "topics": [
+        "gui",
+        "rolldown-vite",
+        "sing-box",
+        "typescript",
+        "vue3",
+        "wails"
+      ],
+      "stars": 8160,
+      "forks": 683,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572169+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "GUI.for.SingBox Release",
+      "latest_release_url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572175+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9160
+    },
+    {
+      "id": 325,
+      "name": "AutoMergePublicNodes",
+      "full_name": "chengaopan/AutoMergePublicNodes",
+      "url": "https://github.com/chengaopan/AutoMergePublicNodes",
+      "description": "自动抓取合并互联网上的公开节点。 🚀 免费节点,🚀免费节点订阅,🚀v2ray免费节点,ssr免费节点订阅,clash免费节点订阅,免费梯子,免费翻墙,免费科学上网,免费ss/v2ray/trojan/clash节点,谷歌商店,翻墙梯子",
+      "language": "Go",
+      "topics": [],
+      "stars": 8091,
+      "forks": 1256,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572191+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "AutoMergePublicNodes Release",
+      "latest_release_url": "https://github.com/chengaopan/AutoMergePublicNodes/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572194+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9091
+    },
+    {
+      "id": 326,
+      "name": "pivpn",
+      "full_name": "pivpn/pivpn",
+      "url": "https://github.com/pivpn/pivpn",
+      "description": "The Simplest VPN installer, designed for Raspberry Pi",
+      "language": "Go",
+      "topics": [
+        "openvpn",
+        "openvpn-installer",
+        "pivpn",
+        "raspberry-pi",
+        "vpn-server",
+        "wireguard"
+      ],
+      "stars": 8043,
+      "forks": 684,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572206+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "pivpn Release",
+      "latest_release_url": "https://github.com/pivpn/pivpn/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572214+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 9043
+    },
+    {
+      "id": 327,
+      "name": "shadowsocks-qt5",
+      "full_name": "shadowsocks/shadowsocks-qt5",
+      "url": "https://github.com/shadowsocks/shadowsocks-qt5",
+      "description": "A cross-platform shadowsocks GUI client",
+      "language": "Go",
+      "topics": [
+        "cross-platform",
+        "proxy",
+        "qt5",
+        "shadowsocks"
+      ],
+      "stars": 7918,
+      "forks": 2269,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572232+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "shadowsocks-qt5 Release",
+      "latest_release_url": "https://github.com/shadowsocks/shadowsocks-qt5/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572237+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8918
+    },
+    {
+      "id": 328,
+      "name": "warpgate",
+      "full_name": "warp-tech/warpgate",
+      "url": "https://github.com/warp-tech/warpgate",
+      "description": "Fully transparent SSH, HTTPS, Kubernetes, database and RDP/VNC bastion/PAM that doesn't need additional client-side software",
+      "language": "Go",
+      "topics": [
+        "bastion",
+        "bastion-host",
+        "https",
+        "https-proxy",
+        "infrastructure",
+        "kubectl",
+        "kubernetes",
+        "mysql",
+        "mysql-proxy",
+        "pam"
+      ],
+      "stars": 7877,
+      "forks": 372,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572253+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "warpgate Release",
+      "latest_release_url": "https://github.com/warp-tech/warpgate/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572256+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8877
+    },
+    {
+      "id": 329,
+      "name": "V2RayX",
+      "full_name": "Cenmrev/V2RayX",
+      "url": "https://github.com/Cenmrev/V2RayX",
+      "description": "GUI for v2ray-core on macOS",
+      "language": "Go",
+      "topics": [],
+      "stars": 7623,
+      "forks": 1116,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572266+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "V2RayX Release",
+      "latest_release_url": "https://github.com/Cenmrev/V2RayX/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572269+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8623
+    },
+    {
+      "id": 330,
+      "name": "mullvadvpn-app",
+      "full_name": "mullvad/mullvadvpn-app",
+      "url": "https://github.com/mullvad/mullvadvpn-app",
+      "description": "The Mullvad VPN client app for desktop and mobile",
+      "language": "Go",
+      "topics": [
+        "electron",
+        "nodejs",
+        "openvpn",
+        "rust",
+        "vpn",
+        "wireguard"
+      ],
+      "stars": 7560,
+      "forks": 521,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572280+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "mullvadvpn-app Release",
+      "latest_release_url": "https://github.com/mullvad/mullvadvpn-app/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572282+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8560
+    },
+    {
+      "id": 331,
+      "name": "adblockfilters",
+      "full_name": "217heidai/adblockfilters",
+      "url": "https://github.com/217heidai/adblockfilters",
+      "description": "去广告合并规则，每8个小时更新一次。",
+      "language": "Go",
+      "topics": [
+        "adblock",
+        "adguard",
+        "adguardhome",
+        "clash",
+        "dnsmasq",
+        "fiters",
+        "hosts",
+        "invizible",
+        "loon",
+        "mihomo"
+      ],
+      "stars": 7532,
+      "forks": 428,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572297+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "adblockfilters Release",
+      "latest_release_url": "https://github.com/217heidai/adblockfilters/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572299+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8532
+    },
+    {
+      "id": 332,
+      "name": "Marzban",
+      "full_name": "Gozargah/Marzban",
+      "url": "https://github.com/Gozargah/Marzban",
+      "description": "Unified GUI Censorship Resistant Solution Powered by Xray",
+      "language": "Go",
+      "topics": [
+        "api",
+        "censorship-resistant",
+        "dashboard",
+        "shadowsocks",
+        "trojan",
+        "v2ray",
+        "vless",
+        "vmess",
+        "vpn",
+        "xray"
+      ],
+      "stars": 7358,
+      "forks": 1206,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572323+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Marzban Release",
+      "latest_release_url": "https://github.com/Gozargah/Marzban/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572329+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8358
+    },
+    {
+      "id": 333,
+      "name": "Prowlarr",
+      "full_name": "Prowlarr/Prowlarr",
+      "url": "https://github.com/Prowlarr/Prowlarr",
+      "description": "Prowlarr is an indexer manager/proxy built on the popular *arr .net/reactjs base stack to integrate with your various PVR apps, supporting management of both Torrent Trackers and Usenet Indexers.",
+      "language": "Go",
+      "topics": [
+        "hacktoberfest",
+        "indexer",
+        "nzb",
+        "radarr",
+        "sonarr",
+        "torrent"
+      ],
+      "stars": 7204,
+      "forks": 389,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572356+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Prowlarr Release",
+      "latest_release_url": "https://github.com/Prowlarr/Prowlarr/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572362+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": false
+      },
+      "platform_labels": [
+        "Windows"
+      ],
+      "platforms_text": "Windows",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8204
+    },
+    {
+      "id": 334,
+      "name": "boringtun",
+      "full_name": "cloudflare/boringtun",
+      "url": "https://github.com/cloudflare/boringtun",
+      "description": "Userspace WireGuard® Implementation in Rust",
+      "language": "Go",
+      "topics": [
+        "cloudflare",
+        "rust",
+        "wireguard"
+      ],
+      "stars": 7194,
+      "forks": 532,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572375+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "boringtun Release",
+      "latest_release_url": "https://github.com/cloudflare/boringtun/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572378+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8194
+    },
+    {
+      "id": 335,
+      "name": "openwrt-packages",
+      "full_name": "kenzok8/openwrt-packages",
+      "url": "https://github.com/kenzok8/openwrt-packages",
+      "description": "openwrt常用软件包",
+      "language": "Go",
+      "topics": [
+        "alist",
+        "ddnsto",
+        "homeproxy",
+        "luci-app-adguardhome",
+        "luci-app-aliddns",
+        "luci-app-eqos",
+        "luci-app-gost",
+        "luci-app-homeproxy",
+        "luci-app-mihomo",
+        "luci-app-mosdns"
+      ],
+      "stars": 7188,
+      "forks": 2548,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572396+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "openwrt-packages Release",
+      "latest_release_url": "https://github.com/kenzok8/openwrt-packages/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572399+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8188
+    },
+    {
+      "id": 336,
+      "name": "docker-ipsec-vpn-server",
+      "full_name": "hwdsl2/docker-ipsec-vpn-server",
+      "url": "https://github.com/hwdsl2/docker-ipsec-vpn-server",
+      "description": "Docker image to run an IPsec VPN server, with IPsec/L2TP, Cisco IPsec and IKEv2. Auto-generates server config and supports VPN client setup on Linux, Windows, macOS, iOS and Android.",
+      "language": "Go",
+      "topics": [
+        "cisco-ipsec",
+        "docker",
+        "docker-compose",
+        "docker-image",
+        "encryption",
+        "ikev2",
+        "ipsec",
+        "l2tp",
+        "libreswan",
+        "linux"
+      ],
+      "stars": 7130,
+      "forks": 1467,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572409+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "docker-ipsec-vpn-server Release",
+      "latest_release_url": "https://github.com/hwdsl2/docker-ipsec-vpn-server/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572412+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": true,
+        "windows": true,
+        "linux": true
+      },
+      "platform_labels": [
+        "Android",
+        "iOS",
+        "Windows",
+        "Linux"
+      ],
+      "platforms_text": "Android, iOS, Windows, Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8130
+    },
+    {
+      "id": 337,
+      "name": "Paolujichang",
+      "full_name": "limbopro/Paolujichang",
+      "url": "https://github.com/limbopro/Paolujichang",
+      "description": "科学上网🕸️之跑路机场名单收集（2020-2026），欢迎投稿。客观描述，保持友善，Ad🔗🈲🙅❌",
+      "language": "Go",
+      "topics": [
+        "limbopro",
+        "paolujichang",
+        "shadowsocks",
+        "trojan",
+        "v2ray",
+        "vless",
+        "vpn"
+      ],
+      "stars": 7110,
+      "forks": 96,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572424+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Paolujichang Release",
+      "latest_release_url": "https://github.com/limbopro/Paolujichang/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572427+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8110
+    },
+    {
+      "id": 338,
+      "name": "Throne",
+      "full_name": "throneproj/Throne",
+      "url": "https://github.com/throneproj/Throne",
+      "description": "Cross-platform GUI proxy utility (Empowered by sing-box)",
+      "language": "Go",
+      "topics": [
+        "amneziawg",
+        "amneziawg2",
+        "amneziawg3",
+        "anytls",
+        "clash",
+        "linux",
+        "macos",
+        "mieru",
+        "nekobox",
+        "nekoray"
+      ],
+      "stars": 7099,
+      "forks": 399,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572438+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Throne Release",
+      "latest_release_url": "https://github.com/throneproj/Throne/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572440+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": true
+      },
+      "platform_labels": [
+        "Windows",
+        "Linux"
+      ],
+      "platforms_text": "Windows, Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8099
+    },
+    {
+      "id": 339,
+      "name": "plano",
+      "full_name": "katanemo/plano",
+      "url": "https://github.com/katanemo/plano",
+      "description": "Plano is an AI-native proxy server and data plane for agentic apps. Smart LLM routing, observability, agent orchestration, and guardrails so you stay focused on your agents core logic.",
+      "language": "Go",
+      "topics": [
+        "ai-gateway",
+        "ai-gateway-support",
+        "envoy",
+        "envoyproxy",
+        "gateway",
+        "generative-ai",
+        "llm-gateway",
+        "llm-inference",
+        "llm-proxy",
+        "llm-routing"
+      ],
+      "stars": 7048,
+      "forks": 484,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572455+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "plano Release",
+      "latest_release_url": "https://github.com/katanemo/plano/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572458+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8048
+    },
+    {
+      "id": 340,
+      "name": "wstunnel",
+      "full_name": "erebe/wstunnel",
+      "url": "https://github.com/erebe/wstunnel",
+      "description": "Tunnel all your traffic over Websocket or HTTP2 - Bypass firewalls/DPI - Static binary available ",
+      "language": "Go",
+      "topics": [
+        "http2",
+        "reverse-tunnel",
+        "socks",
+        "socks5",
+        "socks5-proxy",
+        "tcp-tunnel",
+        "transparent-proxy",
+        "tunneling",
+        "udp-tunnel",
+        "websocket"
+      ],
+      "stars": 7038,
+      "forks": 565,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572470+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "wstunnel Release",
+      "latest_release_url": "https://github.com/erebe/wstunnel/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572473+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 8038
+    },
+    {
+      "id": 341,
+      "name": "multi-v2ray",
+      "full_name": "Jrohy/multi-v2ray",
+      "url": "https://github.com/Jrohy/multi-v2ray",
+      "description": "v2ray/xray多用户管理部署程序",
+      "language": "Go",
+      "topics": [
+        "gfw",
+        "grpc",
+        "http2",
+        "mtproto",
+        "multi-v2ray",
+        "multiple",
+        "reality",
+        "socks5",
+        "trojan",
+        "v2ray"
+      ],
+      "stars": 6967,
+      "forks": 2328,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572501+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "multi-v2ray Release",
+      "latest_release_url": "https://github.com/Jrohy/multi-v2ray/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572515+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7967
+    },
+    {
+      "id": 342,
+      "name": "geoip",
+      "full_name": "Loyalsoldier/geoip",
+      "url": "https://github.com/Loyalsoldier/geoip",
+      "description": "🌚 🌍 🌝 GeoIP 增强版，自由定制多种格式 GeoIP 文件，包括但不限于 V2Ray dat 格式文件 geoip.dat、MaxMind mmdb 格式文件、sing-box SRS 格式文件、mihomo MRS 格式文件、Clash ruleset、Surge ruleset、Nginx allow & deny 规则文件等。Enhanced edition of GeoIP for Nginx, V2Ray, Xray-core, Clash, mihomo, sing-box, Shadowrocket, Quantumult X, Surge, hysteria, Trojan-Go, dae, etc.",
+      "language": "Go",
+      "topics": [
+        "anti-censorship",
+        "anticensorship",
+        "clash",
+        "geoip",
+        "gfw",
+        "hysteria",
+        "ipv4",
+        "ipv6",
+        "maxmind",
+        "mihomo"
+      ],
+      "stars": 6518,
+      "forks": 886,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572549+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "geoip Release",
+      "latest_release_url": "https://github.com/Loyalsoldier/geoip/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572555+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7518
+    },
+    {
+      "id": 343,
+      "name": "Custom_OpenClash_Rules",
+      "full_name": "Aethersailor/Custom_OpenClash_Rules",
+      "url": "https://github.com/Aethersailor/Custom_OpenClash_Rules",
+      "description": "面向 OpenClash 用户的配置、订阅转换模板、YAML、规则、覆写模块、脚本与中文教程。",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clash-meta",
+        "gfwlist",
+        "openclash",
+        "openwrt",
+        "ruleset",
+        "vless"
+      ],
+      "stars": 6507,
+      "forks": 1386,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572570+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Custom_OpenClash_Rules Release",
+      "latest_release_url": "https://github.com/Aethersailor/Custom_OpenClash_Rules/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572573+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7507
+    },
+    {
+      "id": 344,
+      "name": "AWAvenue-Ads-Rule",
+      "full_name": "TG-Twilight/AWAvenue-Ads-Rule",
+      "url": "https://github.com/TG-Twilight/AWAvenue-Ads-Rule",
+      "description": "众多优秀广告规则的上游、开源社区中最棒的广告过滤器之一。适配AdGuard/Home/DNS、AdAway、hosts、Mosdns、ClashMeta、QuantumultX等主流广告拦截工具/代理工具。",
+      "language": "Go",
+      "topics": [
+        "adblock",
+        "adblock-list",
+        "adguard",
+        "adguard-blocklist",
+        "adguardhome",
+        "clash",
+        "dns",
+        "dnsmasq",
+        "filterlist",
+        "filters"
+      ],
+      "stars": 6466,
+      "forks": 166,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572589+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "AWAvenue-Ads-Rule Release",
+      "latest_release_url": "https://github.com/TG-Twilight/AWAvenue-Ads-Rule/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572592+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7466
+    },
+    {
+      "id": 345,
+      "name": "awesome-vpn",
+      "full_name": "awesome-vpn/awesome-vpn",
+      "url": "https://github.com/awesome-vpn/awesome-vpn",
+      "description": "Free proxy node aggregator. Daily updated vmess/vless/trojan/ss. 免费 代理节点 翻墙 梯子 科学上网 机场订阅 网络加速 VPN 免翻墙每日更新 一键导入",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clashvergerev",
+        "fanqiang",
+        "free",
+        "geopolitics",
+        "gfw",
+        "mihomo",
+        "shadowsocks",
+        "sing-box",
+        "singbox"
+      ],
+      "stars": 6399,
+      "forks": 568,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572618+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "awesome-vpn Release",
+      "latest_release_url": "https://github.com/awesome-vpn/awesome-vpn/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572624+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7399
+    },
+    {
+      "id": 346,
+      "name": "ClashMac",
+      "full_name": "666OS/ClashMac",
+      "url": "https://github.com/666OS/ClashMac",
+      "description": "Native Proxy Experience Built for macOS",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clash-meta",
+        "macos",
+        "mihomo",
+        "network",
+        "proxy",
+        "swiftui"
+      ],
+      "stars": 6274,
+      "forks": 266,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572639+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "ClashMac Release",
+      "latest_release_url": "https://github.com/666OS/ClashMac/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572642+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7274
+    },
+    {
+      "id": 347,
+      "name": "WorkerVless2sub",
+      "full_name": "cmliu/WorkerVless2sub",
+      "url": "https://github.com/cmliu/WorkerVless2sub",
+      "description": "自动化批量替换生成优选线路 VMess / VLESS / Trojan 节点的 优选订阅生成器",
+      "language": "Go",
+      "topics": [],
+      "stars": 6236,
+      "forks": 7608,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572665+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "WorkerVless2sub Release",
+      "latest_release_url": "https://github.com/cmliu/WorkerVless2sub/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572671+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7236
+    },
+    {
+      "id": 348,
+      "name": "node-ws",
+      "full_name": "eooce/node-ws",
+      "url": "https://github.com/eooce/node-ws",
+      "description": "基于serverless实现的vless+trojan+shadowsocks+vmess四协议，无内核，node环境通用项目",
+      "language": "Go",
+      "topics": [],
+      "stars": 6229,
+      "forks": 10262,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572684+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "node-ws Release",
+      "latest_release_url": "https://github.com/eooce/node-ws/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572687+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7229
+    },
+    {
+      "id": 349,
+      "name": "clash-for-linux",
+      "full_name": "wnlen/clash-for-linux",
+      "url": "https://github.com/wnlen/clash-for-linux",
+      "description": "🐧 一个更完整、更优雅的 Linux Clash / Mihomo 代理运行平台",
+      "language": "Go",
+      "topics": [
+        "clash-meta",
+        "devops-tools",
+        "linux",
+        "mihomo",
+        "openclaw",
+        "proxy",
+        "shell-script",
+        "vpn"
+      ],
+      "stars": 6006,
+      "forks": 1224,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572712+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "clash-for-linux Release",
+      "latest_release_url": "https://github.com/wnlen/clash-for-linux/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572717+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 7006
+    },
+    {
+      "id": 350,
+      "name": "wireproxy",
+      "full_name": "windtf/wireproxy",
+      "url": "https://github.com/windtf/wireproxy",
+      "description": "Wireguard client that exposes itself as a socks5 proxy",
+      "language": "Go",
+      "topics": [
+        "golang",
+        "network",
+        "proxy",
+        "socks5",
+        "socks5-proxy",
+        "vpn",
+        "wireguard",
+        "wireguard-tunnel"
+      ],
+      "stars": 5795,
+      "forks": 405,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572742+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "wireproxy Release",
+      "latest_release_url": "https://github.com/windtf/wireproxy/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572747+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6795
+    },
+    {
+      "id": 351,
+      "name": "argosbx",
+      "full_name": "yonggekkk/argosbx",
+      "url": "https://github.com/yonggekkk/argosbx",
+      "description": "小白自建代理神器！ArgoSBX一键无交互小钢炮脚本💣：Sing-box、Xray、Argo三内核自动搭配；支持VPS、Docker、容器多环境部署；套CDN的5大方案+套WARP的15种组合；已支持协议：Naiveproxy、AnyTLS、Any-reality、Vless-xhttp-reality-vision-enc、Vless-tcp-reality-vision、Vless-xhttp-vision-enc、Vless-ws-vision-enc、Shadowsocks-2022、Hysteria2、Tuic、Socks5、Vmess-ws、Argo临时/固定隧道",
+      "language": "Go",
+      "topics": [
+        "anytls",
+        "argo",
+        "cloudflared",
+        "docker-image",
+        "hysteria2",
+        "naiveproxy",
+        "shadowsocks-2022",
+        "singbox",
+        "socks5",
+        "tuic"
+      ],
+      "stars": 5775,
+      "forks": 2294,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572767+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "argosbx Release",
+      "latest_release_url": "https://github.com/yonggekkk/argosbx/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572770+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6775
+    },
+    {
+      "id": 352,
+      "name": "ProxySU",
+      "full_name": "proxysu/ProxySU",
+      "url": "https://github.com/proxysu/ProxySU",
+      "description": "Xray,V2ray，Trojan，NaiveProxy, Trojan-Go, ShadowsocksR(SSR),Shadowsocks-libev及相关插件,MTProto+TLS 一键安装工具，windows下用（一键科学上网）",
+      "language": "Go",
+      "topics": [
+        "ipv6",
+        "mtproto-proxy",
+        "mtproto-tls",
+        "naiveproxy",
+        "proxy",
+        "shadowrocket",
+        "shadowsocks",
+        "shadowsocks-libev",
+        "shadowsocksr",
+        "ssr"
+      ],
+      "stars": 5708,
+      "forks": 1501,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572785+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "ProxySU Release",
+      "latest_release_url": "https://github.com/proxysu/ProxySU/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572788+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": false
+      },
+      "platform_labels": [
+        "Windows"
+      ],
+      "platforms_text": "Windows",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6708
+    },
+    {
+      "id": 353,
+      "name": "sing-box",
+      "full_name": "fscarmen/sing-box",
+      "url": "https://github.com/fscarmen/sing-box",
+      "description": "Sing-box 全家桶 --- 一键多协议脚本。支持 Reality、Hysteria2 、TUIC 、Trojan 、Shadowsocks 、 AnyTLS 、ShadowTLS 、 Vmess 、 VLESS 、NaiveProxy，搭配 Argo 隧道等，多客户端订阅（Clash / V2rayN / Throne / ShadowRocket / SFA ），无须域名、功能强大、配置灵活。",
+      "language": "Go",
+      "topics": [
+        "anytls",
+        "argo",
+        "hysteria2",
+        "mihomo",
+        "nekobox",
+        "reality",
+        "shadowrocket",
+        "shadowsocks-2022",
+        "shadowtls",
+        "sing-box"
+      ],
+      "stars": 5636,
+      "forks": 1125,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572805+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "sing-box Release",
+      "latest_release_url": "https://github.com/fscarmen/sing-box/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572808+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6636
+    },
+    {
+      "id": 354,
+      "name": "innernet",
+      "full_name": "tonarino/innernet",
+      "url": "https://github.com/tonarino/innernet",
+      "description": "A private network system that uses WireGuard under the hood.",
+      "language": "Go",
+      "topics": [],
+      "stars": 5547,
+      "forks": 214,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572819+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "innernet Release",
+      "latest_release_url": "https://github.com/tonarino/innernet/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572822+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6547
+    },
+    {
+      "id": 355,
+      "name": "tun2socks",
+      "full_name": "xjasonlyu/tun2socks",
+      "url": "https://github.com/xjasonlyu/tun2socks",
+      "description": "tun2socks - powered by gVisor TCP/IP stack",
+      "language": "Go",
+      "topics": [
+        "go",
+        "golang",
+        "gvisor",
+        "http-proxy",
+        "nat",
+        "proxifier",
+        "proxy",
+        "shadowsocks",
+        "socks4",
+        "socks5"
+      ],
+      "stars": 5488,
+      "forks": 645,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572834+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "tun2socks Release",
+      "latest_release_url": "https://github.com/xjasonlyu/tun2socks/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572839+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6488
+    },
+    {
+      "id": 356,
+      "name": "REALITY",
+      "full_name": "XTLS/REALITY",
+      "url": "https://github.com/XTLS/REALITY",
+      "description": "THE NEXT FUTURE",
+      "language": "Go",
+      "topics": [
+        "reality",
+        "vless",
+        "xray",
+        "xtls",
+        "xudp"
+      ],
+      "stars": 5482,
+      "forks": 461,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572850+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "REALITY Release",
+      "latest_release_url": "https://github.com/XTLS/REALITY/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572853+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6482
+    },
+    {
+      "id": 357,
+      "name": "shadowrocket-rules",
+      "full_name": "GMOogway/shadowrocket-rules",
+      "url": "https://github.com/GMOogway/shadowrocket-rules",
+      "description": "小火箭规则🚀，小火箭模块，小火箭配置，shadowrocket规则，shadowrocket rules，最全面的直连（DIRECT）、代理（PROXY）、屏蔽（REJECT）规则，自动构建，每日更新",
+      "language": "Go",
+      "topics": [
+        "adblock",
+        "direct",
+        "gfw",
+        "gfwlist",
+        "ios",
+        "module",
+        "proxy",
+        "reject",
+        "rules",
+        "shadowrocket"
+      ],
+      "stars": 5435,
+      "forks": 272,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572867+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "shadowrocket-rules Release",
+      "latest_release_url": "https://github.com/GMOogway/shadowrocket-rules/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572869+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": true,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [
+        "iOS"
+      ],
+      "platforms_text": "iOS",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6435
+    },
+    {
+      "id": 358,
+      "name": "rethink-app",
+      "full_name": "celzero/rethink-app",
+      "url": "https://github.com/celzero/rethink-app",
+      "description": "DNS over HTTPS / DNS over Tor / DNSCrypt client, WireGuard proxifier, firewall, and connection tracker for Android.",
+      "language": "Go",
+      "topics": [
+        "android",
+        "android-app",
+        "android-application",
+        "android-firewall",
+        "anti-censorship",
+        "anti-surveillance",
+        "censorship-circumvention",
+        "censorship-resistance",
+        "dns",
+        "dns-over-https"
+      ],
+      "stars": 5412,
+      "forks": 328,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572901+00:00",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "rethink-app Release",
+      "latest_release_url": "https://github.com/celzero/rethink-app/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572906+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [
+        "Android"
+      ],
+      "platforms_text": "Android",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6412
+    },
+    {
+      "id": 359,
+      "name": "sublink-worker",
+      "full_name": "7Sageer/sublink-worker",
+      "url": "https://github.com/7Sageer/sublink-worker",
+      "description": "One Worker, All Subscriptions",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "clash-meta",
+        "cloudflare-workers",
+        "mihomo",
+        "singbox",
+        "v2rayn",
+        "v2rayng",
+        "xray-core"
+      ],
+      "stars": 5385,
+      "forks": 9563,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572920+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "sublink-worker Release",
+      "latest_release_url": "https://github.com/7Sageer/sublink-worker/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572923+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6385
+    },
+    {
+      "id": 360,
+      "name": "hooker",
+      "full_name": "CreditTone/hooker",
+      "url": "https://github.com/CreditTone/hooker",
+      "description": "🔥🔥 hooker is a Frida-based reverse engineering toolkit for Android. It offers a user-friendly CLI, universal scripts, auto hook generation, memory roaming to detect activities/services, one-click SOCKS5 proxy setup, Frida JustTrustMe, and BoringSSL unpinning for all apps.",
+      "language": "Go",
+      "topics": [
+        "android",
+        "apk",
+        "boringssl",
+        "frida",
+        "justtrustme",
+        "mcp",
+        "reverse-engineering",
+        "sslunpinning",
+        "xposed"
+      ],
+      "stars": 5306,
+      "forks": 1263,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572941+00:00",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "hooker Release",
+      "latest_release_url": "https://github.com/CreditTone/hooker/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572944+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": true,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [
+        "Android"
+      ],
+      "platforms_text": "Android",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6306
+    },
+    {
+      "id": 361,
+      "name": "OpenWrt-nikki",
+      "full_name": "nikkinikki-org/OpenWrt-nikki",
+      "url": "https://github.com/nikkinikki-org/OpenWrt-nikki",
+      "description": "Transparent Proxy with Mihomo on OpenWrt.",
+      "language": "Go",
+      "topics": [
+        "clash",
+        "luci-app",
+        "luci-app-nikki",
+        "mihomo",
+        "nikki",
+        "openwrt",
+        "transparent-proxy"
+      ],
+      "stars": 5248,
+      "forks": 579,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572956+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "OpenWrt-nikki Release",
+      "latest_release_url": "https://github.com/nikkinikki-org/OpenWrt-nikki/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572958+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6248
+    },
+    {
+      "id": 362,
+      "name": "one_click_script",
+      "full_name": "jinwyp/one_click_script",
+      "url": "https://github.com/jinwyp/one_click_script",
+      "description": "install latest or LTS linux kernel and enable BBR or BBR plus",
+      "language": "Go",
+      "topics": [
+        "acme",
+        "bbr",
+        "bbrplus",
+        "cloudflare",
+        "frp",
+        "linux-kernel",
+        "netflix",
+        "nginx",
+        "ngrok",
+        "openwrt"
+      ],
+      "stars": 5143,
+      "forks": 1392,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572970+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "one_click_script Release",
+      "latest_release_url": "https://github.com/jinwyp/one_click_script/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572973+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6143
+    },
+    {
+      "id": 363,
+      "name": "Sing-box",
+      "full_name": "eooce/Sing-box",
+      "url": "https://github.com/eooce/Sing-box",
+      "description": "既然来了，就留下你的Star吧！Serv00 | CT8 | Hostuno | VPS | 游戏机 | sing-box(reality + hy2 + vmess-argo +tuic5)四合一无交互一键安装脚本(已适配Alpine)，支持纯V6 vps，丰富的分流服务, 可添加anytls,socks5,ss-2022等协议",
+      "language": "Go",
+      "topics": [
+        "argo",
+        "hysteria2",
+        "oneclick",
+        "reality",
+        "serv00",
+        "sing-box",
+        "tuic",
+        "tunnel",
+        "vmess-ws-tls"
+      ],
+      "stars": 5101,
+      "forks": 1840,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.572987+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "Sing-box Release",
+      "latest_release_url": "https://github.com/eooce/Sing-box/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.572990+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6101
+    },
+    {
+      "id": 364,
+      "name": "v2board",
+      "full_name": "v2board/v2board",
+      "url": "https://github.com/v2board/v2board",
+      "description": "🚀A multiple proxy protocol manage panel application interface",
+      "language": "Go",
+      "topics": [
+        "hysteria",
+        "panel",
+        "shadowsocks",
+        "sspanel",
+        "trojan",
+        "v2board",
+        "v2panel",
+        "v2ray",
+        "vless"
+      ],
+      "stars": 5064,
+      "forks": 1841,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.573003+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "v2board Release",
+      "latest_release_url": "https://github.com/v2board/v2board/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.573006+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6064
+    },
+    {
+      "id": 365,
+      "name": "panel",
+      "full_name": "remnawave/panel",
+      "url": "https://github.com/remnawave/panel",
+      "description": "A powerful proxy management tool, built on top of Xray-core, with a focus on simplicity and ease of use.",
+      "language": "Go",
+      "topics": [
+        "censorship-resistant",
+        "nestjs",
+        "proxy-management",
+        "remnawave",
+        "trojan-gfw",
+        "typescript",
+        "vless",
+        "xray",
+        "xtls-core"
+      ],
+      "stars": 5043,
+      "forks": 299,
+      "archived": false,
+      "pushed_at": "2026-09-13T18:04:19.573018+00:00",
+      "query_slugs": [
+        "code"
+      ],
+      "has_release": true,
+      "latest_release_tag": "latest",
+      "latest_release_name": "panel Release",
+      "latest_release_url": "https://github.com/remnawave/panel/releases",
+      "latest_release_published_at": "2026-09-13T18:04:19.573029+00:00",
+      "release_age_days": 15,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 1,
+      "release_assets": [],
+      "status": "active",
+      "score": 6043
     }
   ]
 }
