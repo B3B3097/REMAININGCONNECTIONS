@@ -1,318 +1,1118 @@
 {
-  "generated_at": "2026-09-14T19:33:20.871134+00:00",
-  "total_extracted": 39,
+  "generated_at": "2026-09-14T23:17:15.978194+00:00",
+  "total_extracted": 139,
   "proxies": [
-    {
-      "host": "127.0.0.1",
-      "port": 1234,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-09-14T19:31:17.228696+00:00"
-    },
-    {
-      "host": "239.255.1.2",
-      "port": 5004,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-09-14T19:31:17.228711+00:00"
-    },
-    {
-      "host": "175.178.182.178",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:30.730284+00:00"
-    },
-    {
-      "host": "150.230.195.209",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:30.730297+00:00"
-    },
-    {
-      "host": "141.147.161.50",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:30.730300+00:00"
-    },
-    {
-      "host": "155.248.172.106",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:30.730303+00:00"
-    },
-    {
-      "host": "66.42.50.118",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:30.730305+00:00"
-    },
-    {
-      "host": "174.137.58.32",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:32.039121+00:00"
-    },
-    {
-      "host": "104.168.244.47",
-      "port": 12580,
-      "protocol": "http",
-      "type": "http",
-      "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-09-14T19:31:32.039132+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 12333,
-      "protocol": "http",
-      "type": "http",
-      "source": "shenwei356/awesome",
-      "found_at": "2026-09-14T19:32:14.046793+00:00"
-    },
     {
       "host": "127.0.0.1",
       "port": 8080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751748+00:00"
+      "source": "s7ckTeam/Glass",
+      "found_at": "2026-09-14T23:16:01.166311+00:00"
+    },
+    {
+      "host": "114.107.150.215",
+      "port": 46213,
+      "protocol": "http",
+      "type": "http",
+      "source": "sukabuliet/ThinkphpRCE",
+      "found_at": "2026-09-14T23:16:02.546455+00:00"
     },
     {
       "host": "127.0.0.1",
-      "port": 9050,
+      "port": 4411,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751759+00:00"
-    },
-    {
-      "host": "1.2.3.4",
-      "port": 5678,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751762+00:00"
+      "source": "netheril96/MEOW",
+      "found_at": "2026-09-14T23:16:03.259817+00:00"
     },
     {
       "host": "127.0.0.1",
-      "port": 5678,
+      "port": 1080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751763+00:00"
+      "source": "netheril96/MEOW",
+      "found_at": "2026-09-14T23:16:03.259827+00:00"
     },
     {
       "host": "127.0.0.1",
-      "port": 4554,
+      "port": 8087,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751765+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8808,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751767+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 22,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751768+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8084,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751770+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 1441,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751772+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8088,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751773+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8008,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751775+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5667,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751776+00:00"
+      "source": "netheril96/MEOW",
+      "found_at": "2026-09-14T23:16:03.259829+00:00"
     },
     {
       "host": "127.0.0.1",
       "port": 8000,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751778+00:00"
+      "source": "bda-research/node-crawler",
+      "found_at": "2026-09-14T23:16:23.438596+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 8088,
+      "host": "1.0.132.249",
+      "port": 4153,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751779+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686237+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 8089,
+      "host": "1.0.136.16",
+      "port": 4153,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751781+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686249+00:00"
     },
     {
-      "host": "0.0.0.0",
-      "port": 1234,
+      "host": "1.0.136.99",
+      "port": 4145,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751782+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686251+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 80,
+      "host": "1.4.148.10",
+      "port": 4145,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751784+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686252+00:00"
     },
     {
-      "host": "174.129.224.73",
+      "host": "1.4.195.114",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686254+00:00"
+    },
+    {
+      "host": "1.9.164.242",
+      "port": 35471,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686255+00:00"
+    },
+    {
+      "host": "1.20.95.95",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686257+00:00"
+    },
+    {
+      "host": "1.20.137.82",
+      "port": 32241,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686258+00:00"
+    },
+    {
+      "host": "1.20.227.66",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686259+00:00"
+    },
+    {
+      "host": "1.20.235.153",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686260+00:00"
+    },
+    {
+      "host": "1.120.134.30",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686262+00:00"
+    },
+    {
+      "host": "1.179.148.9",
+      "port": 36476,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686264+00:00"
+    },
+    {
+      "host": "1.179.151.165",
+      "port": 31948,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686265+00:00"
+    },
+    {
+      "host": "3.141.13.98",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686266+00:00"
+    },
+    {
+      "host": "5.8.18.244",
+      "port": 993,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686268+00:00"
+    },
+    {
+      "host": "5.34.74.234",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686269+00:00"
+    },
+    {
+      "host": "5.44.254.40",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686270+00:00"
+    },
+    {
+      "host": "5.58.47.25",
+      "port": 3629,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686271+00:00"
+    },
+    {
+      "host": "5.135.1.146",
+      "port": 25275,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686272+00:00"
+    },
+    {
+      "host": "5.178.204.235",
+      "port": 2082,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686273+00:00"
+    },
+    {
+      "host": "5.178.217.227",
+      "port": 31019,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686274+00:00"
+    },
+    {
+      "host": "5.188.64.79",
+      "port": 5678,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686275+00:00"
+    },
+    {
+      "host": "8.17.28.139",
+      "port": 39593,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686276+00:00"
+    },
+    {
+      "host": "8.39.228.35",
+      "port": 39593,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686278+00:00"
+    },
+    {
+      "host": "8.42.68.197",
+      "port": 39593,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686279+00:00"
+    },
+    {
+      "host": "8.42.68.249",
+      "port": 39593,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686280+00:00"
+    },
+    {
+      "host": "8.210.76.150",
+      "port": 27832,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686281+00:00"
+    },
+    {
+      "host": "8.210.200.44",
+      "port": 5555,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686282+00:00"
+    },
+    {
+      "host": "12.11.59.114",
       "port": 1080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751786+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686283+00:00"
     },
     {
-      "host": "0.0.0.0",
-      "port": 8800,
+      "host": "12.131.183.66",
+      "port": 30504,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751787+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686284+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 4567,
+      "host": "12.158.87.26",
+      "port": 39593,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751789+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686285+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 5445,
+      "host": "1.12.55.136",
+      "port": 2080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751790+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686286+00:00"
     },
     {
-      "host": "0.0.0.0",
+      "host": "1.180.0.162",
+      "port": 7302,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686288+00:00"
+    },
+    {
+      "host": "1.180.49.222",
+      "port": 7302,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686289+00:00"
+    },
+    {
+      "host": "5.56.124.176",
+      "port": 8192,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686290+00:00"
+    },
+    {
+      "host": "5.189.159.215",
+      "port": 59166,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686291+00:00"
+    },
+    {
+      "host": "8.142.3.145",
+      "port": 3306,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686292+00:00"
+    },
+    {
+      "host": "8.210.253.223",
+      "port": 53854,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686293+00:00"
+    },
+    {
+      "host": "8.218.160.143",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686294+00:00"
+    },
+    {
+      "host": "18.163.25.217",
       "port": 8080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751792+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686295+00:00"
     },
     {
-      "host": "192.168.0.3",
-      "port": 1025,
+      "host": "23.253.253.26",
+      "port": 59166,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751793+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686296+00:00"
     },
     {
-      "host": "174.129.224.73",
-      "port": 80,
+      "host": "24.249.199.4",
+      "port": 4145,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751795+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686297+00:00"
     },
     {
-      "host": "127.0.0.1",
-      "port": 1235,
+      "host": "24.249.199.12",
+      "port": 4145,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751796+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686298+00:00"
     },
     {
-      "host": "127.0.0.1",
+      "host": "31.41.90.142",
       "port": 1080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751798+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686299+00:00"
     },
     {
-      "host": "132.148.129.183",
-      "port": 14124,
+      "host": "31.43.203.100",
+      "port": 1080,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751799+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686301+00:00"
     },
     {
-      "host": "255.255.255.255",
-      "port": 65535,
+      "host": "31.202.25.190",
+      "port": 3128,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751801+00:00"
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686302+00:00"
+    },
+    {
+      "host": "34.79.91.3",
+      "port": 59040,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686303+00:00"
+    },
+    {
+      "host": "37.44.238.2",
+      "port": 54140,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686304+00:00"
+    },
+    {
+      "host": "37.192.118.80",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686305+00:00"
+    },
+    {
+      "host": "37.230.114.48",
+      "port": 1081,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686306+00:00"
+    },
+    {
+      "host": "39.170.85.129",
+      "port": 7302,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686307+00:00"
+    },
+    {
+      "host": "42.193.23.91",
+      "port": 7890,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686308+00:00"
+    },
+    {
+      "host": "43.132.238.17",
+      "port": 24018,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686310+00:00"
+    },
+    {
+      "host": "44.202.62.60",
+      "port": 8088,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686311+00:00"
+    },
+    {
+      "host": "44.202.243.108",
+      "port": 8088,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686312+00:00"
+    },
+    {
+      "host": "45.32.114.246",
+      "port": 8081,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686313+00:00"
+    },
+    {
+      "host": "45.76.32.8",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686315+00:00"
+    },
+    {
+      "host": "45.233.85.205",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686316+00:00"
+    },
+    {
+      "host": "1.0.205.87",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686317+00:00"
+    },
+    {
+      "host": "1.1.189.58",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686318+00:00"
+    },
+    {
+      "host": "1.1.220.63",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686319+00:00"
+    },
+    {
+      "host": "1.4.214.178",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686320+00:00"
+    },
+    {
+      "host": "1.9.83.210",
+      "port": 1337,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686321+00:00"
+    },
+    {
+      "host": "1.10.141.115",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686323+00:00"
+    },
+    {
+      "host": "1.20.225.123",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686324+00:00"
+    },
+    {
+      "host": "1.85.52.250",
+      "port": 9797,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686325+00:00"
+    },
+    {
+      "host": "1.179.144.41",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686326+00:00"
+    },
+    {
+      "host": "2.58.217.1",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686327+00:00"
+    },
+    {
+      "host": "3.20.236.208",
+      "port": 49205,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686328+00:00"
+    },
+    {
+      "host": "3.89.73.90",
+      "port": 8118,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686329+00:00"
+    },
+    {
+      "host": "3.215.177.148",
+      "port": 49205,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686330+00:00"
+    },
+    {
+      "host": "4.16.68.158",
+      "port": 443,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686331+00:00"
+    },
+    {
+      "host": "5.9.118.41",
+      "port": 8889,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686332+00:00"
+    },
+    {
+      "host": "5.56.92.25",
+      "port": 8090,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686333+00:00"
+    },
+    {
+      "host": "5.104.174.199",
+      "port": 23500,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686334+00:00"
+    },
+    {
+      "host": "5.160.175.226",
+      "port": 8383,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686335+00:00"
+    },
+    {
+      "host": "5.187.9.10",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686336+00:00"
+    },
+    {
+      "host": "8.219.115.145",
+      "port": 3128,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686338+00:00"
+    },
+    {
+      "host": "8.242.190.119",
+      "port": 999,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686339+00:00"
+    },
+    {
+      "host": "8.242.205.41",
+      "port": 9991,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686340+00:00"
+    },
+    {
+      "host": "12.36.95.132",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686341+00:00"
+    },
+    {
+      "host": "12.88.29.66",
+      "port": 9080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686342+00:00"
+    },
+    {
+      "host": "14.102.51.185",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686343+00:00"
+    },
+    {
+      "host": "14.139.57.195",
+      "port": 23500,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686344+00:00"
+    },
+    {
+      "host": "14.161.26.100",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686345+00:00"
+    },
+    {
+      "host": "14.161.31.192",
+      "port": 53281,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686346+00:00"
+    },
+    {
+      "host": "14.161.33.150",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686348+00:00"
+    },
+    {
+      "host": "1.0.171.213",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686349+00:00"
+    },
+    {
+      "host": "1.20.207.99",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686350+00:00"
+    },
+    {
+      "host": "2.138.28.204",
+      "port": 3128,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686351+00:00"
+    },
+    {
+      "host": "3.94.253.49",
+      "port": 8118,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686352+00:00"
+    },
+    {
+      "host": "5.8.53.7",
+      "port": 18081,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686353+00:00"
+    },
+    {
+      "host": "5.9.180.204",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686354+00:00"
+    },
+    {
+      "host": "5.54.186.76",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686355+00:00"
+    },
+    {
+      "host": "5.75.144.136",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686356+00:00"
+    },
+    {
+      "host": "5.78.40.148",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686357+00:00"
+    },
+    {
+      "host": "5.78.42.62",
+      "port": 50001,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686358+00:00"
+    },
+    {
+      "host": "5.78.42.170",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686360+00:00"
+    },
+    {
+      "host": "5.78.45.181",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686361+00:00"
+    },
+    {
+      "host": "5.78.65.102",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686362+00:00"
+    },
+    {
+      "host": "5.78.65.154",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686363+00:00"
+    },
+    {
+      "host": "5.78.66.187",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686364+00:00"
+    },
+    {
+      "host": "5.78.67.98",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686365+00:00"
+    },
+    {
+      "host": "5.78.74.216",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686366+00:00"
+    },
+    {
+      "host": "1.0.133.89",
+      "port": 4153,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686367+00:00"
+    },
+    {
+      "host": "1.0.133.100",
+      "port": 51327,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686368+00:00"
+    },
+    {
+      "host": "1.0.136.28",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686369+00:00"
+    },
+    {
+      "host": "1.0.136.49",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686370+00:00"
+    },
+    {
+      "host": "1.0.136.138",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686371+00:00"
+    },
+    {
+      "host": "1.0.136.221",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686373+00:00"
+    },
+    {
+      "host": "1.0.137.61",
+      "port": 4153,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686374+00:00"
+    },
+    {
+      "host": "1.0.141.70",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686375+00:00"
+    },
+    {
+      "host": "1.0.141.132",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686376+00:00"
+    },
+    {
+      "host": "1.0.144.43",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686377+00:00"
+    },
+    {
+      "host": "1.0.146.166",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686379+00:00"
+    },
+    {
+      "host": "1.0.150.180",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686380+00:00"
+    },
+    {
+      "host": "1.0.153.37",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686381+00:00"
+    },
+    {
+      "host": "1.0.157.96",
+      "port": 4153,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686382+00:00"
+    },
+    {
+      "host": "1.0.160.29",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686383+00:00"
+    },
+    {
+      "host": "1.0.160.38",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686385+00:00"
+    },
+    {
+      "host": "1.0.161.47",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686386+00:00"
+    },
+    {
+      "host": "1.0.161.232",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686387+00:00"
+    },
+    {
+      "host": "1.0.162.225",
+      "port": 4153,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686388+00:00"
+    },
+    {
+      "host": "1.0.163.158",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686389+00:00"
+    },
+    {
+      "host": "1.0.170.50",
+      "port": 80,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686390+00:00"
+    },
+    {
+      "host": "1.0.208.68",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686391+00:00"
+    },
+    {
+      "host": "1.0.208.108",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686392+00:00"
+    },
+    {
+      "host": "1.0.208.111",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686393+00:00"
+    },
+    {
+      "host": "1.0.208.131",
+      "port": 4145,
+      "protocol": "http",
+      "type": "http",
+      "source": "jetkai/proxy-list",
+      "found_at": "2026-09-14T23:16:28.686394+00:00"
     },
     {
       "host": "127.0.0.1",
-      "port": 23,
+      "port": 8888,
       "protocol": "http",
       "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-09-14T19:32:44.751802+00:00"
+      "source": "anandprtp/Antra",
+      "found_at": "2026-09-14T23:16:30.542733+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 7860,
+      "protocol": "http",
+      "type": "http",
+      "source": "KevinStreetCoder/harvestr",
+      "found_at": "2026-09-14T23:16:41.985721+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 9055,
+      "protocol": "http",
+      "type": "http",
+      "source": "KevinStreetCoder/harvestr",
+      "found_at": "2026-09-14T23:16:41.985735+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 3000,
+      "protocol": "http",
+      "type": "http",
+      "source": "rahgozar94725/MTProto-Checker",
+      "found_at": "2026-09-14T23:16:59.349129+00:00"
     }
   ]
 }
