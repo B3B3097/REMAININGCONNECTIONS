@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-16T07:49:43.701856+00:00",
+  "generated_at": "2026-09-16T10:27:06.038Z",
   "categories": {
     "subscriptions": {
       "count": 27,
@@ -27,5 +27,16 @@
       "file": "data/utils_found.json"
     }
   },
-  "total_proxies": 1826
+  "total_proxies": 1826,
+  "subscriptions_count": 27,
+  "subscriptions_working": 25,
+  "tg_stats": {
+    "total": 450,
+    "working": 99,
+    "by_status": {
+      "working": 99,
+      "timeout": 326,
+      "connection_failed": 25
+    }
+  }
 }
