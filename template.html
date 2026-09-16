@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMAININGCONNECTIONS</title>
+    <meta name="description" content="Real-time proxy statistics, subscription discovery, and Telegram proxy monitoring dashboard.">
+    <meta property="og:title" content="REMAININGCONNECTIONS">
+    <meta property="og:description" content="Real-time proxy statistics, subscription discovery, and Telegram proxy monitoring dashboard.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; }
+        .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; line-height: 1.3; white-space: nowrap; }
+        .badge-success { background: #065f46; color: #6ee7b7; }
+        .badge-warning { background: #78350f; color: #fde68a; }
+        .badge-danger { background: #7f1d1d; color: #fca5a5; }
+        .badge-neutral { background: #1e3a5f; color: #93c5fd; }
+        .badge-platform { background: #4c1d95; color: #c4b5fd; }
+        .chip { display: inline-block; padding: 0.05rem 0.5rem; border-radius: 9999px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #94a3b8; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; text-decoration: none; cursor: pointer; border: none; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.85; }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-secondary { background: #374151; color: #d1d5db; }
+        .btn-sm { padding: 0.25rem 0.6rem; font-size: 0.75rem; }
+        .tab-btn { padding: 0.55rem 1rem; font-size: 0.875rem; font-weight: 600; color: #94a3b8; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+        .tab-btn:hover { color: #e2e8f0; }
+        .tab-btn.active { color: #60a5fa; border-bottom-color: #3b82f6; }
+        .tab-panel { display: none; flex-direction: column; gap: 1rem; }
+        .stat-chip { background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; padding: 0.35rem 0.75rem; min-width: 88px; }
+        .stat-chip .stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; font-weight: 700; }
+        .stat-chip .stat-value { font-size: 1.05rem; font-weight: 700; color: #e2e8f0; line-height: 1.25; }
+        .empty-box { display: none; text-align: center; padding: 2.5rem 1rem; color: #94a3b8; border: 1px dashed #475569; border-radius: 0.5rem; font-size: 0.875rem; }
+        .subs-card-muted { opacity: 0.6; }
+        .ping-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+        .ping-good { background: #10b981; }
+        .ping-ok { background: #f59e0b; }
+        .ping-bad { background: #ef4444; }
+        .text-muted { color: #94a3b8; }
+        .text-faint { color: #64748b; }
+        #sp-log { background: #0f172a; border: 1px solid #334155; border-radius: 0.5rem; padding: 0.75rem 1rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.75rem; color: #94a3b8; height: 220px; overflow-y: auto; word-break: break-word; }
+        .sp-bar { height: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 9999px; overflow: hidden; }
+        .sp-bar > div { height: 100%; width: 0%; background: linear-gradient(90deg, #2563eb, #22d3ee); transition: width 0.25s ease; }
+        #toastContainer { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+        .toast { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #e2e8f0; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45); transition: opacity 0.25s ease, transform 0.25s ease; min-width: 180px; max-width: 340px; }
+        .toast-success { border-left: 3px solid #34d399; }
+        .toast-error { border-left: 3px solid #f87171; }
+        .toast-info { border-left: 3px solid #60a5fa; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+    <!-- Sticky header: title + hero stats + tab nav -->
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-700">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <div>
+                    <h1 class="text-2xl font-bold leading-tight">REMAININGCONNECTIONS</h1>
+                    <p class="text-xs text-slate-400">Proxy Discovery &amp; Monitoring Dashboard</p>
+                </div>
+                <div class="flex flex-wrap gap-2 ml-auto" id="hero-stats">
+                    <div class="stat-chip"><div class="stat-label">Valid Subs</div><div class="stat-value" id="hero-valid-subs">0</div></div>
+                    <div class="stat-chip"><div class="stat-label">Subs Found</div><div class="stat-value" id="hero-subs-found">0</div></div>
+                    <div class="stat-chip"><div class="stat-label">TG Working</div><div class="stat-value text-green-400" id="hero-tg-working">0</div></div>
+                    <div class="stat-chip"><div class="stat-label">HTTP+SOCKS Working</div><div class="stat-value text-blue-400" id="hero-hs-working">0</div></div>
+                    <div class="stat-chip"><div class="stat-label">Utilities</div><div class="stat-value" id="hero-utils">0</div></div>
+                </div>
+            </div>
+            <nav class="flex flex-wrap gap-1 -mb-px" id="tabs">
+                <button class="tab-btn" data-tab="subs">Subscriptions</button>
+                <button class="tab-btn" data-tab="zaceper">⚡ Зацепер (Зеркало)</button>
+                <button class="tab-btn" data-tab="tg">TG Proxies</button>
+                <button class="tab-btn" data-tab="https">HTTP/SOCKS</button>
+                <button class="tab-btn" data-tab="utils">Utilities</button>
+                <button class="tab-btn" data-tab="speed">Speed Test</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 max-w-7xl">
+
+        <!-- Auto-Update & Health Check Controls -->
+        <div id="auto-update-bar" class="card p-3.5 mb-4 border border-slate-700/80 bg-slate-900/90 shadow-md flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span id="auto-update-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span id="auto-update-status-title" class="font-bold text-slate-200">Авто-обновление активно</span>
+                </div>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <div class="flex items-center gap-1.5 text-slate-300">
+                    <label for="auto-update-interval-select" class="text-slate-400">Интервал:</label>
+                    <select id="auto-update-interval-select" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="15">Каждые 15 мин</option>
+                        <option value="30" selected>Каждые 30 мин</option>
+                        <option value="60">Каждый 1 час</option>
+                        <option value="120">Каждые 2 часа</option>
+                        <option value="360">Каждые 6 часов</option>
+                        <option value="0">Отключено (вручную)</option>
+                    </select>
+                </div>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <span id="auto-update-last-text" class="text-slate-400">Посл. проверка: проверяем...</span>
+                <span class="text-slate-600 hidden md:inline">|</span>
+                <span id="auto-update-next-text" class="text-slate-400 hidden md:inline">След.: ожидание</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="auto-update-run-btn" class="btn btn-primary btn-sm flex items-center gap-1.5 cursor-pointer" title="Запустить проверку всех подписок и прокси прямо сейчас">
+                    <span id="auto-update-spinner" style="display:none;">⏳</span>
+                    <span id="auto-update-btn-text">⚡ Обновить и проверить всё</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Toolbar: search filters the cards of the current tab -->
+        <div class="card p-3 mb-4 flex flex-wrap items-center gap-3">
+            <span class="text-sm font-semibold text-slate-300">Dashboard</span>
+            <input type="text" id="search-input" placeholder="Search current tab (name, host, port, tag...)" autocomplete="off"
+                   class="px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm focus:outline-none focus:border-blue-500 w-full sm:w-96">
+            <span class="text-sm text-muted ml-auto" id="show-counter"></span>
+        </div>
+
+        <!-- ============ Tab: Subscriptions ============ -->
+        <section id="panel-subs" class="tab-panel flex flex-col gap-4">
+            <!-- Discovery & Search Console -->
+            <div class="card p-4 border border-blue-500/30 bg-slate-800/90 shadow-lg">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg">🔍</div>
+                        <div>
+                            <h2 class="text-sm font-bold text-white leading-tight">Live Discovery &amp; GitHub Поиск Подписок</h2>
+                            <p class="text-xs text-slate-400">Автоматический поиск свежих рабочих подписок на GitHub и агрегаторах с проверкой нод и протоколов.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="subs-discover-btn" class="btn btn-primary btn-sm flex items-center gap-1.5">
+                            <span id="subs-discover-spinner" style="display:none;">⏳</span>
+                            <span>🔍 Найти свежие подписки</span>
+                        </button>
+                        <button id="subs-refresh-all-btn" class="btn btn-secondary btn-sm flex items-center gap-1.5" title="Перепроверить все существующие подписки">
+                            <span>↻ Обновить ноды</span>
+                        </button>
+                        <button id="subs-add-modal-btn" class="btn btn-secondary btn-sm flex items-center gap-1.5" title="Добавить свою ссылку на подписку в каталог">
+                            <span>➕ Добавить URL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <div class="relative flex-1 min-w-[260px]">
+                        <input type="text" id="subs-discover-query" placeholder="Запрос для поиска (например: vless, trojan, hysteria2, clash, free v2ray, russia)..."
+                               class="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-slate-200 focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1 text-xs">
+                        <span class="text-slate-400 text-[11px] mr-1">Быстрый поиск:</span>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="all">⚡ Все агрегаторы</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="vless">⚡ VLESS</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="hysteria">⚡ Hysteria 2</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="trojan">⚡ Trojan</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="vmess">⚡ VMess</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="ss">⚡ Shadowsocks</button>
+                        <button class="badge badge-platform cursor-pointer hover:bg-slate-700 transition" data-sub-quick="tuic">⚡ TUIC</button>
+                    </div>
+                </div>
+                <div id="subs-discover-status" class="mt-2 text-xs font-semibold" style="display:none;"></div>
+            </div>
+
+            <!-- Filter & Sort Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-800/60 rounded-lg border border-slate-700/60">
+                <div class="flex flex-wrap items-center gap-1.5" id="subs-proto-chips">
+                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider mr-1">Протокол:</span>
+                    <button class="sub-proto-btn badge badge-platform cursor-pointer border border-blue-400/50 bg-blue-500/20 text-blue-300 font-semibold" data-proto="all">Все (<span id="count-all">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="vless">VLESS (<span id="count-vless">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="vmess">VMess (<span id="count-vmess">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="trojan">Trojan (<span id="count-trojan">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="hysteria">Hysteria (<span id="count-hysteria">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="ss">SS (<span id="count-ss">0</span>)</button>
+                    <button class="sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition" data-proto="tuic">TUIC (<span id="count-tuic">0</span>)</button>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 ml-auto">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs text-slate-400">Сортировка:</span>
+                        <select id="subs-sort" class="px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                            <option value="configs-desc">Конфигов (max → min)</option>
+                            <option value="configs-asc">Конфигов (min → max)</option>
+                            <option value="name-asc">По названию (A-Z)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-1 border-l border-slate-700 pl-3">
+                        <button id="subs-mode-valid" class="btn btn-primary btn-sm">Рабочие</button>
+                        <button id="subs-mode-all" class="btn btn-secondary btn-sm">Все</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="subs-empty" class="empty-box" data-no-data="No subscriptions found in the data files."></div>
+        </section>
+
+        <!-- ============ Tab: Зацепер (Subscription Relayer & IP Bypass) ============ -->
+        <section id="panel-zaceper" class="tab-panel">
+            <div class="card p-5 border-blue-500/30 bg-slate-800/80">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl">⚡</div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white leading-tight">Зацепер подписок (Subscription Relayer &amp; IP Bypass)</h2>
+                            <p class="text-xs text-slate-400">Обход блокировок по IP и гео-ограничений: вставьте любую ссылку на VPN-подписку — сервер зацепится за неё и создаст постоянное защищённое зеркало (/sub/...).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="zaceper-form" class="space-y-3 mt-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Ссылка на исходную подписку / VPN конфиг</label>
+                            <input type="url" id="zac-url" required placeholder="https://vpn.example.com/sub/token... или base64 / txt ссылка"
+                                   class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-blue-500 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Название подписки (необязательно)</label>
+                            <input type="text" id="zac-name" placeholder="Мой VPN сервис"
+                                   class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>Поддерживает: VLESS, VMess, Trojan, Shadowsocks, Hysteria 2, TUIC, WireGuard, Base64, Clash, Sing-box</span>
+                        </div>
+                        <button type="submit" id="zac-submit" class="btn btn-primary px-5 py-2 text-sm font-semibold flex items-center gap-2">
+                            <span>⚡ Зацепить подписку</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="zac-result" class="mt-4 p-4 rounded-lg bg-emerald-950/40 border border-emerald-500/40" style="display:none;"></div>
+            </div>
+
+            <div class="flex items-center justify-between mt-2">
+                <h3 class="text-base font-semibold text-slate-200 flex items-center gap-2">
+                    <span>Активные зацепленные подписки</span>
+                    <span id="zac-count-badge" class="badge badge-platform">0</span>
+                </h3>
+                <button id="zac-refresh-all" class="btn btn-secondary btn-sm flex items-center gap-1.5">
+                    <span>↻ Обновить все</span>
+                </button>
+            </div>
+
+            <div id="zacList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="zac-empty" class="empty-box" style="display: block;">
+                Пока нет зацепленных подписок. Вставьте ссылку выше или нажмите «⚡ Зацепить» на любой карточке во вкладке Subscriptions.
+            </div>
+        </section>
+
+        <!-- ============ Tab: TG Proxies ============ -->
+        <section id="panel-tg" class="tab-panel">
+            <div class="card p-3 mb-3 border border-slate-700/60 bg-slate-800/60 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-sm font-bold text-white">Telegram MTProto Прокси</h3>
+                    <p class="text-xs text-slate-400">Мониторинг доступности и измерение задержки MTProto прокси с TCP проверкой.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="tg-check-btn" class="btn btn-secondary btn-sm flex items-center gap-1.5 cursor-pointer" title="Выполнить TCP пинг всех MTProto прокси">
+                        <span id="tg-check-spinner" style="display:none;">⏳</span>
+                        <span id="tg-check-btn-text">↻ Проверить пинг прокси</span>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Total Checked</div><div class="text-2xl font-bold" id="tg-total">0</div></div>
+                <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Working</div><div class="text-2xl font-bold text-green-400" id="tg-working">0</div></div>
+                <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Timeout</div><div class="text-2xl font-bold text-yellow-400" id="tg-timeout">0</div></div>
+                <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Failed</div><div class="text-2xl font-bold text-red-400" id="tg-failed">0</div></div>
+            </div>
+            <div id="proxiesList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="tg-empty" class="empty-box" data-no-data="No working TG proxies available yet."></div>
+        </section>
+
+        <!-- ============ Tab: HTTP/SOCKS ============ -->
+        <section id="panel-https" class="tab-panel">
+            <div id="httpSocksList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="https-empty" class="empty-box" data-no-data="No validated HTTP/SOCKS proxies yet — discovery workflow will fill this"></div>
+        </section>
+
+        <!-- ============ Tab: Utilities ============ -->
+        <section id="panel-utils" class="tab-panel">
+            <div id="utilsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="utils-empty" class="empty-box" data-no-data="No utilities found in the data files."></div>
+        </section>
+
+        <!-- ============ Tab: Speed Test ============ -->
+        <section id="panel-speed" class="tab-panel">
+            <div class="card p-6">
+                <div class="flex flex-wrap items-center gap-3 mb-2">
+                    <h2 class="text-xl font-semibold mr-auto">Speed Test</h2>
+                    <button id="sp-start" class="btn btn-primary">Start</button>
+                    <button id="sp-stop" class="btn btn-secondary" disabled>Stop</button>
+                </div>
+                <p class="text-sm text-muted mb-5">Measures your connection straight from the browser against Cloudflare speed endpoints. Runs entirely client-side — nothing is sent to this site's backend.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="border border-slate-700 rounded-lg p-4">
+                        <div class="text-xs text-muted uppercase tracking-wide font-bold mb-1">Latency</div>
+                        <div class="text-3xl font-bold" id="sp-latency">--</div>
+                        <div class="text-xs text-faint mt-1">median of 5 requests</div>
+                    </div>
+                    <div class="border border-slate-700 rounded-lg p-4">
+                        <div class="text-xs text-muted uppercase tracking-wide font-bold mb-1">Download</div>
+                        <div class="text-3xl font-bold text-blue-400" id="sp-download">--</div>
+                        <div class="sp-bar mt-2"><div id="sp-dl-bar"></div></div>
+                        <div class="text-xs text-faint mt-1" id="sp-dl-info">25 MB test file</div>
+                    </div>
+                    <div class="border border-slate-700 rounded-lg p-4">
+                        <div class="text-xs text-muted uppercase tracking-wide font-bold mb-1">Upload</div>
+                        <div class="text-3xl font-bold text-emerald-400" id="sp-upload">--</div>
+                        <div class="sp-bar mt-2"><div id="sp-ul-bar"></div></div>
+                        <div class="text-xs text-faint mt-1" id="sp-ul-info">~16 MB payload</div>
+                    </div>
+                </div>
+
+                <div class="text-sm mb-2 text-slate-300" id="sp-status">Idle — press Start to begin.</div>
+                <div id="sp-log"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-10 border-t border-slate-800 py-6 text-center text-sm text-faint">
+        <p>Generated by REMAININGCONNECTIONS | <a href="https://t.me/REMAININGCONNECTIONS" class="text-blue-400 hover:underline" target="_blank" rel="noopener">t.me/REMAININGCONNECTIONS</a></p>
+    </footer>
+
+    <!-- Add Subscription Modal -->
+    <div id="add-sub-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" style="display:none;">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full p-5 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span>➕ Добавить подписку в каталог</span>
+                </h3>
+                <button type="button" id="add-sub-close" class="text-slate-400 hover:text-white text-lg leading-none cursor-pointer">&times;</button>
+            </div>
+            <form id="add-sub-form" class="mt-4 flex flex-col gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">URL подписки <span class="text-red-400">*</span></label>
+                    <input type="url" id="add-sub-url" required placeholder="https://raw.githubusercontent.com/.../sub.txt"
+                           class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500">
+                    <p class="text-[11px] text-slate-400 mt-1">Поддерживаются форматы: Base64, Plain Text (VLESS/VMess/Trojan/Hysteria2/SS/TUIC), Clash YAML, Sing-box JSON.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Название (необязательно)</label>
+                    <input type="text" id="add-sub-name" placeholder="Например: Моя VLESS подписка"
+                           class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                </div>
+                <div id="add-sub-status" class="text-xs" style="display:none;"></div>
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" id="add-sub-cancel" class="btn btn-secondary btn-sm cursor-pointer">Отмена</button>
+                    <button type="submit" id="add-sub-submit" class="btn btn-primary btn-sm cursor-pointer">Проверить и добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast notifications (also used by configs.js toast()) -->
+    <div id="toastContainer" aria-live="polite"></div>
+
+    <script>
+    const CONFIG = __SAFE_JSON__;
+
+    // ---------- State ----------
+    let currentTab = 'subs';
+    let searchQuery = '';
+    let subsValidOnly = true;
+
+    // ---------- Helpers ----------
+    function esc(v) {
+        return String(v === null || v === undefined ? '' : v)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function badge(text, kind) {
+        return '<span class="badge badge-' + kind + '">' + esc(text) + '</span>';
+    }
+
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+
+    function fmtLatency(ms) {
+        const n = Number(ms);
+        return Number.isFinite(n) ? n.toFixed(2) + ' ms' : '';
+    }
+
+    // ---------- Toasts & clipboard ----------
+    function showToast(message, kind) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-' + (kind === 'success' || kind === 'error' ? kind : 'info');
+        toast.textContent = (kind === 'success' ? '✓ ' : kind === 'error' ? '✕ ' : '') + message;
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        container.appendChild(toast);
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+        });
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            setTimeout(() => { toast.remove(); }, 250);
+        }, 2200);
+    }
+
+    async function copyToClipboard(text) {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch (e) {
+            return false;
+        }
+        // Fallback for non-secure contexts (e.g. local http.server): hidden textarea + execCommand.
+        let ta = null;
+        try {
+            ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            return document.execCommand('copy');
+        } catch (e) {
+            return false;
+        } finally {
+            if (ta && ta.parentNode) ta.parentNode.removeChild(ta);
+        }
+    }
+
+    // ---------- Render: hero stats ----------
+    function renderHero() {
+        const subs = CONFIG.subscriptions || [];
+        const tgStats = CONFIG.tg_stats || {};
+        const utils = CONFIG.utilities || [];
+        setText('hero-valid-subs', subs.filter((s) => s.valid).length.toLocaleString());
+        setText('hero-subs-found', (CONFIG.subscriptions_count != null ? CONFIG.subscriptions_count : subs.length).toLocaleString());
+        const tgWorking = tgStats.working != null ? tgStats.working : (CONFIG.tg_proxies || []).filter((p) => p.status === 'working').length;
+        setText('hero-tg-working', tgWorking.toLocaleString());
+        setText('hero-hs-working', (CONFIG.working_proxies || 0).toLocaleString());
+        setText('hero-utils', (utils.length || (CONFIG.utilities_summary && CONFIG.utilities_summary.total_utilities) || 0).toLocaleString());
+    }
+
+    // ---------- Render: TG summary strip ----------
+    function renderTgSummary() {
+        const st = CONFIG.tg_stats || {};
+        const by = st.by_status || {};
+        let failed = 0;
+        Object.entries(by).forEach(([k, v]) => { if (k !== 'working' && k !== 'timeout') failed += v; });
+        setText('tg-total', (st.total != null ? st.total : 0).toLocaleString());
+        setText('tg-working', ((by.working != null ? by.working : st.working) || 0).toLocaleString());
+        setText('tg-timeout', (by.timeout || 0).toLocaleString());
+        setText('tg-failed', failed.toLocaleString());
+    }
+
+    // ---------- Card builders ----------
+    const SUB_BADGES = { active: 'success', unknown: 'neutral' };
+
+    let currentSubProto = 'all';
+    let currentSubSort = 'configs-desc';
+
+    function subCard(s) {
+        const title = s.name || s.repo || 'unknown subscription';
+        const valid = s.valid === true;
+        const fmt = s.subscription_url ? (s.subscription_url.toLowerCase().endsWith('.txt') ? 'TXT' : (s.subscription_url.toLowerCase().endsWith('.json') ? 'JSON' : (s.subscription_url.toLowerCase().endsWith('.yaml') ? 'YAML' : 'SUB'))) : null;
+        const statusKind = SUB_BADGES[s.status] || (valid ? 'success' : 'neutral');
+        const repoHref = s.url || '#';
+        const repoText = s.repo || s.url || '';
+        const updated = (s.updated_mins_ago !== null && s.updated_mins_ago !== undefined)
+            ? '<span class="text-xs text-faint">updated ' + esc(s.updated_mins_ago) + 'm ago</span>' : '';
+
+        // Protocol badges
+        const protoBadges = (s.protocols && s.protocols.length > 0)
+            ? s.protocols.map(p => '<button class="badge badge-platform cursor-pointer uppercase text-[10px] hover:bg-slate-700 transition" data-filter-proto="' + esc(p) + '" title="Фильтровать по ' + esc(p) + '">' + esc(p) + '</button>').join(' ')
+            : '';
+
+        const actions = valid
+            ? '<button class="btn btn-primary btn-sm" data-copy="' + esc(s.subscription_url) + '">Copy URL</button>'
+              + '<button class="btn btn-secondary btn-sm" data-zacepit="' + esc(s.subscription_url) + '" data-name="' + esc(title) + '" title="Создать постоянное зеркало (обход блокировок)">⚡ Зацепить</button>'
+              + '<a class="btn btn-secondary btn-sm" href="' + esc(s.subscription_url) + '" target="_blank" rel="noopener">Open</a>'
+            : '<a class="btn btn-secondary btn-sm" href="' + esc(repoHref) + '" target="_blank" rel="noopener">Open repo</a>'
+              + '<button class="btn btn-secondary btn-sm" data-copy="' + esc(repoHref) + '">Copy repo link</button>';
+        const sample = s.content_sample
+            ? '<p class="text-xs text-slate-400 mt-2 leading-relaxed font-mono bg-slate-900/60 p-2 rounded break-all border border-slate-700/40 select-all">' + esc(s.content_sample) + '</p>' : '';
+        const protosStr = (s.protocols || []).join(' ').toLowerCase();
+        const search = [title, s.repo || '', s.url || '', s.subscription_url || '', protosStr, s.status || '', valid ? 'working valid' : 'empty', s.content_sample || ''].join(' ').toLowerCase();
+        return '<div class="card p-4 flex flex-col ' + (valid ? '' : 'subs-card-muted') + '" data-valid="' + (valid ? '1' : '0') + '" data-configs="' + (s.configs_count || 0) + '" data-title="' + esc(title.toLowerCase()) + '" data-proto="' + esc(protosStr) + '" data-search="' + esc(search) + '">'
+            + '<div class="flex items-start justify-between gap-2 mb-2">'
+            + '<h3 class="font-semibold text-sm break-all leading-snug text-slate-100">' + esc(title) + '</h3>'
+            + '<div class="flex gap-1 flex-shrink-0 flex-wrap justify-end">'
+            + (fmt ? badge(fmt, fmt === 'TXT' ? 'success' : 'platform') : '')
+            + badge(s.status || (valid ? 'active' : 'empty'), statusKind)
+            + '<span class="badge ' + (valid ? 'badge-success font-bold' : 'badge-neutral') + '">' + (s.configs_count || 0).toLocaleString() + ' нод</span>'
+            + '</div>'
+            + '</div>'
+            + (protoBadges ? '<div class="flex flex-wrap gap-1 mb-2">' + protoBadges + '</div>' : '')
+            + '<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">'
+            + '<a class="text-blue-400 hover:underline text-xs break-all" href="' + esc(repoHref) + '" target="_blank" rel="noopener">' + esc(repoText || repoHref) + '</a>'
+            + updated
+            + '</div>'
+            + sample
+            + '<div class="flex items-center gap-2 pt-3 mt-auto">' + actions + '</div>'
+            + '</div>';
+    }
+
+    function updateSubProtoCounts() {
+        const subs = (CONFIG.subscriptions || []).filter(s => !subsValidOnly || s.valid);
+        const counts = { all: subs.length, vless: 0, vmess: 0, trojan: 0, hysteria: 0, ss: 0, tuic: 0 };
+        subs.forEach(s => {
+            const protos = (s.protocols || []).map(p => p.toLowerCase());
+            if (protos.some(p => p === 'vless')) counts.vless++;
+            if (protos.some(p => p === 'vmess')) counts.vmess++;
+            if (protos.some(p => p === 'trojan')) counts.trojan++;
+            if (protos.some(p => p.includes('hysteria') || p === 'hy2')) counts.hysteria++;
+            if (protos.some(p => p === 'ss' || p === 'shadowsocks')) counts.ss++;
+            if (protos.some(p => p === 'tuic')) counts.tuic++;
+        });
+        Object.entries(counts).forEach(([k, v]) => {
+            const el = document.getElementById('count-' + k);
+            if (el) el.textContent = v;
+        });
+    }
+
+    function renderSubs() {
+        const grid = document.getElementById('subsGrid');
+        if (!grid) return;
+        let subs = (CONFIG.subscriptions || []).slice();
+
+        if (currentSubSort === 'configs-desc') {
+            subs.sort((a, b) => (b.configs_count || 0) - (a.configs_count || 0));
+        } else if (currentSubSort === 'configs-asc') {
+            subs.sort((a, b) => (a.configs_count || 0) - (b.configs_count || 0));
+        } else if (currentSubSort === 'name-asc') {
+            subs.sort((a, b) => (a.name || a.repo || '').localeCompare(b.name || b.repo || ''));
+        }
+
+        grid.innerHTML = subs.map(subCard).join('');
+        updateSubProtoCounts();
+    }
+
+    const PROXY_BADGES = { working: 'success', timeout: 'warning' };
+
+    function proxyStatusBadge(status) {
+        const kind = PROXY_BADGES[status] || 'danger';
+        return badge(status || 'unknown', kind);
+    }
+
+    function tgCard(p) {
+        const host = p.host || p.server || '';
+        const hostPort = host + ':' + p.port;
+        const proto = (p.protocol || 'unknown').toUpperCase();
+        const lat = fmtLatency(p.latency_ms);
+        const search = [host, p.port, p.protocol || '', p.status || ''].join(' ').toLowerCase();
+        const buttons = [];
+        buttons.push('<button class="btn btn-secondary btn-sm" data-copy="' + esc(hostPort) + '">Copy host:port</button>');
+        if (p.tg_url) buttons.push('<a class="btn btn-primary btn-sm" href="' + esc(p.tg_url) + '">Connect in Telegram</a>');
+        if (p.tg_url) buttons.push('<button class="btn btn-secondary btn-sm" data-copy="' + esc(p.tg_url) + '">Copy link</button>');
+        if (p.tme_url) buttons.push('<a class="btn btn-secondary btn-sm" href="' + esc(p.tme_url) + '" target="_blank" rel="noopener">t.me link</a>');
+        return '<div class="card p-4 flex flex-col" data-search="' + esc(search) + '">'
+            + '<div class="flex items-center justify-between gap-2 flex-wrap mb-1">'
+            + '<span class="font-mono text-base font-semibold break-all">' + esc(hostPort) + '</span>'
+            + badge(proto, 'platform')
+            + '</div>'
+            + '<div class="flex flex-wrap items-center gap-2">' + proxyStatusBadge(p.status)
+            + (lat ? '<span class="text-xs text-slate-400">' + esc(lat) + '</span>' : '')
+            + '</div>'
+            + '<div class="flex items-center gap-2 mt-3"></div>'
+            + (buttons.length ? '<div class="flex flex-wrap gap-2 mt-2">' + buttons.join('') + '</div>' : '')
+            + '</div>';
+    }
+
+    function renderTg() {
+        const list = document.getElementById('proxiesList');
+        if (!list) return;
+        const proxies = CONFIG.tg_proxies || [];
+        list.innerHTML = proxies.map(tgCard).join('');
+    }
+
+    function hsCard(p) {
+        const host = p.host || p.server || '';
+        const hostPort = host + ':' + p.port;
+        const proto = (p.protocol || p.type || 'unknown').toUpperCase();
+        const lat = fmtLatency(p.latency_ms);
+        const search = [host, p.port, p.protocol || p.type || '', p.status || '', p.country || ''].join(' ').toLowerCase();
+        return '<div class="card p-4 flex flex-col" data-search="' + esc(search) + '">'
+            + '<div class="flex items-center justify-between gap-2 flex-wrap mb-1">'
+            + '<span class="font-mono text-base font-semibold break-all">' + esc(hostPort) + '</span>'
+            + badge(proto, 'platform')
+            + '</div>'
+            + '<div class="flex flex-wrap items-center gap-2">' + proxyStatusBadge(p.status || (p.working ? 'working' : 'unknown'))
+            + (lat ? '<span class="text-xs text-slate-400">' + esc(lat) + '</span>' : '')
+            + '</div>'
+            + '<div class="flex flex-wrap gap-2 mt-2">'
+            + '<button class="btn btn-secondary btn-sm" data-copy="' + esc(hostPort) + '">Copy host:port</button>'
+            + (p.url ? '<button class="btn btn-secondary btn-sm" data-copy="' + esc(p.url) + '">Copy URL</button>' : '')
+            + '</div>'
+            + '</div>';
+    }
+
+    function renderHttpSocks() {
+        const list = document.getElementById('httpSocksList');
+        if (!list) return;
+        const proxies = CONFIG.proxies || [];
+        list.innerHTML = proxies.map(hsCard).join('');
+    }
+
+    const UTIL_BADGES = { active: 'success', stale: 'warning', outdated: 'danger' };
+
+    function utilCard(u) {
+        const statusKind = UTIL_BADGES[u.status] || 'neutral';
+        const name = u.name || u.full_name || 'utility';
+        const url = u.url || '#';
+        const stars = Number(u.stars || 0).toLocaleString();
+        const forks = Number(u.forks || 0).toLocaleString();
+        const platforms = String(u.platforms_text || '')
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+            .map((t) => badge(t, 'platform'))
+            .join(' ');
+        const release = u.has_release
+            ? '<div class="text-xs text-slate-400 mt-2">Release: <a class="text-blue-400 hover:underline break-all" href="' + esc(u.latest_release_url || url) + '" target="_blank" rel="noopener">' + esc(u.latest_release_tag || 'release') + '</a>'
+            + (u.release_age_days !== null && u.release_age_days !== undefined ? ' (' + esc(u.release_age_days) + 'd ago)' : '') + '</div>' : '';
+        const topics = (u.topics || []).slice(0, 5).map((t) => '<span class="chip">' + esc(t) + '</span>').join(' ');
+        const search = [name, u.full_name || '', u.url || '', u.description || '', u.status || ''].join(' ').toLowerCase();
+        return '<div class="card p-4 flex flex-col" data-search="' + esc(search) + '">'
+            + '<div class="flex items-start justify-between gap-2 mb-1">'
+            + '<h3 class="font-semibold text-sm break-all leading-snug"><a class="text-blue-400 hover:underline" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(name) + '</a></h3>'
+            + badge(u.status || 'unknown', statusKind)
+            + '</div>'
+            + (u.description ? '<p class="text-xs text-slate-400 leading-relaxed mb-2">' + esc(u.description) + '</p>' : '')
+            + '<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs mb-2">'
+            + '<span class="text-yellow-400 font-semibold">&#9733; ' + stars + '</span>'
+            + '<span class="text-faint">' + forks + ' forks</span>'
+            + '<button class="btn btn-secondary btn-sm" data-copy="' + esc(u.url) + '">Copy link</button>'
+            + (platforms ? '<span class="flex flex-wrap gap-1">' + platforms + '</span>' : '')
+            + '</div>'
+            + release
+            + (topics ? '<div class="flex flex-wrap gap-1 mt-auto pt-2">' + topics + '</div>' : '')
+            + '</div>';
+    }
+
+    function renderUtils() {
+        const grid = document.getElementById('utilsGrid');
+        if (!grid) return;
+        const utils = CONFIG.utilities || [];
+        grid.innerHTML = utils.map(utilCard).join('');
+    }
+
+    // ---------- Filters / search ----------
+    const TAB_GRIDS = {
+        subs: { grid: 'subsGrid', empty: 'subs-empty' },
+        zaceper: { grid: 'zacList', empty: 'zac-empty' },
+        tg: { grid: 'proxiesList', empty: 'tg-empty' },
+        https: { grid: 'httpSocksList', empty: 'https-empty' },
+        utils: { grid: 'utilsGrid', empty: 'utils-empty' },
+    };
+
+    function setSubProtocolFilter(proto) {
+        currentSubProto = proto || 'all';
+        document.querySelectorAll('.sub-proto-btn').forEach(btn => {
+            const match = btn.dataset.proto === currentSubProto;
+            if (match) {
+                btn.className = 'sub-proto-btn badge badge-platform cursor-pointer border border-blue-400/50 bg-blue-500/20 text-blue-300 font-semibold';
+            } else {
+                btn.className = 'sub-proto-btn badge badge-neutral cursor-pointer hover:bg-slate-700 transition';
+            }
+        });
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const conf = TAB_GRIDS[currentTab];
+        const counter = document.getElementById('show-counter');
+        if (!conf) {
+            if (counter) counter.textContent = '';
+            return;
+        }
+        const grid = document.getElementById(conf.grid);
+        const empty = document.getElementById(conf.empty);
+        if (!grid) return;
+        const cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+        const q = searchQuery.trim().toLowerCase();
+        let shown = 0;
+        cards.forEach((card) => {
+            let ok = true;
+            if (q && !(card.dataset.search || '').includes(q)) ok = false;
+            if (ok && currentTab === 'subs') {
+                if (subsValidOnly && card.dataset.valid !== '1') ok = false;
+                if (currentSubProto !== 'all') {
+                    const cardProtos = (card.dataset.proto || '');
+                    if (!cardProtos.includes(currentSubProto)) ok = false;
+                }
+            }
+            card.style.display = ok ? '' : 'none';
+            if (ok) shown += 1;
+        });
+        if (empty) {
+            if (shown === 0) {
+                empty.style.display = 'block';
+                empty.textContent = cards.length === 0
+                    ? (empty.dataset.noData || 'Nothing to show here yet.')
+                    : 'No items match your filter.';
+            } else {
+                empty.style.display = 'none';
+            }
+        }
+        if (counter) counter.textContent = 'Showing ' + shown + ' of ' + cards.length;
+    }
+
+    // ---------- Tab switching ----------
+    function switchTab(name) {
+        currentTab = name;
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+            b.classList.toggle('active', b.dataset.tab === name);
+        });
+        document.querySelectorAll('.tab-panel').forEach((p) => {
+            p.style.display = (p.id === 'panel-' + name) ? 'flex' : 'none';
+        });
+        applyFilters();
+    }
+
+    function setSubsMode(validOnly) {
+        subsValidOnly = validOnly;
+        const vBtn = document.getElementById('subs-mode-valid');
+        const aBtn = document.getElementById('subs-mode-all');
+        if (vBtn) { vBtn.classList.toggle('btn-primary', validOnly); vBtn.classList.toggle('btn-secondary', !validOnly); }
+        if (aBtn) { aBtn.classList.toggle('btn-primary', !validOnly); aBtn.classList.toggle('btn-secondary', validOnly); }
+        updateSubProtoCounts();
+        applyFilters();
+    }
+
+    // ---------- Speed Test (client-side, Cloudflare endpoints) ----------
+    const SP = { running: false, stopRequested: false, abortCtrl: null, xhr: null };
+
+    function spSetStatus(text, isError) {
+        const el = document.getElementById('sp-status');
+        if (!el) return;
+        el.textContent = text;
+        el.className = 'text-sm mb-2 ' + (isError ? 'text-red-400' : 'text-slate-300');
+    }
+
+    function spLog(msg) {
+        const el = document.getElementById('sp-log');
+        if (!el) return;
+        const line = document.createElement('div');
+        line.textContent = '[' + new Date().toLocaleTimeString('en-GB', { hour12: false }) + '] ' + msg;
+        el.appendChild(line);
+        while (el.children.length > 12) el.removeChild(el.firstChild);
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function spSetBig(id, text) {
+        setText(id, text);
+    }
+
+    function spSetBar(id, pct) {
+        const el = document.getElementById(id);
+        if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+
+    function spSetRunning(running) {
+        SP.running = running;
+        const start = document.getElementById('sp-start');
+        const stop = document.getElementById('sp-stop');
+        if (start) start.disabled = running;
+        if (stop) stop.disabled = !running;
+    }
+
+    async function spMeasureLatency(signal) {
+        const samples = [];
+        for (let i = 0; i < 5; i++) {
+            if (SP.stopRequested) throw new Error('Aborted');
+            const url = 'https://speed.cloudflare.com/__down?bytes=1&cb=' + Date.now() + '-' + i;
+            const t0 = performance.now();
+            let resp;
+            try {
+                resp = await fetch(url, { method: 'HEAD', cache: 'no-store', signal });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            } catch (e) {
+                if (SP.stopRequested || signal.aborted) throw new Error('Aborted');
+                // Some networks reject HEAD; fall back to a GET of a 1-byte file.
+                resp = await fetch(url, { method: 'GET', cache: 'no-store', signal });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            }
+            await resp.arrayBuffer();
+            const ms = performance.now() - t0;
+            samples.push(ms);
+            spLog('latency probe ' + (i + 1) + '/5: ' + Math.round(ms) + ' ms');
+        }
+        samples.sort((a, b) => a - b);
+        return samples[2]; // median of 5
+    }
+
+    async function spMeasureDownload(signal) {
+        const total = 25000000;
+        const url = 'https://speed.cloudflare.com/__down?bytes=' + total + '&cb=' + Date.now();
+        const resp = await fetch(url, { cache: 'no-store', signal });
+        if (!resp.ok) throw new Error('Download endpoint returned HTTP ' + resp.status);
+        const reader = resp.body && resp.body.getReader ? resp.body.getReader() : null;
+        if (!reader) {
+            const t0 = performance.now();
+            const buf = await resp.arrayBuffer();
+            const secs = Math.max((performance.now() - t0) / 1000, 0.001);
+            return { mbps: (buf.byteLength * 8) / secs / 1e6, bytes: buf.byteLength, secs };
+        }
+        const t0 = performance.now();
+        let bytes = 0;
+        for (;;) {
+            const chunk = await reader.read();
+            if (chunk.done) break;
+            if (chunk.value) bytes += chunk.value.byteLength;
+            const secs = (performance.now() - t0) / 1000;
+            if (secs > 0.05) {
+                const mbps = (bytes * 8) / secs / 1e6;
+                spSetBig('sp-download', mbps.toFixed(2) + ' Mbps');
+                spSetBar('sp-dl-bar', (bytes / total) * 100);
+                const info = document.getElementById('sp-dl-info');
+                if (info) info.textContent = (bytes / 1048576).toFixed(1) + ' MB / ' + (total / 1048576).toFixed(0) + ' MB';
+            }
+        }
+        const secs = Math.max((performance.now() - t0) / 1000, 0.001);
+        return { mbps: (bytes * 8) / secs / 1e6, bytes: bytes, secs: secs };
+    }
+
+    function spBuildPayload(targetBytes) {
+        const oneMB = new Uint8Array(1048576);
+        for (let off = 0; off < oneMB.length; off += 65536) {
+            crypto.getRandomValues(oneMB.subarray(off, Math.min(off + 65536, oneMB.length)));
+        }
+        const parts = [];
+        let total = 0;
+        while (total + oneMB.length <= targetBytes) { parts.push(oneMB); total += oneMB.length; }
+        return new Blob(parts, { type: 'application/octet-stream' });
+    }
+
+    function spMeasureUpload() {
+        return new Promise((resolve, reject) => {
+            let payload;
+            try {
+                payload = spBuildPayload(16 * 1048576); // ~16 MB
+            } catch (e) {
+                reject(new Error('Could not build upload payload: ' + e.message));
+                return;
+            }
+            const xhr = new XMLHttpRequest();
+            SP.xhr = xhr;
+            const t0 = performance.now();
+            let lastT = t0;
+            let lastLoaded = 0;
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (SP.stopRequested) { try { xhr.abort(); } catch (err) {} return; }
+                const now = performance.now();
+                const dt = (now - lastT) / 1000;
+                if (e.lengthComputable && dt >= 0.2) {
+                    const instantMbps = ((e.loaded - lastLoaded) * 8) / dt / 1e6;
+                    spSetBig('sp-upload', instantMbps.toFixed(2) + ' Mbps');
+                    spSetBar('sp-ul-bar', (e.loaded / e.total) * 100);
+                    const info = document.getElementById('sp-ul-info');
+                    if (info) info.textContent = (e.loaded / 1048576).toFixed(1) + ' MB / ' + (e.total / 1048576).toFixed(1) + ' MB';
+                    spLog('upload ' + Math.round(e.loaded / 1048576) + ' / ' + Math.round(e.total / 1048576) + ' MB — ' + instantMbps.toFixed(2) + ' Mbps');
+                    lastT = now;
+                    lastLoaded = e.loaded;
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                const secs = Math.max((performance.now() - t0) / 1000, 0.001);
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve({ mbps: (payload.size * 8) / secs / 1e6, bytes: payload.size, secs: secs, status: xhr.status });
+                } else {
+                    reject(new Error('Upload endpoint returned HTTP ' + xhr.status));
+                }
+            });
+            xhr.addEventListener('error', () => reject(new Error('Upload failed: network error (endpoint unreachable or blocked)')));
+            xhr.addEventListener('timeout', () => reject(new Error('Upload timed out after 120 s')));
+            xhr.addEventListener('abort', () => reject(new Error('Aborted')));
+            try {
+                xhr.open('POST', 'https://speed.cloudflare.com/__up?cb=' + Date.now());
+                xhr.timeout = 120000;
+                xhr.send(payload);
+            } catch (e) {
+                reject(new Error('Upload could not start: ' + e.message));
+            }
+        });
+    }
+
+    async function runSpeedTest() {
+        if (SP.running) return;
+        SP.stopRequested = false;
+        SP.abortCtrl = new AbortController();
+        const signal = SP.abortCtrl.signal;
+        spSetRunning(true);
+        spSetBig('sp-latency', '--');
+        spSetBig('sp-download', '--');
+        spSetBig('sp-upload', '--');
+        spSetBar('sp-dl-bar', 0);
+        spSetBar('sp-ul-bar', 0);
+        spSetStatus('Speed test started.');
+        spLog('--- Speed test started ---');
+        try {
+            if (SP.stopRequested) throw new Error('Aborted');
+            spSetStatus('Measuring latency (5 sequential probes)...');
+            const ms = await spMeasureLatency(signal);
+            spSetBig('sp-latency', Math.round(ms) + ' ms');
+            spLog('Median latency: ' + Math.round(ms) + ' ms');
+
+            if (SP.stopRequested) throw new Error('Aborted');
+            spSetStatus('Measuring download (25 MB from speed.cloudflare.com)...');
+            const dl = await spMeasureDownload(signal);
+            spSetBig('sp-download', dl.mbps.toFixed(2) + ' Mbps');
+            spSetBar('sp-dl-bar', 100);
+            spLog('Download: ' + dl.mbps.toFixed(2) + ' Mbps (' + (dl.bytes / 1048576).toFixed(1) + ' MB in ' + dl.secs.toFixed(2) + ' s)');
+
+            if (SP.stopRequested) throw new Error('Aborted');
+            spSetStatus('Measuring upload (~16 MB POST to speed.cloudflare.com)...');
+            const ul = await spMeasureUpload();
+            spSetBig('sp-upload', ul.mbps.toFixed(2) + ' Mbps');
+            spSetBar('sp-ul-bar', 100);
+            spLog('Upload: ' + ul.mbps.toFixed(2) + ' Mbps (' + (ul.bytes / 1048576).toFixed(1) + ' MB in ' + ul.secs.toFixed(2) + ' s, HTTP ' + ul.status + ')');
+
+            spSetStatus('Done. Latency ' + Math.round(ms) + ' ms · down ' + dl.mbps.toFixed(2) + ' Mbps · up ' + ul.mbps.toFixed(2) + ' Mbps');
+            spLog('Speed test finished.');
+        } catch (e) {
+            const msg = (e && e.message) ? e.message : String(e);
+            if (SP.stopRequested) {
+                spSetStatus('Stopped by user.');
+                spLog('Speed test stopped.');
+            } else {
+                spSetStatus('Speed test failed: ' + msg + ' — check your network / firewall and try again.', true);
+                spLog('ERROR: ' + msg);
+            }
+        }
+        spSetRunning(false);
+        SP.abortCtrl = null;
+        SP.xhr = null;
+    }
+
+    function stopSpeedTest() {
+        if (!SP.running) return;
+        SP.stopRequested = true;
+        if (SP.abortCtrl) { try { SP.abortCtrl.abort(); } catch (e) {} }
+        if (SP.xhr) { try { SP.xhr.abort(); } catch (e) {} }
+    }
+
+    // ---------- Зацепер (Relayer & Mirror) Logic ----------
+    let zaceperList = [];
+
+    async function loadZaceperList() {
+        try {
+            const res = await fetch('/api/v1/zaceper/list');
+            if (res.ok) {
+                zaceperList = await res.json();
+                renderZaceperList();
+            }
+        } catch (e) {
+            console.error('Failed to load zaceper list:', e);
+        }
+    }
+
+    function renderZaceperCard(item) {
+        const mirrorUrl = window.location.origin + item.subUrl;
+        const protoBadges = (item.protocols || []).slice(0, 5).map(p => badge(p, 'platform')).join(' ');
+        const search = [item.name, item.id, item.targetUrl, (item.protocols || []).join(' ')].join(' ').toLowerCase();
+        const dateStr = item.lastSynced ? new Date(item.lastSynced).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'just now';
+        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(mirrorUrl);
+
+        return '<div class="card p-4 flex flex-col" data-search="' + esc(search) + '">'
+            + '<div class="flex items-start justify-between gap-2 mb-2">'
+            + '  <div>'
+            + '    <h3 class="font-semibold text-sm break-all text-white">' + esc(item.name || item.id) + '</h3>'
+            + '    <div class="text-xs text-slate-400 font-mono mt-0.5">' + esc(item.id) + ' • <span class="text-emerald-400 font-semibold">' + (item.nodesCount || 0) + ' нод</span>'
+            + '      <span class="text-faint ml-2">' + dateStr + '</span>'
+            + '    </div>'
+            + '  </div>'
+            + '  <div class="flex gap-1 flex-shrink-0">' + (item.status === 'active' ? badge('Active', 'success') : badge('Check Source', 'warning')) + '</div>'
+            + '</div>'
+            + '<div class="text-xs text-slate-400 break-all mb-2 bg-slate-900/80 p-2.5 rounded border border-slate-700/60 font-mono">'
+            + '  <div class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-0.5">Исходник (Source):</div>'
+            + '  <a href="' + esc(item.targetUrl) + '" target="_blank" rel="noopener" class="text-blue-400 hover:underline break-all">' + esc(item.targetUrl) + '</a>'
+            + '</div>'
+            + '<div class="text-xs text-emerald-300 break-all mb-3 bg-emerald-950/40 p-2.5 rounded border border-emerald-500/40 font-mono">'
+            + '  <div class="text-emerald-500 text-[10px] uppercase font-bold tracking-wider mb-0.5">Зеркало (Relayed Subscription):</div>'
+            + '  <div class="select-all font-semibold text-emerald-200">' + esc(mirrorUrl) + '</div>'
+            + '</div>'
+            + (protoBadges ? '<div class="flex flex-wrap gap-1 mb-3">' + protoBadges + '</div>' : '')
+            + '<div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-700/50 mt-auto">'
+            + '  <button class="btn btn-primary btn-sm" data-copy="' + esc(mirrorUrl) + '">Копировать ссылку</button>'
+            + '  <a class="btn btn-secondary btn-sm" href="v2rayng://install-sub?url=' + encodeURIComponent(mirrorUrl) + '" title="Импорт в v2rayNG">v2rayNG</a>'
+            + '  <a class="btn btn-secondary btn-sm" href="clash://install-config?url=' + encodeURIComponent(mirrorUrl) + '" title="Импорт в Clash">Clash</a>'
+            + '  <a class="btn btn-secondary btn-sm" href="sing-box://import-remote-profile?url=' + encodeURIComponent(mirrorUrl) + '" title="Импорт в sing-box">sing-box</a>'
+            + '  <a class="btn btn-secondary btn-sm" href="' + esc(qrUrl) + '" target="_blank" title="Показать QR-код">QR</a>'
+            + '  <button class="btn btn-secondary btn-sm ml-auto" data-zac-refresh="' + esc(item.id) + '" title="Обновить с первоисточника">↻</button>'
+            + '  <button class="btn btn-secondary btn-sm text-red-400 hover:text-red-300" data-zac-delete="' + esc(item.id) + '" title="Удалить">✕</button>'
+            + '</div>'
+            + '</div>';
+    }
+
+    function renderZaceperList() {
+        const grid = document.getElementById('zacList');
+        const empty = document.getElementById('zac-empty');
+        const badgeEl = document.getElementById('zac-count-badge');
+        if (badgeEl) badgeEl.textContent = zaceperList.length;
+        if (!grid) return;
+
+        if (zaceperList.length === 0) {
+            grid.innerHTML = '';
+            if (empty) empty.style.display = 'block';
+        } else {
+            if (empty) empty.style.display = 'none';
+            grid.innerHTML = zaceperList.map(renderZaceperCard).join('');
+        }
+        applyFilters();
+    }
+
+    async function handleCreateZaceper(e) {
+        if (e) e.preventDefault();
+        const urlInput = document.getElementById('zac-url');
+        const nameInput = document.getElementById('zac-name');
+        const submitBtn = document.getElementById('zac-submit');
+        const resultDiv = document.getElementById('zac-result');
+
+        if (!urlInput || !urlInput.value) return;
+        const targetUrl = urlInput.value.trim();
+        const targetName = nameInput ? nameInput.value.trim() : '';
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Зацепляю... ⏳</span>';
+
+        try {
+            const res = await fetch('/api/v1/zaceper/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: targetUrl, name: targetName })
+            });
+            const data = await res.json();
+            if (data.success && data.subscription) {
+                const sub = data.subscription;
+                const mirrorUrl = window.location.origin + sub.subUrl;
+                urlInput.value = '';
+                if (nameInput) nameInput.value = '';
+
+                if (resultDiv) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = '<div class="flex items-start justify-between gap-2">'
+                        + '<div>'
+                        + '  <div class="font-bold text-emerald-300 flex items-center gap-1.5 text-sm">'
+                        + '    <span>✓ Подписка успешно зацеплена! Найдено нод: ' + (sub.nodesCount || 0) + '</span>'
+                        + '  </div>'
+                        + '  <p class="text-xs text-slate-300 mt-1">Создано постоянное облачное зеркало, готовое для вставки в любой VPN клиент:</p>'
+                        + '  <div class="mt-2 p-2 bg-slate-900/90 rounded border border-emerald-500/50 font-mono text-xs text-emerald-200 select-all break-all">'
+                        +      esc(mirrorUrl)
+                        + '  </div>'
+                        + '</div>'
+                        + '<button class="btn btn-primary btn-sm ml-2" data-copy="' + esc(mirrorUrl) + '">Копировать</button>'
+                        + '</div>';
+                }
+
+                await copyToClipboard(mirrorUrl);
+                showToast('Подписка зацеплена! Ссылка-зеркало скопирована', 'success');
+                await loadZaceperList();
+            } else {
+                showToast(data.error || 'Ошибка создания зеркала', 'error');
+            }
+        } catch (err) {
+            showToast('Сбой запроса: ' + err.message, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>⚡ Зацепить подписку</span>';
+        }
+    }
+
+    window.onZaceperCreated = (newSub) => {
+        loadZaceperList();
+        switchTab('zaceper');
+        const resultDiv = document.getElementById('zac-result');
+        if (resultDiv) {
+            const mirrorUrl = window.location.origin + newSub.subUrl;
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="font-bold text-emerald-300 text-sm">✓ Подписка успешно зацеплена! Нод: ' + (newSub.nodesCount || 0) + '</div>'
+                + '<div class="mt-1 font-mono text-xs text-emerald-200 select-all">' + esc(mirrorUrl) + '</div>';
+        }
+    };
+
+    // ---------- Init ----------
+    function init() {
+        renderHero();
+        renderTgSummary();
+        renderSubs();
+        renderTg();
+        renderHttpSocks();
+        renderUtils();
+        loadZaceperList();
+
+        // Global delegated copy handler: registered once on document, so it
+        // keeps working for cards re-rendered later. configs.js modal buttons
+        // use [data-rc-copy] and are handled by configs.js itself.
+        document.addEventListener('click', async (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('[data-copy]') : null;
+            if (!btn) return;
+            e.preventDefault();
+            const ok = await copyToClipboard(btn.getAttribute('data-copy'));
+            showToast(ok ? 'Copied to clipboard' : 'Copy failed — select and copy manually', ok ? 'success' : 'error');
+        });
+
+        // Delegated clicks for Zaceper & Protocols
+        document.addEventListener('click', async (e) => {
+            // Check protocol filter badge click
+            const protoBadge = e.target && e.target.closest ? e.target.closest('[data-filter-proto]') : null;
+            if (protoBadge) {
+                e.preventDefault();
+                const proto = protoBadge.getAttribute('data-filter-proto');
+                setSubProtocolFilter(proto);
+                return;
+            }
+
+            // Check data-zacepit on any subscription card
+            const zBtn = e.target && e.target.closest ? e.target.closest('[data-zacepit]') : null;
+            if (zBtn) {
+                e.preventDefault();
+                const url = zBtn.getAttribute('data-zacepit');
+                const name = zBtn.getAttribute('data-name') || '';
+                switchTab('zaceper');
+                const urlInput = document.getElementById('zac-url');
+                const nameInput = document.getElementById('zac-name');
+                if (urlInput) urlInput.value = url;
+                if (nameInput) nameInput.value = name;
+                handleCreateZaceper();
+                return;
+            }
+
+            // Check refresh on a single zaceper item
+            const refBtn = e.target && e.target.closest ? e.target.closest('[data-zac-refresh]') : null;
+            if (refBtn) {
+                e.preventDefault();
+                const id = refBtn.getAttribute('data-zac-refresh');
+                refBtn.textContent = '⏳';
+                try {
+                    const res = await fetch('/api/v1/zaceper/refresh/' + id, { method: 'POST' });
+                    const d = await res.json();
+                    if (d.success) {
+                        showToast('Обновлено! Нод: ' + (d.subscription ? d.subscription.nodesCount : ''), 'success');
+                        await loadZaceperList();
+                    } else {
+                        showToast(d.error || 'Ошибка обновления', 'error');
+                    }
+                } catch (err) {
+                    showToast('Сбой обновления: ' + err.message, 'error');
+                }
+                return;
+            }
+
+            // Check delete on a single zaceper item
+            const delBtn = e.target && e.target.closest ? e.target.closest('[data-zac-delete]') : null;
+            if (delBtn) {
+                e.preventDefault();
+                const id = delBtn.getAttribute('data-zac-delete');
+                try {
+                    const res = await fetch('/api/v1/zaceper/delete/' + id, { method: 'DELETE' });
+                    const d = await res.json();
+                    if (d.success) {
+                        showToast('Зеркало подписки удалено', 'info');
+                        await loadZaceperList();
+                    }
+                } catch (err) {
+                    showToast('Сбой удаления: ' + err.message, 'error');
+                }
+                return;
+            }
+        });
+
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => { searchQuery = e.target.value; applyFilters(); });
+        }
+        const vBtn = document.getElementById('subs-mode-valid');
+        const aBtn = document.getElementById('subs-mode-all');
+        if (vBtn) vBtn.addEventListener('click', () => setSubsMode(true));
+        if (aBtn) aBtn.addEventListener('click', () => setSubsMode(false));
+
+        // Subscriptions Protocol Chips
+        document.querySelectorAll('.sub-proto-btn').forEach(btn => {
+            btn.addEventListener('click', () => setSubProtocolFilter(btn.dataset.proto));
+        });
+
+        // Subscriptions Sort
+        const subsSortEl = document.getElementById('subs-sort');
+        if (subsSortEl) {
+            subsSortEl.addEventListener('change', (e) => {
+                currentSubSort = e.target.value;
+                renderSubs();
+                applyFilters();
+            });
+        }
+
+        // Subscriptions Discovery & Refresh Handlers
+        const discBtn = document.getElementById('subs-discover-btn');
+        if (discBtn) discBtn.addEventListener('click', () => runSubsDiscovery());
+
+        const discQuery = document.getElementById('subs-discover-query');
+        if (discQuery) {
+            discQuery.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') runSubsDiscovery();
+            });
+        }
+
+        document.querySelectorAll('[data-sub-quick]').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const q = chip.dataset.subQuick === 'all' ? '' : chip.dataset.subQuick;
+                if (discQuery) discQuery.value = q;
+                runSubsDiscovery(q);
+            });
+        });
+
+        const refreshAllBtn = document.getElementById('subs-refresh-all-btn');
+        if (refreshAllBtn) refreshAllBtn.addEventListener('click', runSubsRefreshAll);
+
+        const addModalBtn = document.getElementById('subs-add-modal-btn');
+        if (addModalBtn) addModalBtn.addEventListener('click', promptAddSubscription);
+
+        const addSubForm = document.getElementById('add-sub-form');
+        if (addSubForm) addSubForm.addEventListener('submit', handleAddSubSubmit);
+        const addSubClose = document.getElementById('add-sub-close');
+        if (addSubClose) addSubClose.addEventListener('click', closeAddSubModal);
+        const addSubCancel = document.getElementById('add-sub-cancel');
+        if (addSubCancel) addSubCancel.addEventListener('click', closeAddSubModal);
+        const addSubModal = document.getElementById('add-sub-modal');
+        if (addSubModal) {
+            addSubModal.addEventListener('click', (e) => {
+                if (e.target === addSubModal) closeAddSubModal();
+            });
+        }
+
+        const zacForm = document.getElementById('zaceper-form');
+        if (zacForm) zacForm.addEventListener('submit', handleCreateZaceper);
+
+        const zacRefreshAll = document.getElementById('zac-refresh-all');
+        if (zacRefreshAll) zacRefreshAll.addEventListener('click', loadZaceperList);
+
+        const startBtn = document.getElementById('sp-start');
+        const stopBtn = document.getElementById('sp-stop');
+        if (startBtn) startBtn.addEventListener('click', runSpeedTest);
+        if (stopBtn) stopBtn.addEventListener('click', stopSpeedTest);
+
+        setSubsMode(true);
+        switchTab('subs');
+
+        // Initial Data Load & Auto-Update Engine
+        loadSubscriptions();
+        loadProxies();
+        loadAutoUpdateStatus();
+
+        const autoSelect = document.getElementById('auto-update-interval-select');
+        if (autoSelect) {
+            autoSelect.addEventListener('change', (e) => changeAutoUpdateInterval(e.target.value));
+        }
+        const autoRunBtn = document.getElementById('auto-update-run-btn');
+        if (autoRunBtn) {
+            autoRunBtn.addEventListener('click', triggerAutoUpdateNow);
+        }
+        const tgCheckBtn = document.getElementById('tg-check-btn');
+        if (tgCheckBtn) {
+            tgCheckBtn.addEventListener('click', checkProxiesNow);
+        }
+
+        // Periodic relative time & sync timers
+        setInterval(updateAutoUpdateUI, 10000);
+        setInterval(loadAutoUpdateStatus, 45000);
+    }
+
+    async function loadSubscriptions() {
+        try {
+            const res = await fetch('/api/v1/subscriptions');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.subscriptions) && data.subscriptions.length > 0) {
+                    CONFIG.subscriptions = data.subscriptions;
+                    renderSubs();
+                    renderHero();
+                    applyFilters();
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load subscriptions dynamically:', e);
+        }
+    }
+
+    async function loadProxies() {
+        try {
+            const res = await fetch('/api/v1/proxies');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.proxies)) {
+                    CONFIG.tg_proxies = data.proxies;
+                    const working = data.working !== undefined ? data.working : data.proxies.filter(p => p.status === 'working').length;
+                    const total = data.total !== undefined ? data.total : data.proxies.length;
+                    const timeout = data.timeout !== undefined ? data.timeout : data.proxies.filter(p => p.status === 'timeout').length;
+                    const failed = data.failed !== undefined ? data.failed : Math.max(0, total - working - timeout);
+
+                    CONFIG.tg_stats = {
+                        total,
+                        working,
+                        by_status: {
+                            working,
+                            timeout,
+                            connection_failed: failed
+                        }
+                    };
+                    renderTg();
+                    renderTgSummary();
+                    renderHero();
+                    applyFilters();
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load proxies dynamically:', e);
+        }
+    }
+
+    async function checkProxiesNow() {
+        const btn = document.getElementById('tg-check-btn');
+        const spinner = document.getElementById('tg-check-spinner');
+        const btnText = document.getElementById('tg-check-btn-text');
+
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'inline';
+        if (btnText) btnText.textContent = 'Проверяем пинг...';
+        showToast('Запущена проверка доступности MTProto прокси...', 'info');
+
+        try {
+            const res = await fetch('/api/v1/proxies/check', { method: 'POST' });
+            if (!res.ok) {
+                showToast('Сервер проверки недоступен в статическом режиме (GitHub Pages). Для живой TCP проверки запустите локальный node server.js', 'info');
+                return;
+            }
+            const data = await res.json();
+            if (data.success) {
+                showToast(`Проверка завершена! Рабочих прокси: ${data.working} из ${data.total}`, 'success');
+                await loadProxies();
+            } else {
+                showToast(data.error || 'Ошибка проверки прокси', 'error');
+            }
+        } catch (err) {
+            showToast('Режим GitHub Pages: для интерактивной TCP-проверки запустите node server.js', 'info');
+        } finally {
+            if (btn) btn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '↻ Проверить пинг прокси';
+        }
+    }
+
+    // Auto-Update Engine (Client State & Timers)
+    let autoUpdateStateClient = {
+        enabled: true,
+        intervalMinutes: 30,
+        isRunning: false,
+        lastRun: (typeof CONFIG !== 'undefined' && CONFIG.generated_at) ? CONFIG.generated_at : null,
+        nextRun: null
+    };
+
+    function formatRelativeTime(isoStr) {
+        if (!isoStr) return 'никогда';
+        const ms = Date.now() - new Date(isoStr).getTime();
+        if (ms < 0) return 'только что';
+        const mins = Math.floor(ms / 60000);
+        if (mins < 1) return 'менее 1 мин назад';
+        if (mins < 60) return `${mins} мин назад`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs} ч назад`;
+        return `${Math.floor(hrs / 24)} дн назад`;
+    }
+
+    function formatCountdown(isoStr) {
+        if (!isoStr) return 'ожидание';
+        const ms = new Date(isoStr).getTime() - Date.now();
+        if (ms <= 0) return 'скоро';
+        const mins = Math.ceil(ms / 60000);
+        if (mins < 60) return `через ${mins} мин`;
+        const hrs = Math.floor(mins / 60);
+        const remMins = mins % 60;
+        return `через ${hrs} ч ${remMins} мин`;
+    }
+
+    function updateAutoUpdateUI() {
+        const dot = document.getElementById('auto-update-dot');
+        const title = document.getElementById('auto-update-status-title');
+        const lastEl = document.getElementById('auto-update-last-text');
+        const nextEl = document.getElementById('auto-update-next-text');
+        const select = document.getElementById('auto-update-interval-select');
+        const runBtn = document.getElementById('auto-update-run-btn');
+        const spinner = document.getElementById('auto-update-spinner');
+        const btnText = document.getElementById('auto-update-btn-text');
+
+        if (select && select.value !== String(autoUpdateStateClient.intervalMinutes)) {
+            select.value = String(autoUpdateStateClient.intervalMinutes);
+        }
+
+        if (autoUpdateStateClient.isRunning) {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping';
+            if (title) title.textContent = 'Обновление в процессе...';
+            if (runBtn) runBtn.disabled = true;
+            if (spinner) spinner.style.display = 'inline';
+            if (btnText) btnText.textContent = 'Проверка нод и прокси...';
+        } else if (!autoUpdateStateClient.enabled || autoUpdateStateClient.intervalMinutes === 0) {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-slate-500';
+            if (title) title.textContent = 'Авто-обновление отключено';
+            if (runBtn) runBtn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '⚡ Обновить и проверить всё';
+        } else {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-emerald-400';
+            if (title) title.textContent = 'Авто-обновление активно';
+            if (runBtn) runBtn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '⚡ Обновить и проверить всё';
+        }
+
+        if (lastEl) {
+            lastEl.textContent = 'Посл. проверка: ' + formatRelativeTime(autoUpdateStateClient.lastRun);
+        }
+        if (nextEl) {
+            if (!autoUpdateStateClient.enabled || autoUpdateStateClient.intervalMinutes === 0) {
+                nextEl.textContent = 'След.: отключено';
+            } else {
+                nextEl.textContent = 'След.: ' + formatCountdown(autoUpdateStateClient.nextRun);
+            }
+        }
+    }
+
+    let isPollingAutoUpdate = false;
+
+    async function loadAutoUpdateStatus() {
+        try {
+            const res = await fetch('/api/v1/auto-update/status');
+            if (res.ok) {
+                const data = await res.json();
+                const wasRunning = autoUpdateStateClient.isRunning;
+                autoUpdateStateClient = {
+                    enabled: data.enabled,
+                    intervalMinutes: data.intervalMinutes,
+                    isRunning: data.isRunning,
+                    lastRun: data.lastRun || data.lastSubscriptionRun || data.lastProxyRun,
+                    nextRun: data.nextRun
+                };
+                updateAutoUpdateUI();
+
+                // If it just completed running, reload fresh data from backend
+                if (wasRunning && !data.isRunning) {
+                    showToast('Авто-обновление завершено! Данные актуализированы.', 'success');
+                    await loadSubscriptions();
+                    await loadProxies();
+                }
+
+                // If running, poll frequently until completion
+                if (data.isRunning && !isPollingAutoUpdate) {
+                    isPollingAutoUpdate = true;
+                    setTimeout(async () => {
+                        isPollingAutoUpdate = false;
+                        await loadAutoUpdateStatus();
+                    }, 3000);
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load auto-update status:', e);
+        }
+    }
+
+    async function changeAutoUpdateInterval(minutes) {
+        const mins = parseInt(minutes, 10);
+        const enabled = mins > 0;
+        showToast('Сохраняем интервал обновления: ' + (enabled ? `${mins} мин` : 'отключено'), 'info');
+        try {
+            const res = await fetch('/api/v1/auto-update/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ intervalMinutes: mins, enabled })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Интервал авто-обновления обновлен!', 'success');
+                await loadAutoUpdateStatus();
+            }
+        } catch (e) {
+            showToast('Сбой сохранения настроек: ' + e.message, 'error');
+        }
+    }
+
+    async function triggerAutoUpdateNow() {
+        if (autoUpdateStateClient.isRunning) return;
+        const btn = document.getElementById('auto-update-run-btn');
+        if (btn) btn.disabled = true;
+        showToast('Запущено комплексное обновление подписок и проверка прокси...', 'info');
+        try {
+            const res = await fetch('/api/v1/auto-update/run-now', { method: 'POST' });
+            if (!res.ok) {
+                showToast('В статическом режиме (GitHub Pages) обновление выполняется через GitHub Actions каждые 6 ч. Для локального запуска: node server.js', 'info');
+                return;
+            }
+            const data = await res.json();
+            if (data.success || data.alreadyRunning) {
+                autoUpdateStateClient.isRunning = true;
+                updateAutoUpdateUI();
+                await loadAutoUpdateStatus();
+            } else {
+                showToast(data.message || 'Ошибка запуска обновления', 'error');
+            }
+        } catch (e) {
+            showToast('В статическом режиме (GitHub Pages) авто-обновление выполняется через GitHub Actions каждые 6 ч. Для локального запуска: node server.js', 'info');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    function openAddSubModal(prefillUrl = '', prefillName = '') {
+        const modal = document.getElementById('add-sub-modal');
+        const urlInput = document.getElementById('add-sub-url');
+        const nameInput = document.getElementById('add-sub-name');
+        const statusEl = document.getElementById('add-sub-status');
+        if (!modal) return;
+        if (urlInput) urlInput.value = prefillUrl;
+        if (nameInput) nameInput.value = prefillName;
+        if (statusEl) { statusEl.style.display = 'none'; statusEl.textContent = ''; }
+        modal.style.display = 'flex';
+        if (urlInput) urlInput.focus();
+    }
+
+    function closeAddSubModal() {
+        const modal = document.getElementById('add-sub-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    async function handleAddSubSubmit(e) {
+        if (e) e.preventDefault();
+        const urlInput = document.getElementById('add-sub-url');
+        const nameInput = document.getElementById('add-sub-name');
+        const submitBtn = document.getElementById('add-sub-submit');
+        const statusEl = document.getElementById('add-sub-status');
+        const url = (urlInput ? urlInput.value : '').trim();
+        const name = (nameInput ? nameInput.value : '').trim();
+        if (!url) return;
+
+        if (submitBtn) submitBtn.disabled = true;
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.className = 'text-xs text-blue-400 font-semibold';
+            statusEl.textContent = '⏳ Проверяем и парсим подписку...';
+        }
+
+        try {
+            const res = await fetch('/api/v1/subscriptions/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, name })
+            });
+            const data = await res.json();
+            if (data.success) {
+                const count = data.subscription ? data.subscription.configs_count : 0;
+                showToast(data.alreadyExists ? 'Подписка уже в каталоге' : ('Подписка добавлена! Нод: ' + count), 'success');
+                await loadSubscriptions();
+                closeAddSubModal();
+                if (urlInput) urlInput.value = '';
+                if (nameInput) nameInput.value = '';
+            } else {
+                if (statusEl) {
+                    statusEl.className = 'text-xs text-red-400 font-semibold';
+                    statusEl.textContent = 'Ошибка: ' + (data.error || 'Не удалось добавить подписку');
+                }
+                showToast(data.error || 'Ошибка добавления подписки', 'error');
+            }
+        } catch (err) {
+            if (statusEl) {
+                statusEl.className = 'text-xs text-red-400 font-semibold';
+                statusEl.textContent = 'Сбой: ' + err.message;
+            }
+            showToast('Сбой запроса: ' + err.message, 'error');
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    }
+
+    function promptAddSubscription() {
+        const qInput = document.getElementById('subs-discover-query');
+        const q = (qInput ? qInput.value : '').trim();
+        const prefill = (q.startsWith('http://') || q.startsWith('https://')) ? q : '';
+        openAddSubModal(prefill);
+    }
+
+    async function runSubsDiscovery(query) {
+        const btn = document.getElementById('subs-discover-btn');
+        const spinner = document.getElementById('subs-discover-spinner');
+        const statusEl = document.getElementById('subs-discover-status');
+        const qInput = document.getElementById('subs-discover-query');
+        const searchQ = (query !== undefined ? query : (qInput ? qInput.value : '')).trim();
+
+        if (searchQ.startsWith('http://') || searchQ.startsWith('https://')) {
+            openAddSubModal(searchQ);
+            return;
+        }
+
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'inline';
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.className = 'mt-2 text-xs text-blue-400 font-semibold flex items-center gap-1';
+            statusEl.innerHTML = '<span>⏳ Выполняется поиск и проверка новых подписок на GitHub...</span>';
+        }
+
+        try {
+            const res = await fetch('/api/v1/subscriptions/discover', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: searchQ })
+            });
+            const data = await res.json();
+            if (data.success && Array.isArray(data.subscriptions)) {
+                CONFIG.subscriptions = data.subscriptions;
+                renderSubs();
+                applyFilters();
+                const newFound = data.newDiscovered || 0;
+                const totalActive = (CONFIG.subscriptions || []).filter(s => s.valid).length;
+                if (statusEl) {
+                    statusEl.className = 'mt-2 text-xs text-emerald-400 font-semibold flex items-center gap-1';
+                    statusEl.innerHTML = '<span>✓ Поиск завершен! ' + (newFound > 0 ? ('Добавлено новых подписок: ' + newFound + '. ') : 'Все подписки проверены. ') + 'Всего рабочих подписок: ' + totalActive + '</span>';
+                }
+                showToast('Поиск завершен! Рабочих: ' + totalActive, 'success');
+            } else {
+                if (statusEl) {
+                    statusEl.className = 'mt-2 text-xs text-red-400 font-semibold';
+                    statusEl.textContent = 'Ошибка поиска: ' + (data.error || 'Не удалось найти подписки');
+                }
+            }
+        } catch (err) {
+            if (statusEl) {
+                statusEl.className = 'mt-2 text-xs text-red-400 font-semibold';
+                statusEl.textContent = 'Сбой запроса: ' + err.message;
+            }
+        } finally {
+            if (btn) btn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+        }
+    }
+
+    async function runSubsRefreshAll() {
+        const btn = document.getElementById('subs-refresh-all-btn');
+        if (btn) btn.disabled = true;
+        showToast('Проверяем и обновляем все подписки...', 'info');
+        try {
+            const res = await fetch('/api/v1/subscriptions/refresh-all', { method: 'POST' });
+            const data = await res.json();
+            if (data.success && Array.isArray(data.subscriptions)) {
+                CONFIG.subscriptions = data.subscriptions;
+                renderSubs();
+                applyFilters();
+                showToast('Все подписки обновлены! Рабочих: ' + data.validCount, 'success');
+            } else {
+                showToast(data.error || 'Ошибка обновления подписок', 'error');
+            }
+        } catch (e) {
+            showToast('Сбой обновления: ' + e.message, 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    </script>
+    <script src="configs.js"></script>
+</body>
+</html>
