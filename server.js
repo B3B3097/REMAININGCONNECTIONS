@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
+import net from 'net';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -178,6 +179,17 @@ function readJsonFile(filename) {
   return getFallbackData(filename);
 }
 
+function writeJsonFile(filename, data) {
+  try {
+    const filePath = path.join(DATA_DIR, filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (err) {
+    console.error(`Error writing ${filename}:`, err.message);
+    return false;
+  }
+}
+
 function saveCustomSubscriptions(subs) {
   try {
     const filePath = path.join(DATA_DIR, 'custom_subscriptions.json');
@@ -294,9 +306,354 @@ app.get('/api/v1/stats', (req, res) => {
   res.json(stats);
 });
 
+// ==========================================
+// TCP Proxy Checker & Auto-Update Engine
+// ==========================================
+
+function checkTcpSocket(host, port, timeoutMs = 2500) {
+  return new Promise((resolve) => {
+    const t0 = Date.now();
+    const socket = new net.Socket();
+    let settled = false;
+
+    const done = (status, error = null) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      const latency = Date.now() - t0;
+      resolve({ status, latency_ms: status === 'working' ? latency : null, error });
+    };
+
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => done('working'));
+    socket.once('timeout', () => done('timeout', 'Connection timed out'));
+    socket.once('error', (err) => done('failed', err.message));
+    try {
+      socket.connect(port, host);
+    } catch (e) {
+      done('failed', e.message);
+    }
+  });
+}
+
+async function checkProxiesBatch(proxies, maxConcurrency = 30, timeoutMs = 2500) {
+  const results = [];
+  let index = 0;
+
+  async function worker() {
+    while (index < proxies.length) {
+      const i = index++;
+      const p = proxies[i];
+      if (!p || !p.host || !p.port) continue;
+      try {
+        const res = await checkTcpSocket(p.host, parseInt(p.port, 10), timeoutMs);
+        p.status = res.status;
+        if (res.latency_ms !== null) {
+          p.latency_ms = res.latency_ms;
+        }
+        p.last_checked = new Date().toISOString();
+        if (res.error) p.check_error = res.error;
+        else delete p.check_error;
+      } catch (err) {
+        p.status = 'failed';
+        p.last_checked = new Date().toISOString();
+      }
+      results.push(p);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(maxConcurrency, proxies.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
+async function checkAllProxiesCore(limit = 450, timeoutMs = 2500) {
+  const data = readJsonFile('tg_proxies_found.json') || { proxies: [] };
+  const proxies = data.proxies || [];
+  const targetList = limit ? proxies.slice(0, limit) : proxies;
+
+  await checkProxiesBatch(targetList, 30, timeoutMs);
+
+  const workingCount = targetList.filter(p => p.status === 'working').length;
+  const timeoutCount = targetList.filter(p => p.status === 'timeout').length;
+  const failedCount = targetList.filter(p => p.status !== 'working' && p.status !== 'timeout').length;
+
+  data.last_checked = new Date().toISOString();
+  writeJsonFile('tg_proxies_found.json', data);
+
+  const summary = readJsonFile('summary.json') || {};
+  summary.generated_at = new Date().toISOString();
+  summary.tg_stats = summary.tg_stats || {};
+  summary.tg_stats.total = targetList.length;
+  summary.tg_stats.working = workingCount;
+  summary.tg_stats.by_status = {
+    working: workingCount,
+    timeout: timeoutCount,
+    connection_failed: failedCount
+  };
+  writeJsonFile('summary.json', summary);
+
+  return {
+    total: targetList.length,
+    working: workingCount,
+    timeout: timeoutCount,
+    failed: failedCount,
+    proxies: data.proxies
+  };
+}
+
+async function refreshAllSubscriptionsCore() {
+  const data = readJsonFile('subscriptions_found.json') || { subscriptions: [] };
+  const subs = data.subscriptions || [];
+  let updatedCount = 0;
+  let totalNodes = 0;
+
+  // Process in concurrent batches of 6
+  for (let i = 0; i < subs.length; i += 6) {
+    const batch = subs.slice(i, i + 6);
+    await Promise.allSettled(batch.map(async (s) => {
+      const target = s.subscription_url || s.url;
+      if (!target) return;
+      try {
+        const text = await fetchRemoteSubscription(target);
+        const nodes = parseNodes(text);
+        s.configs_count = nodes.length;
+        s.valid = nodes.length > 0;
+        s.status = nodes.length > 0 ? 'active' : 'empty';
+        s.updated_mins_ago = 0;
+        s.last_checked = new Date().toISOString();
+        if (nodes.length > 0) {
+          totalNodes += nodes.length;
+          const protos = new Set();
+          nodes.forEach(n => {
+            const m = n.match(PROTO_RE);
+            if (m) protos.add(m[1].toLowerCase());
+          });
+          s.protocols = Array.from(protos);
+          s.content_sample = nodes[0].substring(0, 90) + '...';
+        }
+        updatedCount++;
+      } catch (err) {
+        // keep old status
+      }
+    }));
+  }
+
+  saveSubscriptionsFound(data);
+  const validTotal = subs.filter(s => s.valid).length;
+
+  const summary = readJsonFile('summary.json') || {};
+  summary.subscriptions_count = subs.length;
+  summary.subscriptions_working = validTotal;
+  writeJsonFile('summary.json', summary);
+
+  return {
+    subscriptions: subs,
+    total: subs.length,
+    valid: validTotal,
+    validCount: validTotal,
+    totalNodes,
+    updatedCount
+  };
+}
+
+// Auto-Update Coordinator
+const defaultAutoUpdateSettings = {
+  enabled: true,
+  intervalMinutes: parseInt(process.env.AUTO_UPDATE_INTERVAL_MINUTES || '30', 10),
+  checkOnStartup: process.env.AUTO_UPDATE_ON_STARTUP !== 'false',
+  lastSubscriptionRun: null,
+  lastProxyRun: null,
+  lastRun: null
+};
+
+let autoUpdateState = {
+  isRunning: false,
+  currentTask: 'idle', // 'subscriptions' | 'proxies' | 'idle'
+  timer: null,
+  nextRun: null,
+  lastResults: null,
+  settings: { ...defaultAutoUpdateSettings }
+};
+
+function scheduleNextAutoUpdate() {
+  if (autoUpdateState.timer) {
+    clearTimeout(autoUpdateState.timer);
+    autoUpdateState.timer = null;
+  }
+
+  if (!autoUpdateState.settings.enabled || autoUpdateState.settings.intervalMinutes <= 0) {
+    autoUpdateState.nextRun = null;
+    return;
+  }
+
+  const intervalMs = autoUpdateState.settings.intervalMinutes * 60 * 1000;
+  autoUpdateState.nextRun = new Date(Date.now() + intervalMs).toISOString();
+
+  autoUpdateState.timer = setTimeout(() => {
+    runAutoUpdate('interval');
+  }, intervalMs);
+}
+
+async function runAutoUpdate(reason = 'interval') {
+  if (autoUpdateState.isRunning) {
+    return { isRunning: true, message: 'Auto-update is already running' };
+  }
+  autoUpdateState.isRunning = true;
+  const startedAt = new Date().toISOString();
+  console.log(`[Auto-Update] Starting job (${reason}) at ${startedAt}...`);
+  const results = { startedAt, reason };
+
+  try {
+    // 1. Refresh subscriptions
+    autoUpdateState.currentTask = 'subscriptions';
+    results.subscriptions = await refreshAllSubscriptionsCore();
+    autoUpdateState.settings.lastSubscriptionRun = new Date().toISOString();
+
+    // 2. Check proxies
+    autoUpdateState.currentTask = 'proxies';
+    results.proxies = await checkAllProxiesCore();
+    autoUpdateState.settings.lastProxyRun = new Date().toISOString();
+
+    autoUpdateState.settings.lastRun = new Date().toISOString();
+    writeJsonFile('auto_update_settings.json', autoUpdateState.settings);
+
+    results.completedAt = new Date().toISOString();
+    autoUpdateState.lastResults = {
+      startedAt,
+      completedAt: results.completedAt,
+      reason,
+      subscriptionsValid: results.subscriptions?.validCount,
+      subscriptionsTotal: results.subscriptions?.total,
+      proxiesWorking: results.proxies?.working,
+      proxiesTotal: results.proxies?.total
+    };
+    console.log(`[Auto-Update] Completed (${reason})! Valid subs: ${results.subscriptions?.validCount}, Working proxies: ${results.proxies?.working}`);
+  } catch (err) {
+    console.error('[Auto-Update] Error during job:', err.message);
+    results.error = err.message;
+  } finally {
+    autoUpdateState.isRunning = false;
+    autoUpdateState.currentTask = 'idle';
+    scheduleNextAutoUpdate();
+  }
+
+  return results;
+}
+
+function initAutoUpdate() {
+  const saved = readJsonFile('auto_update_settings.json');
+  if (saved && typeof saved === 'object') {
+    autoUpdateState.settings = { ...autoUpdateState.settings, ...saved };
+  }
+
+  if (autoUpdateState.settings.checkOnStartup) {
+    console.log('[Auto-Update] Startup check enabled. Triggering initial run in 3 seconds...');
+    setTimeout(() => {
+      runAutoUpdate('startup');
+    }, 3000);
+  } else {
+    scheduleNextAutoUpdate();
+  }
+}
+
 app.get('/api/v1/proxies', (req, res) => {
   const data = readJsonFile('tg_proxies_found.json') || { proxies: [] };
-  res.json(data);
+  const proxies = data.proxies || [];
+  const working = proxies.filter(p => p.status === 'working' || p.working === true).length;
+  res.json({
+    proxies,
+    total: proxies.length,
+    working,
+    timeout: proxies.filter(p => p.status === 'timeout').length,
+    failed: proxies.filter(p => p.status !== 'working' && p.status !== 'timeout').length,
+    last_checked: autoUpdateState.settings.lastProxyRun || data.last_checked || null
+  });
+});
+
+app.post('/api/v1/proxies/check', async (req, res) => {
+  try {
+    const result = await checkAllProxiesCore();
+    autoUpdateState.settings.lastProxyRun = new Date().toISOString();
+    writeJsonFile('auto_update_settings.json', autoUpdateState.settings);
+    res.json({
+      success: true,
+      ...result,
+      message: `Проверка прокси завершена! Всего: ${result.total}, рабочих: ${result.working}`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Auto-Update API Endpoints
+app.get('/api/v1/auto-update/status', (req, res) => {
+  res.json({
+    enabled: autoUpdateState.settings.enabled,
+    intervalMinutes: autoUpdateState.settings.intervalMinutes,
+    checkOnStartup: autoUpdateState.settings.checkOnStartup,
+    isRunning: autoUpdateState.isRunning,
+    currentTask: autoUpdateState.currentTask,
+    lastRun: autoUpdateState.settings.lastRun,
+    lastSubscriptionRun: autoUpdateState.settings.lastSubscriptionRun,
+    lastProxyRun: autoUpdateState.settings.lastProxyRun,
+    nextRun: autoUpdateState.nextRun,
+    lastResults: autoUpdateState.lastResults
+  });
+});
+
+app.post('/api/v1/auto-update/settings', (req, res) => {
+  const { enabled, intervalMinutes, checkOnStartup } = req.body || {};
+  if (typeof enabled === 'boolean') {
+    autoUpdateState.settings.enabled = enabled;
+  }
+  if (intervalMinutes !== undefined) {
+    const mins = parseInt(intervalMinutes, 10);
+    if (!isNaN(mins) && mins >= 0) {
+      autoUpdateState.settings.intervalMinutes = mins;
+    }
+  }
+  if (typeof checkOnStartup === 'boolean') {
+    autoUpdateState.settings.checkOnStartup = checkOnStartup;
+  }
+
+  writeJsonFile('auto_update_settings.json', autoUpdateState.settings);
+  scheduleNextAutoUpdate();
+
+  res.json({
+    success: true,
+    message: 'Настройки авто-обновления сохранены',
+    settings: autoUpdateState.settings,
+    nextRun: autoUpdateState.nextRun
+  });
+});
+
+app.post('/api/v1/auto-update/run-now', async (req, res) => {
+  if (autoUpdateState.isRunning) {
+    return res.json({
+      success: false,
+      alreadyRunning: true,
+      currentTask: autoUpdateState.currentTask,
+      message: 'Обновление уже выполняется в фоновом режиме...'
+    });
+  }
+
+  const wait = req.query.wait === 'true';
+  if (wait) {
+    const result = await runAutoUpdate('manual');
+    return res.json({
+      success: true,
+      result,
+      message: 'Авто-обновление подписок и проверка прокси успешно завершены!'
+    });
+  } else {
+    runAutoUpdate('manual');
+    return res.json({
+      success: true,
+      started: true,
+      message: 'Авто-обновление подписок и проверка прокси запущены в фоне!'
+    });
+  }
 });
 
 app.get('/api/v1/subscriptions', (req, res) => {
@@ -329,52 +686,18 @@ app.get('/api/v1/subscriptions', (req, res) => {
 
 // Refresh all existing subscriptions by re-probing their URLs
 app.post('/api/v1/subscriptions/refresh-all', async (req, res) => {
-  const data = readJsonFile('subscriptions_found.json') || { subscriptions: [] };
-  const subs = data.subscriptions || [];
-  let updatedCount = 0;
-  let totalNodes = 0;
-
-  // Process in batches of 5
-  for (let i = 0; i < subs.length; i += 5) {
-    const batch = subs.slice(i, i + 5);
-    await Promise.allSettled(batch.map(async (s) => {
-      const target = s.subscription_url || s.url;
-      if (!target) return;
-      try {
-        const text = await fetchRemoteSubscription(target);
-        const nodes = parseNodes(text);
-        s.configs_count = nodes.length;
-        s.valid = nodes.length > 0;
-        s.status = nodes.length > 0 ? 'active' : 'empty';
-        s.updated_mins_ago = 1;
-        if (nodes.length > 0) {
-          totalNodes += nodes.length;
-          const protos = new Set();
-          nodes.forEach(n => {
-            const m = n.match(PROTO_RE);
-            if (m) protos.add(m[1].toLowerCase());
-          });
-          s.protocols = Array.from(protos);
-          s.content_sample = nodes[0].substring(0, 90) + '...';
-        }
-        updatedCount++;
-      } catch (err) {
-        // keep old status or mark as warning
-      }
-    }));
+  try {
+    const result = await refreshAllSubscriptionsCore();
+    autoUpdateState.settings.lastSubscriptionRun = new Date().toISOString();
+    writeJsonFile('auto_update_settings.json', autoUpdateState.settings);
+    res.json({
+      success: true,
+      ...result,
+      message: `Обновлено подписок: ${result.total}, валидных: ${result.validCount}`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
-
-  saveSubscriptionsFound(data);
-  const validTotal = subs.filter(s => s.valid).length;
-  res.json({
-    success: true,
-    subscriptions: subs,
-    total: subs.length,
-    valid: validTotal,
-    validCount: validTotal,
-    totalNodes,
-    message: `Обновлено подписок: ${subs.length}, валидных: ${validTotal}`
-  });
 });
 
 // Add a single custom subscription URL
@@ -813,4 +1136,5 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${PORT}`);
+  initAutoUpdate();
 });

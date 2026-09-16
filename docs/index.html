@@ -79,6 +79,38 @@
 
     <main class="container mx-auto px-4 py-6 max-w-7xl">
 
+        <!-- Auto-Update & Health Check Controls -->
+        <div id="auto-update-bar" class="card p-3.5 mb-4 border border-slate-700/80 bg-slate-900/90 shadow-md flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span id="auto-update-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span id="auto-update-status-title" class="font-bold text-slate-200">Авто-обновление активно</span>
+                </div>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <div class="flex items-center gap-1.5 text-slate-300">
+                    <label for="auto-update-interval-select" class="text-slate-400">Интервал:</label>
+                    <select id="auto-update-interval-select" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="15">Каждые 15 мин</option>
+                        <option value="30" selected>Каждые 30 мин</option>
+                        <option value="60">Каждый 1 час</option>
+                        <option value="120">Каждые 2 часа</option>
+                        <option value="360">Каждые 6 часов</option>
+                        <option value="0">Отключено (вручную)</option>
+                    </select>
+                </div>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <span id="auto-update-last-text" class="text-slate-400">Посл. проверка: проверяем...</span>
+                <span class="text-slate-600 hidden md:inline">|</span>
+                <span id="auto-update-next-text" class="text-slate-400 hidden md:inline">След.: ожидание</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="auto-update-run-btn" class="btn btn-primary btn-sm flex items-center gap-1.5 cursor-pointer" title="Запустить проверку всех подписок и прокси прямо сейчас">
+                    <span id="auto-update-spinner" style="display:none;">⏳</span>
+                    <span id="auto-update-btn-text">⚡ Обновить и проверить всё</span>
+                </button>
+            </div>
+        </div>
+
         <!-- Toolbar: search filters the cards of the current tab -->
         <div class="card p-3 mb-4 flex flex-wrap items-center gap-3">
             <span class="text-sm font-semibold text-slate-300">Dashboard</span>
@@ -223,6 +255,18 @@
 
         <!-- ============ Tab: TG Proxies ============ -->
         <section id="panel-tg" class="tab-panel">
+            <div class="card p-3 mb-3 border border-slate-700/60 bg-slate-800/60 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-sm font-bold text-white">Telegram MTProto Прокси</h3>
+                    <p class="text-xs text-slate-400">Мониторинг доступности и измерение задержки MTProto прокси с TCP проверкой.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="tg-check-btn" class="btn btn-secondary btn-sm flex items-center gap-1.5 cursor-pointer" title="Выполнить TCP пинг всех MTProto прокси">
+                        <span id="tg-check-spinner" style="display:none;">⏳</span>
+                        <span id="tg-check-btn-text">↻ Проверить пинг прокси</span>
+                    </button>
+                </div>
+            </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Total Checked</div><div class="text-2xl font-bold" id="tg-total">0</div></div>
                 <div class="card p-3"><div class="text-xs text-muted uppercase tracking-wide font-bold">Working</div><div class="text-2xl font-bold text-green-400" id="tg-working">0</div></div>
@@ -1220,7 +1264,28 @@
 
         setSubsMode(true);
         switchTab('subs');
+
+        // Initial Data Load & Auto-Update Engine
         loadSubscriptions();
+        loadProxies();
+        loadAutoUpdateStatus();
+
+        const autoSelect = document.getElementById('auto-update-interval-select');
+        if (autoSelect) {
+            autoSelect.addEventListener('change', (e) => changeAutoUpdateInterval(e.target.value));
+        }
+        const autoRunBtn = document.getElementById('auto-update-run-btn');
+        if (autoRunBtn) {
+            autoRunBtn.addEventListener('click', triggerAutoUpdateNow);
+        }
+        const tgCheckBtn = document.getElementById('tg-check-btn');
+        if (tgCheckBtn) {
+            tgCheckBtn.addEventListener('click', checkProxiesNow);
+        }
+
+        // Periodic relative time & sync timers
+        setInterval(updateAutoUpdateUI, 10000);
+        setInterval(loadAutoUpdateStatus, 45000);
     }
 
     async function loadSubscriptions() {
@@ -1231,11 +1296,228 @@
                 if (data && Array.isArray(data.subscriptions) && data.subscriptions.length > 0) {
                     CONFIG.subscriptions = data.subscriptions;
                     renderSubs();
+                    renderHero();
                     applyFilters();
                 }
             }
         } catch (e) {
             console.warn('Failed to load subscriptions dynamically:', e);
+        }
+    }
+
+    async function loadProxies() {
+        try {
+            const res = await fetch('/api/v1/proxies');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.proxies)) {
+                    CONFIG.tg_proxies = data.proxies;
+                    const working = data.working !== undefined ? data.working : data.proxies.filter(p => p.status === 'working').length;
+                    const total = data.total !== undefined ? data.total : data.proxies.length;
+                    const timeout = data.timeout !== undefined ? data.timeout : data.proxies.filter(p => p.status === 'timeout').length;
+                    const failed = data.failed !== undefined ? data.failed : Math.max(0, total - working - timeout);
+
+                    CONFIG.tg_stats = {
+                        total,
+                        working,
+                        by_status: {
+                            working,
+                            timeout,
+                            connection_failed: failed
+                        }
+                    };
+                    renderTg();
+                    renderTgSummary();
+                    renderHero();
+                    applyFilters();
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load proxies dynamically:', e);
+        }
+    }
+
+    async function checkProxiesNow() {
+        const btn = document.getElementById('tg-check-btn');
+        const spinner = document.getElementById('tg-check-spinner');
+        const btnText = document.getElementById('tg-check-btn-text');
+
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'inline';
+        if (btnText) btnText.textContent = 'Проверяем пинг...';
+        showToast('Запущена проверка доступности MTProto прокси...', 'info');
+
+        try {
+            const res = await fetch('/api/v1/proxies/check', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                showToast(`Проверка завершена! Рабочих прокси: ${data.working} из ${data.total}`, 'success');
+                await loadProxies();
+            } else {
+                showToast(data.error || 'Ошибка проверки прокси', 'error');
+            }
+        } catch (err) {
+            showToast('Сбой проверки: ' + err.message, 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '↻ Проверить пинг прокси';
+        }
+    }
+
+    // Auto-Update Engine (Client State & Timers)
+    let autoUpdateStateClient = {
+        enabled: true,
+        intervalMinutes: 30,
+        isRunning: false,
+        lastRun: null,
+        nextRun: null
+    };
+
+    function formatRelativeTime(isoStr) {
+        if (!isoStr) return 'никогда';
+        const ms = Date.now() - new Date(isoStr).getTime();
+        if (ms < 0) return 'только что';
+        const mins = Math.floor(ms / 60000);
+        if (mins < 1) return 'менее 1 мин назад';
+        if (mins < 60) return `${mins} мин назад`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs} ч назад`;
+        return `${Math.floor(hrs / 24)} дн назад`;
+    }
+
+    function formatCountdown(isoStr) {
+        if (!isoStr) return 'ожидание';
+        const ms = new Date(isoStr).getTime() - Date.now();
+        if (ms <= 0) return 'скоро';
+        const mins = Math.ceil(ms / 60000);
+        if (mins < 60) return `через ${mins} мин`;
+        const hrs = Math.floor(mins / 60);
+        const remMins = mins % 60;
+        return `через ${hrs} ч ${remMins} мин`;
+    }
+
+    function updateAutoUpdateUI() {
+        const dot = document.getElementById('auto-update-dot');
+        const title = document.getElementById('auto-update-status-title');
+        const lastEl = document.getElementById('auto-update-last-text');
+        const nextEl = document.getElementById('auto-update-next-text');
+        const select = document.getElementById('auto-update-interval-select');
+        const runBtn = document.getElementById('auto-update-run-btn');
+        const spinner = document.getElementById('auto-update-spinner');
+        const btnText = document.getElementById('auto-update-btn-text');
+
+        if (select && select.value !== String(autoUpdateStateClient.intervalMinutes)) {
+            select.value = String(autoUpdateStateClient.intervalMinutes);
+        }
+
+        if (autoUpdateStateClient.isRunning) {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping';
+            if (title) title.textContent = 'Обновление в процессе...';
+            if (runBtn) runBtn.disabled = true;
+            if (spinner) spinner.style.display = 'inline';
+            if (btnText) btnText.textContent = 'Проверка нод и прокси...';
+        } else if (!autoUpdateStateClient.enabled || autoUpdateStateClient.intervalMinutes === 0) {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-slate-500';
+            if (title) title.textContent = 'Авто-обновление отключено';
+            if (runBtn) runBtn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '⚡ Обновить и проверить всё';
+        } else {
+            if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-emerald-400';
+            if (title) title.textContent = 'Авто-обновление активно';
+            if (runBtn) runBtn.disabled = false;
+            if (spinner) spinner.style.display = 'none';
+            if (btnText) btnText.textContent = '⚡ Обновить и проверить всё';
+        }
+
+        if (lastEl) {
+            lastEl.textContent = 'Посл. проверка: ' + formatRelativeTime(autoUpdateStateClient.lastRun);
+        }
+        if (nextEl) {
+            if (!autoUpdateStateClient.enabled || autoUpdateStateClient.intervalMinutes === 0) {
+                nextEl.textContent = 'След.: отключено';
+            } else {
+                nextEl.textContent = 'След.: ' + formatCountdown(autoUpdateStateClient.nextRun);
+            }
+        }
+    }
+
+    let isPollingAutoUpdate = false;
+
+    async function loadAutoUpdateStatus() {
+        try {
+            const res = await fetch('/api/v1/auto-update/status');
+            if (res.ok) {
+                const data = await res.json();
+                const wasRunning = autoUpdateStateClient.isRunning;
+                autoUpdateStateClient = {
+                    enabled: data.enabled,
+                    intervalMinutes: data.intervalMinutes,
+                    isRunning: data.isRunning,
+                    lastRun: data.lastRun || data.lastSubscriptionRun || data.lastProxyRun,
+                    nextRun: data.nextRun
+                };
+                updateAutoUpdateUI();
+
+                // If it just completed running, reload fresh data from backend
+                if (wasRunning && !data.isRunning) {
+                    showToast('Авто-обновление завершено! Данные актуализированы.', 'success');
+                    await loadSubscriptions();
+                    await loadProxies();
+                }
+
+                // If running, poll frequently until completion
+                if (data.isRunning && !isPollingAutoUpdate) {
+                    isPollingAutoUpdate = true;
+                    setTimeout(async () => {
+                        isPollingAutoUpdate = false;
+                        await loadAutoUpdateStatus();
+                    }, 3000);
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load auto-update status:', e);
+        }
+    }
+
+    async function changeAutoUpdateInterval(minutes) {
+        const mins = parseInt(minutes, 10);
+        const enabled = mins > 0;
+        showToast('Сохраняем интервал обновления: ' + (enabled ? `${mins} мин` : 'отключено'), 'info');
+        try {
+            const res = await fetch('/api/v1/auto-update/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ intervalMinutes: mins, enabled })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Интервал авто-обновления обновлен!', 'success');
+                await loadAutoUpdateStatus();
+            }
+        } catch (e) {
+            showToast('Сбой сохранения настроек: ' + e.message, 'error');
+        }
+    }
+
+    async function triggerAutoUpdateNow() {
+        if (autoUpdateStateClient.isRunning) return;
+        const btn = document.getElementById('auto-update-run-btn');
+        if (btn) btn.disabled = true;
+        showToast('Запущено комплексное обновление подписок и проверка прокси...', 'info');
+        try {
+            const res = await fetch('/api/v1/auto-update/run-now', { method: 'POST' });
+            const data = await res.json();
+            if (data.success || data.alreadyRunning) {
+                autoUpdateStateClient.isRunning = true;
+                updateAutoUpdateUI();
+                await loadAutoUpdateStatus();
+            } else {
+                showToast(data.message || 'Ошибка запуска обновления', 'error');
+            }
+        } catch (e) {
+            showToast('Сбой запроса: ' + e.message, 'error');
         }
     }
 
