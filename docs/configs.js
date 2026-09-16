@@ -130,7 +130,17 @@
   };
 
   const fetchSubscription = async (url) => {
-    // Try direct fetch first
+    // 1. Try our backend relay first (server-side Cloud Run, bypasses CORS & client ISP blocking)
+    try {
+      const res = await fetch("/api/v1/relay?url=" + encodeURIComponent(url), { cache: "no-store" });
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.length > 0) return text;
+      }
+    } catch (e) {
+      // fall through
+    }
+    // 2. Try direct fetch
     try {
       const res = await fetch(url, { cache: "no-store" });
       if (res.ok) {
@@ -140,7 +150,7 @@
     } catch (e) {
       // fall through to proxies
     }
-    // Try CORS proxies
+    // 3. Try public CORS proxies
     for (const proxyFn of CORS_PROXIES) {
       try {
         const res = await fetch(proxyFn(url), { cache: "no-store" });
@@ -152,7 +162,7 @@
         // try next proxy
       }
     }
-    throw new Error("All fetch attempts failed (CORS or network)");
+    throw new Error("Не удалось загрузить подписку. Проверьте адрес или создайте зеркало во вкладке Зацепер.");
   };
 
   // ---------- CSS ----------
@@ -248,6 +258,7 @@
       html += `<a href="${esc(link)}" class="rc-btn rc-btn-primary" style="text-transform:capitalize;" title="Import to ${esc(key)}">${esc(key)}</a>`;
     }
     html += `<button class="rc-btn rc-btn-secondary" id="rcCopySub">Copy URL</button>`;
+    html += `<button class="rc-btn rc-btn-primary" id="rcZacepitBtn" style="background:#059669;" title="Создать зеркало для обхода ограничений">⚡ Зацепить подписку</button>`;
     html += `</div>`;
 
     html += `<div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">${configs.length} configs found</div>`;
@@ -274,6 +285,32 @@
 
     document.getElementById("rcCopySub")?.addEventListener("click", () => {
       copyText(subUrl, "Subscription URL copied");
+    });
+    document.getElementById("rcZacepitBtn")?.addEventListener("click", async () => {
+      const btn = document.getElementById("rcZacepitBtn");
+      if (btn) btn.textContent = "Зацепляю...";
+      try {
+        const res = await fetch("/api/v1/zaceper/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: subUrl, name: subName })
+        });
+        const data = await res.json();
+        if (data.success && data.subscription) {
+          const mirrorUrl = window.location.origin + data.subscription.subUrl;
+          await copyText(mirrorUrl, "Зеркало создано! Ссылка скопирована");
+          if (btn) btn.textContent = "✓ Зацеплено!";
+          if (typeof window.onZaceperCreated === "function") {
+            window.onZaceperCreated(data.subscription);
+          }
+        } else {
+          toast("Ошибка создания зеркала: " + (data.error || "Неизвестная ошибка"), "error");
+          if (btn) btn.textContent = "⚡ Зацепить подписку";
+        }
+      } catch (err) {
+        toast("Сбой запроса: " + err.message, "error");
+        if (btn) btn.textContent = "⚡ Зацепить подписку";
+      }
     });
     modalBody.querySelectorAll("[data-rc-copy]").forEach((btn) => {
       btn.addEventListener("click", () => {
