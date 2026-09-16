@@ -14,9 +14,15 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.041127Z"
+      "checked_at": "2026-09-15T21:37:19.041127Z",
+      "configs_count": 1,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.466Z",
+      "protocols": [],
+      "content_sample": "clash://proxy..."
     },
     {
       "url": "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/mix.txt",
@@ -89,8 +95,19 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.458582Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.458582Z",
+      "configs_count": 1504,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.553Z",
+      "protocols": [
+        "ss",
+        "trojan",
+        "vless",
+        "vmess"
+      ],
+      "content_sample": "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTo0SHViMmY5SnloRUN5QXEyT3BtME5T@51.79.161.232:443#%F0%9F..."
     },
     {
       "url": "https://raw.githubusercontent.com/v2raynnodes/clashnode/main/source/_posts/2025-12-19-free-node.md",
@@ -106,9 +123,17 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.057870Z"
+      "checked_at": "2026-09-15T21:37:19.057870Z",
+      "configs_count": 2,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.533Z",
+      "protocols": [
+        "https"
+      ],
+      "content_sample": "https://nodesfree.github.io/clashnode/clash.yaml..."
     },
     {
       "url": "https://raw.githubusercontent.com/myominn062-svg/mk-studio-vpn-service/main/countries/AL.sub.txt",
@@ -128,9 +153,21 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.071948Z"
+      "checked_at": "2026-09-15T21:37:19.071948Z",
+      "configs_count": 101,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.496Z",
+      "protocols": [
+        "hysteria2",
+        "vless",
+        "ss",
+        "trojan",
+        "vmess"
+      ],
+      "content_sample": "hysteria2://g2d0ooqq3ykzsacc@giftcard.gateway-stream.com:52000?alpn=h3&fp=chrome&obfs=sala..."
     },
     {
       "url": "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/Base64/Config list12_base64.txt",
@@ -149,9 +186,20 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.094463Z"
+      "checked_at": "2026-09-15T21:37:19.094463Z",
+      "configs_count": 490,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.560Z",
+      "protocols": [
+        "vless",
+        "vmess",
+        "trojan",
+        "ss"
+      ],
+      "content_sample": "vless://dfa25b43-edf2-99e4-c3b0-1aa7c9ccaa96@138.199.225.195:1152?security=reality&flow=xt..."
     },
     {
       "url": "https://raw.githubusercontent.com/Argh94/V2RayAutoConfig/main/configs/Argentina.txt",
@@ -176,8 +224,16 @@
           "error": "xray_start_failed"
         }
       ],
-      "status": "failed",
-      "checked_at": "2026-09-15T21:37:19.243242Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:19.243242Z",
+      "configs_count": 1,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.487Z",
+      "protocols": [
+        "hysteria2"
+      ],
+      "content_sample": "hysteria2://g2d0ooqq3ykzsacc@giftcard.gateway-stream.com:52001?alpn=h3&fp=chrome&sni=giftc..."
     },
     {
       "url": "https://raw.githubusercontent.com/tglaoshiji/freenodes/main/source/_posts/2025-12-11-freenode.md",
@@ -193,9 +249,17 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.128162Z"
+      "checked_at": "2026-09-15T21:37:19.128162Z",
+      "configs_count": 3,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.754Z",
+      "protocols": [
+        "https"
+      ],
+      "content_sample": "https://oneclash.githubrowcontent.com/2025/12/20251211.txt..."
     },
     {
       "url": "https://raw.githubusercontent.com/Denchic-2009/xray-checked-configs/main/config_ru.txt",
@@ -266,8 +330,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.617017Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.617017Z",
+      "configs_count": 216,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.845Z",
+      "protocols": [
+        "vless"
+      ],
+      "content_sample": "vless://01a21e01-6098-4c3b-a6fd-1a04d64d0c7f@188.225.25.142:443?encryption=none&flow=xtls-..."
     },
     {
       "url": "https://raw.githubusercontent.com/Medium1992/mihomo-proxy-ros/main/www/templates/proxy/ssh.yaml",
@@ -283,9 +355,15 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:19.132001Z"
+      "checked_at": "2026-09-15T21:37:19.132001Z",
+      "configs_count": 1,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.754Z",
+      "protocols": [],
+      "content_sample": "clash://proxy..."
     },
     {
       "url": "https://raw.githubusercontent.com/kort0881/vpn-aggregator/main/out/subs/eu_sub_5.txt",
@@ -330,8 +408,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:19.682540Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:19.682540Z",
+      "configs_count": 60,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.759Z",
+      "protocols": [
+        "vless"
+      ],
+      "content_sample": "vless://14ffccc6-81e0-4108-ab35-b3df398534af@apisw2.jobwebs.ir:8735?security=reality&encry..."
     },
     {
       "url": "https://raw.githubusercontent.com/morpheusadam/v2ray-config/main/subs/bundles/mini.txt",
@@ -401,8 +487,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.707422Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.707422Z",
+      "configs_count": 100,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.737Z",
+      "protocols": [
+        "trojan"
+      ],
+      "content_sample": "trojan://MiTiVPN@151.101.26.26:80?ed=2560&eh=Sec-WebSocket-Protocol&host=cdn2-mitivpn.glob..."
     },
     {
       "url": "https://raw.githubusercontent.com/0xRadikal/Free-v2ray-Configs/main/secure/configs.txt",
@@ -475,8 +569,18 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.736842Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.736842Z",
+      "configs_count": 1383,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.814Z",
+      "protocols": [
+        "vless",
+        "trojan",
+        "vmess"
+      ],
+      "content_sample": "vless://01a21e01-6098-4c3b-a6fd-1a04d64d0c7f@88.216.57.221:443?security=reality&flow=xtls-..."
     },
     {
       "url": "https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/main/configs/location/ES/proxy_configs.txt",
@@ -501,8 +605,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:19.803873Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:19.803873Z",
+      "configs_count": 1,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:07.041Z",
+      "protocols": [
+        "vless"
+      ],
+      "content_sample": "vless://4350213a-b4e7-262a-0bd7-bd16957cf71a@170.168.97.8:443?fp=chrome&path=/&pbk=jYD82Xg..."
     },
     {
       "url": "https://raw.githubusercontent.com/aviamastersgh/vpn-free-russia/main/all_configs.txt",
@@ -578,8 +690,22 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:30.307334Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:30.307334Z",
+      "configs_count": 9129,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:07.130Z",
+      "protocols": [
+        "vless",
+        "vmess",
+        "trojan",
+        "hysteria2",
+        "hy2",
+        "ss",
+        "tuic"
+      ],
+      "content_sample": "vless://b940be1b-3998-45d2-bf7b-06e7b6c4987a@38.54.29.210:2053?security=tls&sni=kkkk-xcd.p..."
     },
     {
       "url": "https://raw.githubusercontent.com/Freedom-Guard-Builder/Freedom-Finder/main/out/channels/VPNHub_proxy.txt",
@@ -595,9 +721,17 @@
         }
       },
       "total_configs": 0,
-      "status": "empty",
+      "status": "active",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:29.459964Z"
+      "checked_at": "2026-09-15T21:37:29.459964Z",
+      "configs_count": 1,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:07.019Z",
+      "protocols": [
+        "https"
+      ],
+      "content_sample": "https://t.me/proxy?server=8ijplp.ir.ir.ir.meli-n12.info&port=8443&secret=dd104462821249bd7..."
     },
     {
       "url": "https://raw.githubusercontent.com/ShatakVPN/ConfigForge-V2Ray/main/configs/ae/vmess.txt",
@@ -627,8 +761,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.674197Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.674197Z",
+      "configs_count": 2,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:07.058Z",
+      "protocols": [
+        "vmess"
+      ],
+      "content_sample": "vmess://eyJhZGQiOiAiMTcyLjY3LjE2MS4xNDQiLCAiYWlkIjogIjAiLCAiYWxwbiI6ICIiLCAiZnAiOiAiIiwgIm..."
     },
     {
       "url": "https://raw.githubusercontent.com/Romaxa55/MegaV_Public/main/subs/ss.txt",
@@ -658,8 +800,16 @@
           "error": null
         }
       ],
-      "status": "working",
-      "checked_at": "2026-09-15T21:37:29.838030Z"
+      "status": "active",
+      "checked_at": "2026-09-15T21:37:29.838030Z",
+      "configs_count": 2,
+      "valid": true,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:06.993Z",
+      "protocols": [
+        "ss"
+      ],
+      "content_sample": "ss://YWVzLTI1Ni1nY206WlJwZ2FCZUd4dEVOSVhndmhwa1pCS3o5R25XUlMyZFljeDlPK2EyaXdOND0=@185.164...."
     },
     {
       "url": "https://raw.githubusercontent.com/IgorShkarin/keenetic-xkeen-router-setup/master/router-backup/public/xkeen-configs/04_outbounds.template.json",
@@ -677,7 +827,11 @@
       "total_configs": 0,
       "status": "empty",
       "working_configs": 0,
-      "checked_at": "2026-09-15T21:37:29.677894Z"
+      "checked_at": "2026-09-15T21:37:29.677894Z",
+      "configs_count": 0,
+      "valid": false,
+      "updated_mins_ago": 0,
+      "last_checked": "2026-09-16T05:52:07.146Z"
     }
   ],
   "generated_at": "2026-09-15T21:37:30.308112Z",
