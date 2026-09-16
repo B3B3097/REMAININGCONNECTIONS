@@ -304,11 +304,11 @@
             window.onZaceperCreated(data.subscription);
           }
         } else {
-          alert("Ошибка создания зеркала: " + (data.error || "Неизвестная ошибка"));
+          toast("Ошибка создания зеркала: " + (data.error || "Неизвестная ошибка"), "error");
           if (btn) btn.textContent = "⚡ Зацепить подписку";
         }
       } catch (err) {
-        alert("Сбой запроса: " + err.message);
+        toast("Сбой запроса: " + err.message, "error");
         if (btn) btn.textContent = "⚡ Зацепить подписку";
       }
     });

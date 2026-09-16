@@ -368,8 +368,10 @@ app.post('/api/v1/subscriptions/refresh-all', async (req, res) => {
   const validTotal = subs.filter(s => s.valid).length;
   res.json({
     success: true,
+    subscriptions: subs,
     total: subs.length,
     valid: validTotal,
+    validCount: validTotal,
     totalNodes,
     message: `Обновлено подписок: ${subs.length}, валидных: ${validTotal}`
   });
@@ -557,7 +559,9 @@ app.post('/api/v1/subscriptions/discover', async (req, res) => {
   res.json({
     success: true,
     added: newlyDiscovered.length,
+    newDiscovered: newlyDiscovered.length,
     newSubscriptions: newlyDiscovered,
+    subscriptions: subs,
     totalValid: validTotal,
     totalSubscriptions: subs.length,
     message: newlyDiscovered.length > 0
