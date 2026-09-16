@@ -80,6 +80,10 @@ config.local.yaml
 # OS
 .DS_Store
 Thumbs.db
+# Node.js
+node_modules/
+package-lock.json
+
 # Temporary, dump and archive files
 codebase.txt
 file.txt
