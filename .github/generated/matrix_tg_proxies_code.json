@@ -1,0 +1,1080 @@
+[
+  {
+    "slug": "tg_proxies-code-0001",
+    "query": "tg://proxy?server",
+    "full_query": "tg://proxy?server",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0002",
+    "query": "t.me/proxy?server",
+    "full_query": "t.me/proxy?server",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0003",
+    "query": "t.me/proxy",
+    "full_query": "t.me/proxy",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0004",
+    "query": "mtproxy secret",
+    "full_query": "mtproxy secret",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0005",
+    "query": "tg://proxy",
+    "full_query": "tg://proxy",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0006",
+    "query": "mtproto secret",
+    "full_query": "mtproto secret",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0007",
+    "query": "dd secret telegram",
+    "full_query": "dd secret telegram",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0008",
+    "query": "https://t.me/proxy",
+    "full_query": "https://t.me/proxy",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0009",
+    "query": "ee secret mtproto",
+    "full_query": "ee secret mtproto",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0010",
+    "query": "server port secret mtproto",
+    "full_query": "server port secret mtproto",
+    "priority": 95,
+    "reason": "tg exact pattern"
+  },
+  {
+    "slug": "tg_proxies-code-0011",
+    "query": "t.me/proxy filename:tg.md",
+    "full_query": "t.me/proxy filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0012",
+    "query": "mtproto filename:proxies.md",
+    "full_query": "mtproto filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0013",
+    "query": "t.me/proxy filename:mtproto.md",
+    "full_query": "t.me/proxy filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0014",
+    "query": "tg proxy filename:telegram-proxies.txt",
+    "full_query": "tg proxy filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0015",
+    "query": "t.me/proxy filename:proxy.md",
+    "full_query": "t.me/proxy filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0016",
+    "query": "tg proxy filename:tg-proxies.txt",
+    "full_query": "tg proxy filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0017",
+    "query": "mtproto filename:telegram-proxies.txt",
+    "full_query": "mtproto filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0018",
+    "query": "mtproto filename:mtproxy.md",
+    "full_query": "mtproto filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0019",
+    "query": "tg proxy filename:free-tg-proxy.txt",
+    "full_query": "tg proxy filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0020",
+    "query": "telegram proxy filename:free-tg-proxy.txt",
+    "full_query": "telegram proxy filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0021",
+    "query": "tg proxy filename:list.txt",
+    "full_query": "tg proxy filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0022",
+    "query": "tg://proxy filename:proxy.yaml",
+    "full_query": "tg://proxy filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0023",
+    "query": "tg proxy filename:proxies.md",
+    "full_query": "tg proxy filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0024",
+    "query": "t.me/proxy filename:tg.txt",
+    "full_query": "t.me/proxy filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0025",
+    "query": "telegram proxy filename:tg.txt",
+    "full_query": "telegram proxy filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0026",
+    "query": "mtproxy filename:mtproto.txt",
+    "full_query": "mtproxy filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0027",
+    "query": "mtproto filename:proxies.yaml",
+    "full_query": "mtproto filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0028",
+    "query": "mtproto filename:proxy-list.txt",
+    "full_query": "mtproto filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0029",
+    "query": "tg proxy filename:mtproto.md",
+    "full_query": "tg proxy filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0030",
+    "query": "tg://proxy filename:tg.md",
+    "full_query": "tg://proxy filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0031",
+    "query": "tg proxy filename:proxies.yaml",
+    "full_query": "tg proxy filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0032",
+    "query": "tg://proxy filename:tg.txt",
+    "full_query": "tg://proxy filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0033",
+    "query": "telegram proxy filename:mtproto.txt",
+    "full_query": "telegram proxy filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0034",
+    "query": "tg://proxy filename:mtproxy.txt",
+    "full_query": "tg://proxy filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0035",
+    "query": "telegram proxy filename:proxy.txt",
+    "full_query": "telegram proxy filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0036",
+    "query": "tg://proxy filename:proxy.md",
+    "full_query": "tg://proxy filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0037",
+    "query": "mtproto filename:tg.md",
+    "full_query": "mtproto filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0038",
+    "query": "t.me/proxy filename:tg-proxies.txt",
+    "full_query": "t.me/proxy filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0039",
+    "query": "mtproxy filename:proxies.yaml",
+    "full_query": "mtproxy filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0040",
+    "query": "mtproto filename:mtproto.md",
+    "full_query": "mtproto filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0041",
+    "query": "t.me/proxy filename:proxies.md",
+    "full_query": "t.me/proxy filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0042",
+    "query": "t.me/proxy filename:telegram-proxy.txt",
+    "full_query": "t.me/proxy filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0043",
+    "query": "tg://proxy filename:telegram-proxy.txt",
+    "full_query": "tg://proxy filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0044",
+    "query": "telegram proxy filename:telegram-proxy.txt",
+    "full_query": "telegram proxy filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0045",
+    "query": "mtproto filename:mtproxy.txt",
+    "full_query": "mtproto filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0046",
+    "query": "mtproto filename:proxy.yaml",
+    "full_query": "mtproto filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0047",
+    "query": "mtproto filename:proxy.txt",
+    "full_query": "mtproto filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0048",
+    "query": "t.me/proxy filename:proxy.txt",
+    "full_query": "t.me/proxy filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0049",
+    "query": "tg://proxy filename:mtproto.json",
+    "full_query": "tg://proxy filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0050",
+    "query": "tg proxy filename:proxy.yaml",
+    "full_query": "tg proxy filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0051",
+    "query": "telegram proxy filename:proxies.md",
+    "full_query": "telegram proxy filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0052",
+    "query": "tg://proxy filename:mtproto.md",
+    "full_query": "tg://proxy filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0053",
+    "query": "tg://proxy filename:tg-proxies.txt",
+    "full_query": "tg://proxy filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0054",
+    "query": "telegram proxy filename:mtproto.json",
+    "full_query": "telegram proxy filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0055",
+    "query": "tg proxy filename:tg.txt",
+    "full_query": "tg proxy filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0056",
+    "query": "mtproto filename:free-tg-proxy.txt",
+    "full_query": "mtproto filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0057",
+    "query": "mtproto filename:mtproto.txt",
+    "full_query": "mtproto filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0058",
+    "query": "tg proxy filename:mtproxy-list.txt",
+    "full_query": "tg proxy filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0059",
+    "query": "tg proxy filename:proxy-list.txt",
+    "full_query": "tg proxy filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0060",
+    "query": "tg proxy filename:tg-proxy.json",
+    "full_query": "tg proxy filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0061",
+    "query": "telegram proxy filename:proxy.yaml",
+    "full_query": "telegram proxy filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0062",
+    "query": "tg://proxy filename:proxy-list.txt",
+    "full_query": "tg://proxy filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0063",
+    "query": "mtproto filename:tg-proxy.json",
+    "full_query": "mtproto filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0064",
+    "query": "t.me/proxy filename:mtproto.txt",
+    "full_query": "t.me/proxy filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0065",
+    "query": "telegram proxy filename:proxy.md",
+    "full_query": "telegram proxy filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0066",
+    "query": "mtproxy filename:mtproto.md",
+    "full_query": "mtproxy filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0067",
+    "query": "t.me/proxy filename:proxies.yaml",
+    "full_query": "t.me/proxy filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0068",
+    "query": "tg proxy filename:mtproxy.txt",
+    "full_query": "tg proxy filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0069",
+    "query": "telegram proxy filename:list.txt",
+    "full_query": "telegram proxy filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0070",
+    "query": "tg proxy filename:proxy.txt",
+    "full_query": "tg proxy filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0071",
+    "query": "tg://proxy filename:mtproxy-list.txt",
+    "full_query": "tg://proxy filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0072",
+    "query": "t.me/proxy filename:free-tg-proxy.txt",
+    "full_query": "t.me/proxy filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0073",
+    "query": "tg://proxy filename:mtproxy.json",
+    "full_query": "tg://proxy filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0074",
+    "query": "tg proxy filename:mtproxy.md",
+    "full_query": "tg proxy filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0075",
+    "query": "tg://proxy filename:list.txt",
+    "full_query": "tg://proxy filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0076",
+    "query": "tg://proxy filename:mtproxy.md",
+    "full_query": "tg://proxy filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0077",
+    "query": "tg proxy filename:mtproxy.json",
+    "full_query": "tg proxy filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0078",
+    "query": "mtproxy filename:mtproxy-list.txt",
+    "full_query": "mtproxy filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0079",
+    "query": "mtproxy filename:tg-proxies.txt",
+    "full_query": "mtproxy filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0080",
+    "query": "tg proxy filename:README.md",
+    "full_query": "tg proxy filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0081",
+    "query": "mtproto filename:README.md",
+    "full_query": "mtproto filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0082",
+    "query": "mtproto filename:mtproxy-list.txt",
+    "full_query": "mtproto filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0083",
+    "query": "t.me/proxy filename:mtproxy.json",
+    "full_query": "t.me/proxy filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0084",
+    "query": "tg://proxy filename:telegram-proxies.txt",
+    "full_query": "tg://proxy filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0085",
+    "query": "mtproxy filename:telegram-proxies.txt",
+    "full_query": "mtproxy filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0086",
+    "query": "tg proxy filename:mtproto.json",
+    "full_query": "tg proxy filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0087",
+    "query": "t.me/proxy filename:tg-proxy.json",
+    "full_query": "t.me/proxy filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0088",
+    "query": "tg://proxy filename:README.md",
+    "full_query": "tg://proxy filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0089",
+    "query": "mtproxy filename:mtproxy.md",
+    "full_query": "mtproxy filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0090",
+    "query": "t.me/proxy filename:tg-proxy.txt",
+    "full_query": "t.me/proxy filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0091",
+    "query": "mtproxy filename:proxy.txt",
+    "full_query": "mtproxy filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0092",
+    "query": "tg proxy filename:tg-proxy.txt",
+    "full_query": "tg proxy filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0093",
+    "query": "t.me/proxy filename:list.txt",
+    "full_query": "t.me/proxy filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0094",
+    "query": "mtproxy filename:tg-proxy.json",
+    "full_query": "mtproxy filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0095",
+    "query": "tg proxy filename:telegram-proxy.txt",
+    "full_query": "tg proxy filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0096",
+    "query": "tg://proxy filename:proxies.txt",
+    "full_query": "tg://proxy filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0097",
+    "query": "t.me/proxy filename:README.md",
+    "full_query": "t.me/proxy filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0098",
+    "query": "tg://proxy filename:proxies.md",
+    "full_query": "tg://proxy filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0099",
+    "query": "telegram proxy filename:proxy-list.txt",
+    "full_query": "telegram proxy filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0100",
+    "query": "telegram proxy filename:mtproxy-list.txt",
+    "full_query": "telegram proxy filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0101",
+    "query": "mtproxy filename:proxy.yaml",
+    "full_query": "mtproxy filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0102",
+    "query": "mtproto filename:tg.txt",
+    "full_query": "mtproto filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0103",
+    "query": "mtproto filename:tg-proxies.txt",
+    "full_query": "mtproto filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0104",
+    "query": "telegram proxy filename:mtproxy.md",
+    "full_query": "telegram proxy filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0105",
+    "query": "telegram proxy filename:README.md",
+    "full_query": "telegram proxy filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0106",
+    "query": "mtproxy filename:tg.md",
+    "full_query": "mtproxy filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0107",
+    "query": "tg://proxy filename:proxy.txt",
+    "full_query": "tg://proxy filename:proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0108",
+    "query": "tg proxy filename:mtproto.txt",
+    "full_query": "tg proxy filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0109",
+    "query": "tg proxy filename:proxy.md",
+    "full_query": "tg proxy filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0110",
+    "query": "tg proxy filename:proxies.txt",
+    "full_query": "tg proxy filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0111",
+    "query": "t.me/proxy filename:mtproxy.txt",
+    "full_query": "t.me/proxy filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0112",
+    "query": "mtproxy filename:mtproxy.json",
+    "full_query": "mtproxy filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0113",
+    "query": "telegram proxy filename:proxies.txt",
+    "full_query": "telegram proxy filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0114",
+    "query": "mtproto filename:mtproto.json",
+    "full_query": "mtproto filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0115",
+    "query": "mtproxy filename:README.md",
+    "full_query": "mtproxy filename:README.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0116",
+    "query": "mtproto filename:proxy.md",
+    "full_query": "mtproto filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0117",
+    "query": "mtproxy filename:proxy-list.txt",
+    "full_query": "mtproxy filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0118",
+    "query": "tg://proxy filename:free-tg-proxy.txt",
+    "full_query": "tg://proxy filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0119",
+    "query": "mtproto filename:mtproxy.json",
+    "full_query": "mtproto filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0120",
+    "query": "mtproto filename:list.txt",
+    "full_query": "mtproto filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0121",
+    "query": "telegram proxy filename:telegram-proxies.txt",
+    "full_query": "telegram proxy filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0122",
+    "query": "mtproxy filename:tg.txt",
+    "full_query": "mtproxy filename:tg.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0123",
+    "query": "tg://proxy filename:proxies.yaml",
+    "full_query": "tg://proxy filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0124",
+    "query": "t.me/proxy filename:mtproxy.md",
+    "full_query": "t.me/proxy filename:mtproxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0125",
+    "query": "tg://proxy filename:mtproto.txt",
+    "full_query": "tg://proxy filename:mtproto.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0126",
+    "query": "telegram proxy filename:mtproxy.json",
+    "full_query": "telegram proxy filename:mtproxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0127",
+    "query": "mtproxy filename:proxy.md",
+    "full_query": "mtproxy filename:proxy.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0128",
+    "query": "t.me/proxy filename:proxy.yaml",
+    "full_query": "t.me/proxy filename:proxy.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0129",
+    "query": "tg proxy filename:tg.md",
+    "full_query": "tg proxy filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0130",
+    "query": "mtproto filename:tg-proxy.txt",
+    "full_query": "mtproto filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0131",
+    "query": "mtproxy filename:telegram-proxy.txt",
+    "full_query": "mtproxy filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0132",
+    "query": "mtproto filename:telegram-proxy.txt",
+    "full_query": "mtproto filename:telegram-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0133",
+    "query": "telegram proxy filename:tg-proxy.txt",
+    "full_query": "telegram proxy filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0134",
+    "query": "mtproto filename:proxies.txt",
+    "full_query": "mtproto filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0135",
+    "query": "tg://proxy filename:tg-proxy.json",
+    "full_query": "tg://proxy filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0136",
+    "query": "mtproxy filename:mtproto.json",
+    "full_query": "mtproxy filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0137",
+    "query": "telegram proxy filename:mtproxy.txt",
+    "full_query": "telegram proxy filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0138",
+    "query": "t.me/proxy filename:mtproto.json",
+    "full_query": "t.me/proxy filename:mtproto.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0139",
+    "query": "t.me/proxy filename:proxy-list.txt",
+    "full_query": "t.me/proxy filename:proxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0140",
+    "query": "t.me/proxy filename:telegram-proxies.txt",
+    "full_query": "t.me/proxy filename:telegram-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0141",
+    "query": "telegram proxy filename:mtproto.md",
+    "full_query": "telegram proxy filename:mtproto.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0142",
+    "query": "telegram proxy filename:proxies.yaml",
+    "full_query": "telegram proxy filename:proxies.yaml",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0143",
+    "query": "mtproxy filename:list.txt",
+    "full_query": "mtproxy filename:list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0144",
+    "query": "tg://proxy filename:tg-proxy.txt",
+    "full_query": "tg://proxy filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0145",
+    "query": "t.me/proxy filename:mtproxy-list.txt",
+    "full_query": "t.me/proxy filename:mtproxy-list.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0146",
+    "query": "telegram proxy filename:tg.md",
+    "full_query": "telegram proxy filename:tg.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0147",
+    "query": "mtproxy filename:proxies.txt",
+    "full_query": "mtproxy filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0148",
+    "query": "t.me/proxy filename:proxies.txt",
+    "full_query": "t.me/proxy filename:proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0149",
+    "query": "mtproxy filename:proxies.md",
+    "full_query": "mtproxy filename:proxies.md",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0150",
+    "query": "mtproxy filename:tg-proxy.txt",
+    "full_query": "mtproxy filename:tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0151",
+    "query": "mtproxy filename:free-tg-proxy.txt",
+    "full_query": "mtproxy filename:free-tg-proxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0152",
+    "query": "telegram proxy filename:tg-proxy.json",
+    "full_query": "telegram proxy filename:tg-proxy.json",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0153",
+    "query": "telegram proxy filename:tg-proxies.txt",
+    "full_query": "telegram proxy filename:tg-proxies.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  },
+  {
+    "slug": "tg_proxies-code-0154",
+    "query": "mtproxy filename:mtproxy.txt",
+    "full_query": "mtproxy filename:mtproxy.txt",
+    "priority": 88,
+    "reason": "tg term+filename"
+  }
+]

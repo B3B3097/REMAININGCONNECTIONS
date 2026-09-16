@@ -1,0 +1,57 @@
+name: Export Repo Code to TXT
+
+on:
+  workflow_dispatch: # Ручной запуск из вкладки Actions
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Code TXT
+        run: |
+          # Получаем имя текущего репозитория из переменных окружения GitHub
+          REPO_NAME="${{ github.event.repository.name }}"
+          OUTPUT_FILE="${REPO_NAME}_code.txt"
+          
+          # Очищаем файл на случай повторного запуска
+          > "$OUTPUT_FILE"
+          
+          echo "=== REPOSITORY CODE EXPORT: $REPO_NAME ===" >> "$OUTPUT_FILE"
+          echo "Generated on: $(date)" >> "$OUTPUT_FILE"
+          echo -e "===========================================\n\n" >> "$OUTPUT_FILE"
+
+          # Ищем все файлы, исключая Git, сам генерируемый файл, воркфлоу и медиа/бинарники
+          find . -type f \
+            ! -path "*/.git/*" \
+            ! -path "./.git" \
+            ! -path "./$OUTPUT_FILE" \
+            ! -name "*.png" \
+            ! -name "*.jpg" \
+            ! -name "*.jpeg" \
+            ! -name "*.gif" \
+            ! -name "*.ico" \
+            ! -name "*.zip" \
+            ! -name "*.tar.gz" \
+            ! -name "*.pdf" | sort | while read -r file; do
+              
+              echo "--------------------------------------------------" >> "$OUTPUT_FILE"
+              echo "FILE: $file" >> "$OUTPUT_FILE"
+              echo "--------------------------------------------------" >> "$OUTPUT_FILE"
+              cat "$file" >> "$OUTPUT_FILE"
+              echo -e "\n\n" >> "$OUTPUT_FILE"
+          done
+
+          echo "FILE_NAME=$OUTPUT_FILE" >> $GITHUB_ENV
+          echo "Export completed: $OUTPUT_FILE"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FILE_NAME }}
+          path: ${{ env.FILE_NAME }}

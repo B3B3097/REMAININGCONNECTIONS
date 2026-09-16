@@ -1,0 +1,138 @@
+name: Search Query Generator
+
+on:
+  schedule:
+    - cron: "40 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: не коммитить результаты"
+        required: false
+        type: boolean
+        default: false
+      commit_generated:
+        description: "Коммитить сгенерированные запросы"
+        required: false
+        type: boolean
+        default: true
+      target:
+        description: "Целевой проект/репозиторий"
+        required: false
+        type: string
+        default: ""
+      max_repo_queries:
+        description: "Лимит запросов для репозиториев"
+        required: false
+        type: string
+        default: "1200"
+      max_code_queries:
+        description: "Лимит запросов для кода"
+        required: false
+        type: string
+        default: "800"
+      seed:
+        description: "Seed"
+        required: false
+        type: string
+        default: "1337"
+
+concurrency:
+  group: search-query-generator
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  OUTPUT_DIR: ".github/generated"
+  GH_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ github.token }}
+  TARGET: ${{ github.event.inputs.target || '' }}
+  MAX_REPO_QUERIES: ${{ github.event.inputs.max_repo_queries || '1200' }}
+  MAX_CODE_QUERIES: ${{ github.event.inputs.max_code_queries || '800' }}
+  SEED: ${{ github.event.inputs.seed || '1337' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  generate:
+    name: Generate queries
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate queries
+        run: |
+          mkdir -p ""
+          TARGET_ARGS=""
+          if [ -n "" ]; then
+            TARGET_ARGS="--target "
+          fi
+          python scripts/generate_search_queries.py             --output-dir ""             --max-repo-queries ""             --max-code-queries ""             --seed ""                          --existing-data data/subscriptions_found.json data/tg_proxies_found.json data/utils_found.json
+
+      - name: Validate JSON
+        run: |
+          python -c "
+          import json, glob
+          files = glob.glob('.github/generated/**/*.json', recursive=True)
+          for f in files:
+              with open(f) as fh:
+                  json.load(fh)
+              print(f'[OK] {f}')
+          print(f'Validated {len(files)} files')
+          "
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-queries
+          path: .github/generated/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Commit
+        if: >-
+          ${{ github.event.inputs.dry_run != true &&
+          github.event.inputs.commit_generated != false }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/generated/
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore(queries): auto-generate [skip ci]"
+            push_ok=0
+            for i in 1 2 3; do
+              git rebase --abort 2>/dev/null || true
+              if git pull --rebase -X theirs --autostash origin main \
+                  && git push origin HEAD:main; then
+                push_ok=1
+                echo "[+] Pushed (attempt $i)"
+                break
+              fi
+              echo "[!] Push attempt $i failed, retrying in $((i * 15))s..."
+              sleep $((i * 15))
+            done
+            if [ "$push_ok" -ne 1 ]; then
+              echo "[!] Failed to push after 3 attempts"
+              exit 1
+            fi
+          fi
