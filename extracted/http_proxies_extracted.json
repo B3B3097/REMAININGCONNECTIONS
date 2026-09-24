@@ -1,5 +1,38 @@
 {
-  "generated_at": "2026-09-24T12:02:50.760398+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-09-24T17:27:09.061519+00:00",
+  "total_extracted": 4,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 1234,
+      "protocol": "http",
+      "type": "http",
+      "source": "strukturag/vlc-2.2",
+      "found_at": "2026-09-24T17:25:31.784916+00:00"
+    },
+    {
+      "host": "239.255.1.2",
+      "port": 5004,
+      "protocol": "http",
+      "type": "http",
+      "source": "strukturag/vlc-2.2",
+      "found_at": "2026-09-24T17:25:31.784932+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 12333,
+      "protocol": "http",
+      "type": "http",
+      "source": "shenwei356/awesome",
+      "found_at": "2026-09-24T17:25:56.470195+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "adriangalilea/namecheap-python",
+      "found_at": "2026-09-24T17:26:38.501260+00:00"
+    }
+  ]
 }
