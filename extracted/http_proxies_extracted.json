@@ -1,5 +1,30 @@
 {
-  "generated_at": "2026-10-01T00:01:39.621366+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-10-01T06:17:30.593222+00:00",
+  "total_extracted": 3,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 8000,
+      "protocol": "http",
+      "type": "http",
+      "source": "bda-research/node-crawler",
+      "found_at": "2026-10-01T06:17:07.965702+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "dixudx/tumblr-crawler",
+      "found_at": "2026-10-01T06:17:08.672493+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 8888,
+      "protocol": "http",
+      "type": "http",
+      "source": "anandprtp/Antra",
+      "found_at": "2026-10-01T06:17:13.728262+00:00"
+    }
+  ]
 }
