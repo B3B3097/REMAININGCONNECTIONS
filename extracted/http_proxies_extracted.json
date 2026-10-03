@@ -1,5 +1,54 @@
 {
-  "generated_at": "2026-10-03T11:53:10.634198+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-10-03T16:34:51.698818+00:00",
+  "total_extracted": 6,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 5000,
+      "protocol": "http",
+      "type": "http",
+      "source": "CIRCL/AIL-framework",
+      "found_at": "2026-10-03T16:34:18.977963+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 7700,
+      "protocol": "http",
+      "type": "http",
+      "source": "CIRCL/AIL-framework",
+      "found_at": "2026-10-03T16:34:18.977978+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1086,
+      "protocol": "http",
+      "type": "http",
+      "source": "vikyd/note",
+      "found_at": "2026-10-03T16:34:19.689927+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1087,
+      "protocol": "http",
+      "type": "http",
+      "source": "vikyd/note",
+      "found_at": "2026-10-03T16:34:19.689939+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 9050,
+      "protocol": "http",
+      "type": "http",
+      "source": "tedchen0001/OSCP-Notes",
+      "found_at": "2026-10-03T16:34:27.127655+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "feixiao/ubuntu",
+      "found_at": "2026-10-03T16:34:27.814397+00:00"
+    }
+  ]
 }
