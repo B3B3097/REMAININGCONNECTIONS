@@ -66,9 +66,14 @@ venv.bak/
 *~
 
 # Data & Logs (Generated files)
-data/*.json
+# ВАЖНО: data/*.json — это опубликованные результаты поиска, которые читают
+# scripts/dashboard_generator.py (сборка docs/index.html для GitHub Pages)
+# и server.js (Vercel/локальный сайт). Их НЕЛЬЗЯ игнорировать, иначе
+# данные никогда не попадают в репозиторий и на сайт не выводятся
+# свежие подписки/прокси/утилиты.
 data/*.log
 data/backups/
+data/*.tmp
 logs/
 output/
 tests/test_run.log

@@ -1789,7 +1789,9 @@ def main():
 
     payload = generate_all(args)
 
-    output_dir = args.output_dir
+    # Пустой --output-dir (например, из-за неразвернувшейся переменной
+    # окружения в CI) раньше приводил к падению os.makedirs("").
+    output_dir = (args.output_dir or "").strip() or ".github/generated"
 
     os.makedirs(output_dir, exist_ok=True)
 
