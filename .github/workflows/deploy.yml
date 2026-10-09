@@ -29,6 +29,37 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check discovery data before build
+        # Если data/*.json не закоммичены (например, из-за .gitignore),
+        # дашборд молча соберётся пустым — предупредим об этом в логе.
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          files = [
+              ("subscriptions", "data/subscriptions_found.json", "subscriptions"),
+              ("telegram", "data/tg_proxies_found.json", "proxies"),
+              ("http", "data/http_proxies_found.json", "proxies"),
+              ("socks", "data/socks_proxies_found.json", "proxies"),
+              ("utilities", "data/utils_found.json", "utilities"),
+          ]
+          missing = []
+          for name, path, key in files:
+              count = 0
+              try:
+                  with open(path, "r", encoding="utf-8") as fh:
+                      data = json.load(fh)
+                  value = data.get(key) if isinstance(data, dict) else None
+                  count = len(value) if isinstance(value, list) else 0
+              except (OSError, ValueError):
+                  missing.append(path)
+              print(f"{name:15s}: {count:6d} ({path})")
+          if missing:
+              print("::warning::Нет данных для дашборда (файлы отсутствуют): "
+                    + ", ".join(missing))
+          PY
+
       - name: Generate Dashboard
         run: python scripts/dashboard_generator.py
 

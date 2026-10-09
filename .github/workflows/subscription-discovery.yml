@@ -198,7 +198,7 @@ jobs:
             "github-actions[bot]@users.noreply.github.com"
           git config http.postBuffer 524288000
           git config core.compression 9
-          git add data/subscriptions_found.json
+          git add -f data/subscriptions_found.json
           if git diff --staged --quiet; then
             echo "[*] No changes to commit."
           else

@@ -79,12 +79,42 @@ jobs:
 
       - name: Generate queries
         run: |
-          mkdir -p ""
-          TARGET_ARGS=""
-          if [ -n "" ]; then
-            TARGET_ARGS="--target "
+          set -euo pipefail
+          # Значения берём из окружения шага (workflow-level env), а не через
+          # ${{ env.* }}: при подстановке на этапе парсинга YAML они превращались
+          # в пустые строки и скрипт падал на os.makedirs("").
+          OUTPUT_DIR="${OUTPUT_DIR:-.github/generated}"
+          MAX_REPO_QUERIES="${MAX_REPO_QUERIES:-1200}"
+          MAX_CODE_QUERIES="${MAX_CODE_QUERIES:-800}"
+          SEED="${SEED:-1337}"
+          TARGET="${TARGET:-}"
+
+          echo "[+] output-dir=${OUTPUT_DIR} repo=${MAX_REPO_QUERIES} code=${MAX_CODE_QUERIES} seed=${SEED}"
+          mkdir -p "${OUTPUT_DIR}"
+
+          TARGET_ARGS=()
+          if [ -n "${TARGET}" ]; then
+            TARGET_ARGS=(--target "${TARGET}")
           fi
-          python scripts/generate_search_queries.py             --output-dir ""             --max-repo-queries ""             --max-code-queries ""             --seed ""                          --existing-data data/subscriptions_found.json data/tg_proxies_found.json data/utils_found.json
+
+          # Передаём только реально существующие файлы с предыдущими находками
+          EXISTING_ARGS=()
+          for f in data/subscriptions_found.json data/tg_proxies_found.json data/utils_found.json; do
+            if [ -f "${f}" ]; then
+              EXISTING_ARGS+=("${f}")
+            fi
+          done
+
+          set -- --output-dir "${OUTPUT_DIR}" \
+                 --max-repo-queries "${MAX_REPO_QUERIES}" \
+                 --max-code-queries "${MAX_CODE_QUERIES}" \
+                 --seed "${SEED}" \
+                 "${TARGET_ARGS[@]+"${TARGET_ARGS[@]}"}"
+          if [ "${#EXISTING_ARGS[@]}" -gt 0 ]; then
+            set -- "$@" --existing-data "${EXISTING_ARGS[@]}"
+          fi
+
+          python scripts/generate_search_queries.py "$@"
 
       - name: Validate JSON
         run: |
