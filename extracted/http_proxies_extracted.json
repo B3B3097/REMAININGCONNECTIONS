@@ -1,5 +1,46 @@
 {
-  "generated_at": "2026-10-12T06:16:27.987492+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-10-12T15:51:37.376215+00:00",
+  "total_extracted": 5,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 5000,
+      "protocol": "http",
+      "type": "http",
+      "source": "CIRCL/AIL-framework",
+      "found_at": "2026-10-12T15:51:05.437114+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 7700,
+      "protocol": "http",
+      "type": "http",
+      "source": "CIRCL/AIL-framework",
+      "found_at": "2026-10-12T15:51:05.437132+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1086,
+      "protocol": "http",
+      "type": "http",
+      "source": "vikyd/note",
+      "found_at": "2026-10-12T15:51:06.055651+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1087,
+      "protocol": "http",
+      "type": "http",
+      "source": "vikyd/note",
+      "found_at": "2026-10-12T15:51:06.055661+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1080,
+      "protocol": "http",
+      "type": "http",
+      "source": "feixiao/ubuntu",
+      "found_at": "2026-10-12T15:51:12.479754+00:00"
+    }
+  ]
 }
