@@ -1,7 +1,7 @@
 function FindProxyForURL(url, host) {
     // Proxy list
     var proxies = [
-        "PROXY 1.1.189.58:8080",
+        "PROXY 47.94.205.252:8080",
     ];
     
     // Round-robin selection
