@@ -1,5 +1,30 @@
 {
-  "generated_at": "2026-10-20T05:05:34.273737+00:00",
-  "total_extracted": 0,
-  "proxies": []
+  "generated_at": "2026-10-20T11:56:03.133309+00:00",
+  "total_extracted": 3,
+  "proxies": [
+    {
+      "host": "127.0.0.1",
+      "port": 3000,
+      "protocol": "http",
+      "type": "http",
+      "source": "rahgozar94725/MTProto-Checker",
+      "found_at": "2026-10-20T11:55:45.556050+00:00"
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 21100,
+      "protocol": "http",
+      "type": "http",
+      "source": "linera-io/linera-protocol",
+      "found_at": "2026-10-20T11:55:47.048361+00:00"
+    },
+    {
+      "host": "192.168.0.18",
+      "port": 6443,
+      "protocol": "http",
+      "type": "http",
+      "source": "collabnix/kubelabs",
+      "found_at": "2026-10-20T11:55:47.764853+00:00"
+    }
+  ]
 }
