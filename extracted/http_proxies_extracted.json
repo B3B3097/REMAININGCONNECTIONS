@@ -1,30 +1,14 @@
 {
-  "generated_at": "2026-10-24T18:57:09.909085+00:00",
-  "total_extracted": 38,
+  "generated_at": "2026-10-24T22:37:51.174686+00:00",
+  "total_extracted": 7,
   "proxies": [
-    {
-      "host": "127.0.0.1",
-      "port": 1234,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-10-24T18:55:03.549937+00:00"
-    },
-    {
-      "host": "239.255.1.2",
-      "port": 5004,
-      "protocol": "http",
-      "type": "http",
-      "source": "strukturag/vlc-2.2",
-      "found_at": "2026-10-24T18:55:03.549952+00:00"
-    },
     {
       "host": "175.178.182.178",
       "port": 12580,
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:15.226202+00:00"
+      "found_at": "2026-10-24T22:37:03.532390+00:00"
     },
     {
       "host": "150.230.195.209",
@@ -32,7 +16,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:15.226214+00:00"
+      "found_at": "2026-10-24T22:37:03.532407+00:00"
     },
     {
       "host": "141.147.161.50",
@@ -40,7 +24,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:15.226215+00:00"
+      "found_at": "2026-10-24T22:37:03.532410+00:00"
     },
     {
       "host": "155.248.172.106",
@@ -48,7 +32,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:15.226217+00:00"
+      "found_at": "2026-10-24T22:37:03.532411+00:00"
     },
     {
       "host": "66.42.50.118",
@@ -56,7 +40,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:15.226218+00:00"
+      "found_at": "2026-10-24T22:37:03.532413+00:00"
     },
     {
       "host": "174.137.58.32",
@@ -64,7 +48,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:16.636282+00:00"
+      "found_at": "2026-10-24T22:37:04.840449+00:00"
     },
     {
       "host": "104.168.244.47",
@@ -72,239 +56,7 @@
       "protocol": "http",
       "type": "http",
       "source": "sleaa17aol/Proxy-",
-      "found_at": "2026-10-24T18:55:16.636292+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518162+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 9050,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518174+00:00"
-    },
-    {
-      "host": "1.2.3.4",
-      "port": 5678,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518175+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5678,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518176+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 4554,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518177+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8808,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518178+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 22,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518179+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8084,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518180+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 1441,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518181+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8088,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518182+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8008,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518183+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5667,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518184+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8000,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518186+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8088,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518187+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 8089,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518188+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 1234,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518189+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518190+00:00"
-    },
-    {
-      "host": "174.129.224.73",
-      "port": 1080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518191+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8800,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518192+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 4567,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518194+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 5445,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518195+00:00"
-    },
-    {
-      "host": "0.0.0.0",
-      "port": 8080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518196+00:00"
-    },
-    {
-      "host": "192.168.0.3",
-      "port": 1025,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518197+00:00"
-    },
-    {
-      "host": "174.129.224.73",
-      "port": 80,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518198+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 1235,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518199+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 1080,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518200+00:00"
-    },
-    {
-      "host": "132.148.129.183",
-      "port": 14124,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518200+00:00"
-    },
-    {
-      "host": "255.255.255.255",
-      "port": 65535,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518202+00:00"
-    },
-    {
-      "host": "127.0.0.1",
-      "port": 23,
-      "protocol": "http",
-      "type": "http",
-      "source": "vi/websocat",
-      "found_at": "2026-10-24T18:56:32.518202+00:00"
+      "found_at": "2026-10-24T22:37:04.840463+00:00"
     }
   ]
 }
