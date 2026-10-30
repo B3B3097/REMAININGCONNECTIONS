@@ -1,82 +1,97 @@
-{
-  "timestamp": "2026-10-30T01:36:11.977687+00:00",
-  "overall_status": "warning",
-  "checks": {
-    "subscriptions": {
-      "freshness": {
-        "status": "warning",
-        "message": "Age: 5.5h",
-        "fresh": false,
-        "age_hours": 5.5085358569444445,
-        "last_update": "2026-10-29T20:05:41.290993+00:00"
+[
+  {
+    "timestamp": "2026-10-30T01:36:11.977687+00:00",
+    "overall_status": "warning",
+    "checks": {
+      "subscriptions": {
+        "freshness": {
+          "status": "warning",
+          "message": "Age: 5.5h",
+          "fresh": false,
+          "age_hours": 5.5085358569444445,
+          "last_update": "2026-10-29T20:05:41.290993+00:00"
+        },
+        "availability": {
+          "status": "warning",
+          "count": 0,
+          "minimum": 10,
+          "sufficient": false
+        }
       },
-      "availability": {
-        "status": "warning",
-        "count": 0,
-        "minimum": 10,
-        "sufficient": false
+      "telegram": {
+        "freshness": {
+          "status": "ok",
+          "message": "Age: 0.5h",
+          "fresh": true,
+          "age_hours": 0.5424182652777778,
+          "last_update": "2026-10-30T01:03:39.361886+00:00"
+        },
+        "availability": {
+          "status": "ok",
+          "count": 5998,
+          "minimum": 5,
+          "sufficient": true
+        }
+      },
+      "http": {
+        "freshness": {
+          "status": "ok",
+          "message": "Age: 1.6h",
+          "fresh": true,
+          "age_hours": 1.557021016111111,
+          "last_update": "2026-10-30T00:02:46.815576+00:00"
+        },
+        "availability": {
+          "status": "warning",
+          "count": 0,
+          "minimum": 10,
+          "sufficient": false
+        }
+      },
+      "socks": {
+        "freshness": {
+          "status": "ok",
+          "message": "Age: 1.6h",
+          "fresh": true,
+          "age_hours": 1.5569572738888888,
+          "last_update": "2026-10-30T00:02:47.045117+00:00"
+        },
+        "availability": {
+          "status": "warning",
+          "count": 0,
+          "minimum": 5,
+          "sufficient": false
+        }
+      },
+      "summary": {
+        "freshness": {
+          "status": "ok",
+          "message": "Age: 0.5h",
+          "fresh": true,
+          "age_hours": 0.5382737591666666,
+          "last_update": "2026-10-30T01:03:54.305822+00:00"
+        },
+        "availability": {
+          "status": "ok",
+          "count": 0,
+          "minimum": 0,
+          "sufficient": true
+        }
       }
     },
-    "telegram": {
-      "freshness": {
-        "status": "ok",
-        "message": "Age: 0.5h",
-        "fresh": true,
-        "age_hours": 0.5424182652777778,
-        "last_update": "2026-10-30T01:03:39.361886+00:00"
-      },
-      "availability": {
-        "status": "ok",
-        "count": 5998,
-        "minimum": 5,
-        "sufficient": true
-      }
-    },
-    "http": {
-      "freshness": {
-        "status": "ok",
-        "message": "Age: 1.6h",
-        "fresh": true,
-        "age_hours": 1.557021016111111,
-        "last_update": "2026-10-30T00:02:46.815576+00:00"
-      },
-      "availability": {
-        "status": "warning",
-        "count": 0,
-        "minimum": 10,
-        "sufficient": false
-      }
-    },
-    "socks": {
-      "freshness": {
-        "status": "ok",
-        "message": "Age: 1.6h",
-        "fresh": true,
-        "age_hours": 1.5569572738888888,
-        "last_update": "2026-10-30T00:02:47.045117+00:00"
-      },
-      "availability": {
-        "status": "warning",
-        "count": 0,
-        "minimum": 5,
-        "sufficient": false
-      }
-    },
-    "summary": {
-      "freshness": {
-        "status": "ok",
-        "message": "Age: 0.5h",
-        "fresh": true,
-        "age_hours": 0.5382737591666666,
-        "last_update": "2026-10-30T01:03:54.305822+00:00"
-      },
-      "availability": {
-        "status": "ok",
-        "count": 0,
-        "minimum": 0,
-        "sufficient": true
-      }
-    }
+    "total_proxies": 5998
   },
-  "total_proxies": 5998
-}
+  {
+    "total": 5998,
+    "working": 706,
+    "success_rate": 0.11770590196732245,
+    "avg_latency_ms": 630.25,
+    "protocols": {
+      "mtproto": 5998
+    },
+    "bypass_needed": 706,
+    "subscriptions_total": 17,
+    "subscriptions_working": 8,
+    "timestamp": "2026-10-30T02:45:01.021137Z"
+  }
+]
