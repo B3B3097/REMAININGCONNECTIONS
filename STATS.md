@@ -1,13 +1,13 @@
 ## 📊 Current Stats
 
-**Total Proxies Found:** 6366
+**Total Proxies Found:** 6369
 
 | Category | Count |
 |----------|-------|
-| Subscriptions | 17 |
+| Subscriptions | 20 |
 | Telegram Proxies | 6049 |
 | HTTP Proxies | 0 |
 | SOCKS Proxies | 0 |
 | Utilities | 300 |
 
-*Last updated: 2026-10-30 18:49:30 UTC*
+*Last updated: 2026-10-30 18:57:54 UTC*
