@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-10-29T21:03:44.896761Z",
+  "generated_at": "2026-10-30T00:42:13.393101Z",
   "generator": "utils-discovery.yml",
   "project": "REMAININGCONNECTIONS dashboard",
   "telegram_channel": "https://t.me/REMAININGCONNECTIONS",
   "candidates_checked": 300,
   "summary": {
     "total_utilities": 300,
-    "with_release": 240,
-    "without_release": 60,
+    "with_release": 239,
+    "without_release": 61,
     "android": 43,
     "ios": 16,
-    "windows": 94,
+    "windows": 95,
     "linux": 101,
-    "active": 179,
+    "active": 178,
     "stale": 18,
     "outdated": 43,
     "no_release": 20,
-    "no_release_recent_repo": 40
+    "no_release_recent_repo": 41
   },
   "utilities": [
     {
@@ -36,10 +36,10 @@
         "tauri-app",
         "windows"
       ],
-      "stars": 154911,
-      "forks": 11127,
+      "stars": 154917,
+      "forks": 11128,
       "archived": false,
-      "pushed_at": "2026-10-29T17:39:20Z",
+      "pushed_at": "2026-10-29T22:56:02Z",
       "query_slugs": [
         "code",
         "repo"
@@ -161,7 +161,7 @@
         }
       ],
       "status": "active",
-      "score": 165751
+      "score": 165757
     },
     {
       "id": 2,
@@ -183,8 +183,8 @@
         "xray",
         "xtls"
       ],
-      "stars": 119454,
-      "forks": 16206,
+      "stars": 119458,
+      "forks": 16207,
       "archived": false,
       "pushed_at": "2026-10-29T18:48:08Z",
       "query_slugs": [
@@ -320,7 +320,7 @@
         }
       ],
       "status": "active",
-      "score": 130310
+      "score": 130314
     },
     {
       "id": 3,
@@ -336,8 +336,8 @@
         "nodejs",
         "promise"
       ],
-      "stars": 109307,
-      "forks": 11963,
+      "stars": 109309,
+      "forks": 11965,
       "archived": false,
       "pushed_at": "2026-10-28T11:43:41Z",
       "query_slugs": [
@@ -362,7 +362,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 117783
+      "score": 117785
     },
     {
       "id": 4,
@@ -385,8 +385,8 @@
         "xray",
         "xtls"
       ],
-      "stars": 64939,
-      "forks": 8444,
+      "stars": 64941,
+      "forks": 8446,
       "archived": false,
       "pushed_at": "2026-10-28T03:06:38Z",
       "query_slugs": [
@@ -509,7 +509,7 @@
         }
       ],
       "status": "active",
-      "score": 73295
+      "score": 73297
     },
     {
       "id": 5,
@@ -529,8 +529,8 @@
         "vless",
         "vpn"
       ],
-      "stars": 59618,
-      "forks": 3878,
+      "stars": 59634,
+      "forks": 3879,
       "archived": false,
       "pushed_at": "2026-10-24T05:53:06Z",
       "query_slugs": [
@@ -663,7 +663,7 @@
         }
       ],
       "status": "active",
-      "score": 73078
+      "score": 73094
     },
     {
       "id": 6,
@@ -695,7 +695,7 @@
       "stars": 52244,
       "forks": 4434,
       "archived": false,
-      "pushed_at": "2026-10-29T20:18:35Z",
+      "pushed_at": "2026-10-29T23:05:04Z",
       "query_slugs": [
         "repo"
       ],
@@ -838,7 +838,7 @@
         "proxy",
         "shadowsocks"
       ],
-      "stars": 59508,
+      "stars": 59509,
       "forks": 16140,
       "archived": false,
       "pushed_at": "2025-01-01T08:09:55Z",
@@ -872,7 +872,7 @@
         }
       ],
       "status": "outdated",
-      "score": 62008
+      "score": 62009
     },
     {
       "id": 8,
@@ -903,8 +903,8 @@
         "x25519",
         "xhttp"
       ],
-      "stars": 48845,
-      "forks": 12566,
+      "stars": 48847,
+      "forks": 12568,
       "archived": false,
       "pushed_at": "2026-10-29T09:09:29Z",
       "query_slugs": [
@@ -1039,7 +1039,7 @@
         }
       ],
       "status": "active",
-      "score": 59813
+      "score": 59815
     },
     {
       "id": 9,
@@ -1059,7 +1059,7 @@
         "requests"
       ],
       "stars": 54564,
-      "forks": 12093,
+      "forks": 12091,
       "archived": false,
       "pushed_at": "2026-10-26T17:14:44Z",
       "query_slugs": [
@@ -1177,7 +1177,7 @@
         "tailscale-server",
         "wireguard"
       ],
-      "stars": 45173,
+      "stars": 45178,
       "forks": 2619,
       "archived": false,
       "pushed_at": "2026-10-29T19:52:39Z",
@@ -1280,7 +1280,7 @@
         }
       ],
       "status": "active",
-      "score": 56133
+      "score": 56138
     },
     {
       "id": 12,
@@ -1309,7 +1309,7 @@
         "tls-certificate",
         "zerossl"
       ],
-      "stars": 47878,
+      "stars": 47879,
       "forks": 5703,
       "archived": false,
       "pushed_at": "2026-10-23T02:31:28Z",
@@ -1333,7 +1333,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 53566
+      "score": 53567
     },
     {
       "id": 13,
@@ -1364,10 +1364,10 @@
         "xtls",
         "xudp"
       ],
-      "stars": 42443,
+      "stars": 42446,
       "forks": 6064,
       "archived": false,
-      "pushed_at": "2026-10-29T20:13:21Z",
+      "pushed_at": "2026-10-30T00:12:41Z",
       "query_slugs": [
         "repo"
       ],
@@ -1484,7 +1484,7 @@
         }
       ],
       "status": "active",
-      "score": 53443
+      "score": 53446
     },
     {
       "id": 14,
@@ -1494,8 +1494,8 @@
       "description": "The universal proxy platform",
       "language": "Go",
       "topics": [],
-      "stars": 39389,
-      "forks": 4845,
+      "stars": 39393,
+      "forks": 4844,
       "archived": false,
       "pushed_at": "2026-10-28T02:44:53Z",
       "query_slugs": [
@@ -1630,7 +1630,7 @@
         }
       ],
       "status": "active",
-      "score": 52849
+      "score": 52853
     },
     {
       "id": 15,
@@ -1802,10 +1802,10 @@
         "user-agent",
         "websocket"
       ],
-      "stars": 43311,
+      "stars": 43315,
       "forks": 7470,
       "archived": false,
-      "pushed_at": "2026-10-29T20:51:37Z",
+      "pushed_at": "2026-10-30T00:16:38Z",
       "query_slugs": [
         "repo"
       ],
@@ -1890,7 +1890,7 @@
         }
       ],
       "status": "active",
-      "score": 49191
+      "score": 49195
     },
     {
       "id": 17,
@@ -1900,8 +1900,8 @@
       "description": "Reverse Engineering / Authorized Penetration Testing / Security Research Skill Router Pack AI-powered routing + On-demand toolchain bootstrapping + Self-evolving knowledge base  Supports Claude Code, Kiro, Cursor, Cline, and other AI coding clients 逆向/渗透/安全技能路由包 - AI 自动路由 + 按需自举工具链 + 自动进化经验库 | 支持 Claude Code / Kiro / Cursor / Cline 等代码 AI 客户端",
       "language": "PowerShell",
       "topics": [],
-      "stars": 43735,
-      "forks": 6462,
+      "stars": 43742,
+      "forks": 6466,
       "archived": false,
       "pushed_at": "2026-09-22T06:43:21Z",
       "query_slugs": [
@@ -1924,7 +1924,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 49079
+      "score": 49086
     },
     {
       "id": 18,
@@ -1989,7 +1989,7 @@
         "styled-components"
       ],
       "stars": 41057,
-      "forks": 2610,
+      "forks": 2609,
       "archived": false,
       "pushed_at": "2026-10-29T20:44:35Z",
       "query_slugs": [
@@ -2382,7 +2382,7 @@
       "stars": 33519,
       "forks": 3144,
       "archived": false,
-      "pushed_at": "2026-10-29T20:29:05Z",
+      "pushed_at": "2026-10-29T23:50:17Z",
       "query_slugs": [
         "code",
         "repo"
@@ -2540,7 +2540,7 @@
       "stars": 34726,
       "forks": 5088,
       "archived": false,
-      "pushed_at": "2026-10-26T22:53:01Z",
+      "pushed_at": "2026-10-29T22:53:12Z",
       "query_slugs": [
         "repo"
       ],
@@ -2549,7 +2549,7 @@
       "latest_release_name": "v5.53.0",
       "latest_release_url": "https://github.com/v2fly/v2ray-core/releases/tag/v5.53.0",
       "latest_release_published_at": "2026-08-02T22:46:29Z",
-      "release_age_days": 87,
+      "release_age_days": 88,
       "platforms": {
         "android": true,
         "ios": false,
@@ -2653,7 +2653,7 @@
         }
       ],
       "status": "active",
-      "score": 45030
+      "score": 45022
     },
     {
       "id": 25,
@@ -2666,7 +2666,7 @@
         "android",
         "shadowsocks"
       ],
-      "stars": 36829,
+      "stars": 36830,
       "forks": 11411,
       "archived": false,
       "pushed_at": "2026-08-09T11:06:54Z",
@@ -2712,7 +2712,7 @@
         }
       ],
       "status": "active",
-      "score": 43241
+      "score": 43242
     },
     {
       "id": 26,
@@ -2733,7 +2733,7 @@
         "vmess",
         "vpn"
       ],
-      "stars": 43053,
+      "stars": 43054,
       "forks": 5641,
       "archived": false,
       "pushed_at": "2024-08-20T09:43:55Z",
@@ -2757,7 +2757,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release",
-      "score": 43053
+      "score": 43054
     },
     {
       "id": 27,
@@ -2775,7 +2775,7 @@
         "shadowsocks",
         "windows"
       ],
-      "stars": 28635,
+      "stars": 28634,
       "forks": 3196,
       "archived": false,
       "pushed_at": "2026-10-28T07:07:25Z",
@@ -2888,7 +2888,7 @@
         }
       ],
       "status": "active",
-      "score": 39603
+      "score": 39602
     },
     {
       "id": 28,
@@ -2905,10 +2905,10 @@
         "letsencrypt",
         "python"
       ],
-      "stars": 33302,
+      "stars": 33303,
       "forks": 3508,
       "archived": false,
-      "pushed_at": "2026-10-29T19:51:08Z",
+      "pushed_at": "2026-10-29T21:56:45Z",
       "query_slugs": [
         "repo"
       ],
@@ -3014,7 +3014,7 @@
         }
       ],
       "status": "active",
-      "score": 39302
+      "score": 39303
     },
     {
       "id": 29,
@@ -3206,10 +3206,10 @@
         "tauri",
         "vue"
       ],
-      "stars": 28165,
+      "stars": 28168,
       "forks": 2556,
       "archived": false,
-      "pushed_at": "2026-10-29T18:52:31Z",
+      "pushed_at": "2026-10-29T22:40:59Z",
       "query_slugs": [
         "repo"
       ],
@@ -3326,7 +3326,7 @@
         }
       ],
       "status": "active",
-      "score": 39165
+      "score": 39168
     },
     {
       "id": 31,
@@ -3462,7 +3462,7 @@
         "ymodem",
         "zmodem"
       ],
-      "stars": 32554,
+      "stars": 32555,
       "forks": 2490,
       "archived": false,
       "pushed_at": "2025-03-11T19:12:09Z",
@@ -3527,7 +3527,7 @@
         }
       ],
       "status": "stale",
-      "score": 38778
+      "score": 38779
     },
     {
       "id": 34,
@@ -3555,18 +3555,18 @@
         "surge",
         "v2ray"
       ],
-      "stars": 29043,
+      "stars": 29042,
       "forks": 2223,
       "archived": false,
-      "pushed_at": "2026-10-28T22:35:55Z",
+      "pushed_at": "2026-10-29T22:36:05Z",
       "query_slugs": [
         "repo"
       ],
       "has_release": true,
-      "latest_release_tag": "202610282235",
-      "latest_release_name": "Released on 202610282235",
-      "latest_release_url": "https://github.com/Loyalsoldier/clash-rules/releases/tag/202610282235",
-      "latest_release_published_at": "2026-10-28T22:35:52Z",
+      "latest_release_tag": "202610292235",
+      "latest_release_name": "Released on 202610292235",
+      "latest_release_url": "https://github.com/Loyalsoldier/clash-rules/releases/tag/202610292235",
+      "latest_release_published_at": "2026-10-29T22:36:02Z",
       "release_age_days": 0,
       "platforms": {
         "android": false,
@@ -3582,91 +3582,91 @@
       "release_assets": [
         {
           "name": "apple.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/apple.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/apple.txt",
           "size_mb": 0.01,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "applications.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/applications.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/applications.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "cncidr.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/cncidr.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/cncidr.txt",
           "size_mb": 0.21,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "direct.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/direct.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/direct.txt",
           "size_mb": 2.18,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "gfw.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/gfw.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/gfw.txt",
           "size_mb": 0.09,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "google.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/google.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/google.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "greatfire.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/greatfire.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/greatfire.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "icloud.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/icloud.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/icloud.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "lancidr.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/lancidr.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/lancidr.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "private.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/private.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/private.txt",
           "size_mb": 0.0,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "proxy.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/proxy.txt",
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/proxy.txt",
           "size_mb": 0.59,
           "content_type": "text/plain",
           "platform_hint": []
         },
         {
           "name": "reject.txt",
-          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610282235/reject.txt",
-          "size_mb": 5.35,
+          "url": "https://github.com/Loyalsoldier/clash-rules/releases/download/202610292235/reject.txt",
+          "size_mb": 5.36,
           "content_type": "text/plain",
           "platform_hint": []
         }
       ],
       "status": "active",
-      "score": 37543
+      "score": 37542
     },
     {
       "id": 35,
@@ -3680,10 +3680,10 @@
         "computer-vision",
         "maa"
       ],
-      "stars": 24097,
+      "stars": 24098,
       "forks": 2905,
       "archived": false,
-      "pushed_at": "2026-10-29T20:36:10Z",
+      "pushed_at": "2026-10-29T22:28:47Z",
       "query_slugs": [
         "repo"
       ],
@@ -3811,7 +3811,7 @@
         }
       ],
       "status": "active",
-      "score": 37525
+      "score": 37526
     },
     {
       "id": 36,
@@ -3897,7 +3897,7 @@
         "spotify",
         "windows"
       ],
-      "stars": 25299,
+      "stars": 25300,
       "forks": 994,
       "archived": false,
       "pushed_at": "2026-10-28T17:39:47Z",
@@ -3979,7 +3979,7 @@
         }
       ],
       "status": "active",
-      "score": 36275
+      "score": 36276
     },
     {
       "id": 38,
@@ -4303,7 +4303,7 @@
         "windows-app"
       ],
       "stars": 23811,
-      "forks": 1656,
+      "forks": 1657,
       "archived": false,
       "pushed_at": "2026-10-29T18:59:13Z",
       "query_slugs": [
@@ -4448,10 +4448,10 @@
         "model-context-protocol",
         "python"
       ],
-      "stars": 28237,
-      "forks": 2540,
+      "stars": 28238,
+      "forks": 2541,
       "archived": false,
-      "pushed_at": "2026-10-29T20:40:24Z",
+      "pushed_at": "2026-10-29T23:40:07Z",
       "query_slugs": [
         "repo"
       ],
@@ -4472,7 +4472,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 34213
+      "score": 34214
     },
     {
       "id": 42,
@@ -4486,7 +4486,7 @@
         "v2ray",
         "vmess"
       ],
-      "stars": 29813,
+      "stars": 29814,
       "forks": 16536,
       "archived": false,
       "pushed_at": "2026-01-15T00:50:11Z",
@@ -4518,7 +4518,7 @@
         }
       ],
       "status": "active",
-      "score": 33517
+      "score": 33518
     },
     {
       "id": 43,
@@ -4562,8 +4562,8 @@
       "description": "The easiest way to run WireGuard VPN + Web-based Admin UI.",
       "language": "TypeScript",
       "topics": [],
-      "stars": 27329,
-      "forks": 2596,
+      "stars": 27330,
+      "forks": 2597,
       "archived": false,
       "pushed_at": "2026-10-29T14:17:42Z",
       "query_slugs": [
@@ -4586,7 +4586,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 33289
+      "score": 33290
     },
     {
       "id": 45,
@@ -4610,7 +4610,7 @@
         "restful-api",
         "sdk"
       ],
-      "stars": 26839,
+      "stars": 26840,
       "forks": 7741,
       "archived": false,
       "pushed_at": "2026-10-29T13:02:21Z",
@@ -4642,7 +4642,7 @@
         }
       ],
       "status": "active",
-      "score": 32655
+      "score": 32656
     },
     {
       "id": 46,
@@ -4734,10 +4734,10 @@
         "shadowrocket",
         "v2ray"
       ],
-      "stars": 31662,
+      "stars": 31663,
       "forks": 2106,
       "archived": false,
-      "pushed_at": "2026-10-28T23:02:52Z",
+      "pushed_at": "2026-10-29T23:03:05Z",
       "query_slugs": [
         "code",
         "repo"
@@ -4759,7 +4759,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "outdated",
-      "score": 31662
+      "score": 31663
     },
     {
       "id": 48,
@@ -4790,7 +4790,7 @@
         "vits",
         "windows"
       ],
-      "stars": 15600,
+      "stars": 15603,
       "forks": 1828,
       "archived": false,
       "pushed_at": "2026-10-29T12:00:57Z",
@@ -4918,7 +4918,7 @@
         }
       ],
       "status": "active",
-      "score": 31576
+      "score": 31579
     },
     {
       "id": 49,
@@ -4952,7 +4952,7 @@
       "stars": 15501,
       "forks": 1253,
       "archived": false,
-      "pushed_at": "2026-10-29T14:04:11Z",
+      "pushed_at": "2026-10-30T00:08:25Z",
       "query_slugs": [
         "repo"
       ],
@@ -5118,7 +5118,7 @@
         "vpn-client",
         "vpn-server"
       ],
-      "stars": 28888,
+      "stars": 28889,
       "forks": 6523,
       "archived": false,
       "pushed_at": "2026-10-29T05:56:26Z",
@@ -5144,7 +5144,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 31388
+      "score": 31389
     },
     {
       "id": 51,
@@ -5165,7 +5165,7 @@
         "tauri",
         "websocket"
       ],
-      "stars": 19386,
+      "stars": 19388,
       "forks": 839,
       "archived": false,
       "pushed_at": "2026-10-29T17:38:27Z",
@@ -5291,7 +5291,7 @@
         }
       ],
       "status": "active",
-      "score": 30234
+      "score": 30236
     },
     {
       "id": 52,
@@ -5366,8 +5366,8 @@
         "steam-link",
         "windows-app"
       ],
-      "stars": 19296,
-      "forks": 1487,
+      "stars": 19297,
+      "forks": 1489,
       "archived": false,
       "pushed_at": "2026-10-29T05:56:47Z",
       "query_slugs": [
@@ -5447,7 +5447,7 @@
         }
       ],
       "status": "active",
-      "score": 30096
+      "score": 30097
     },
     {
       "id": 54,
@@ -5470,7 +5470,7 @@
         "sound"
       ],
       "stars": 24265,
-      "forks": 3885,
+      "forks": 3884,
       "archived": false,
       "pushed_at": "2026-10-29T19:59:29Z",
       "query_slugs": [
@@ -5636,7 +5636,7 @@
       "latest_release_name": "8.3.1",
       "latest_release_url": "https://github.com/guzzle/guzzle/releases/tag/8.3.1",
       "latest_release_published_at": "2026-10-25T21:37:36Z",
-      "release_age_days": 3,
+      "release_age_days": 4,
       "platforms": {
         "android": false,
         "ios": false,
@@ -5648,7 +5648,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 29420
+      "score": 29412
     },
     {
       "id": 57,
@@ -5676,7 +5676,7 @@
         "xray-core"
       ],
       "stars": 13821,
-      "forks": 31596,
+      "forks": 31595,
       "archived": false,
       "pushed_at": "2026-07-20T13:07:08Z",
       "query_slugs": [
@@ -5723,7 +5723,7 @@
       "description": "Simple & Powerful proxy utility, Support routing rules for clash/sing-box",
       "language": "Dart",
       "topics": [],
-      "stars": 15816,
+      "stars": 15817,
       "forks": 1311,
       "archived": false,
       "pushed_at": "2026-10-29T05:31:36Z",
@@ -5839,7 +5839,7 @@
         }
       ],
       "status": "active",
-      "score": 28924
+      "score": 28925
     },
     {
       "id": 59,
@@ -5861,7 +5861,7 @@
       "stars": 17965,
       "forks": 1063,
       "archived": false,
-      "pushed_at": "2026-10-29T20:46:55Z",
+      "pushed_at": "2026-10-29T21:04:56Z",
       "query_slugs": [
         "repo"
       ],
@@ -5979,8 +5979,8 @@
         "vpn-server",
         "wireguard"
       ],
-      "stars": 15604,
-      "forks": 1227,
+      "stars": 15607,
+      "forks": 1228,
       "archived": false,
       "pushed_at": "2026-10-29T14:20:36Z",
       "query_slugs": [
@@ -6106,7 +6106,7 @@
         }
       ],
       "status": "active",
-      "score": 28776
+      "score": 28779
     },
     {
       "id": 61,
@@ -6381,7 +6381,7 @@
       "stars": 22282,
       "forks": 2627,
       "archived": false,
-      "pushed_at": "2026-10-29T16:08:49Z",
+      "pushed_at": "2026-10-29T21:27:29Z",
       "query_slugs": [
         "repo"
       ],
@@ -6416,10 +6416,10 @@
         "github",
         "tauri"
       ],
-      "stars": 21887,
+      "stars": 21889,
       "forks": 1040,
       "archived": false,
-      "pushed_at": "2026-10-29T19:06:03Z",
+      "pushed_at": "2026-10-30T00:32:38Z",
       "query_slugs": [
         "repo"
       ],
@@ -6440,7 +6440,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 27879
+      "score": 27881
     },
     {
       "id": 66,
@@ -6593,7 +6593,7 @@
       "stars": 22571,
       "forks": 2044,
       "archived": false,
-      "pushed_at": "2026-10-23T21:33:01Z",
+      "pushed_at": "2026-10-29T21:32:38Z",
       "query_slugs": [
         "repo"
       ],
@@ -6629,10 +6629,10 @@
         "reverse-proxy",
         "zero-trust-network-access"
       ],
-      "stars": 16342,
+      "stars": 16345,
       "forks": 1506,
       "archived": false,
-      "pushed_at": "2026-10-29T12:12:16Z",
+      "pushed_at": "2026-10-29T22:41:45Z",
       "query_slugs": [
         "repo"
       ],
@@ -6761,7 +6761,7 @@
         }
       ],
       "status": "active",
-      "score": 27342
+      "score": 27345
     },
     {
       "id": 69,
@@ -6781,7 +6781,7 @@
         "whatsapp-web",
         "whatsapp-web-api"
       ],
-      "stars": 22821,
+      "stars": 22823,
       "forks": 5185,
       "archived": false,
       "pushed_at": "2026-10-25T12:04:09Z",
@@ -6805,7 +6805,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 27317
+      "score": 27319
     },
     {
       "id": 70,
@@ -6836,18 +6836,18 @@
         "v2ray",
         "xray"
       ],
-      "stars": 20970,
+      "stars": 20972,
       "forks": 2767,
       "archived": false,
-      "pushed_at": "2026-10-28T22:05:48Z",
+      "pushed_at": "2026-10-29T22:05:47Z",
       "query_slugs": [
         "repo"
       ],
       "has_release": true,
-      "latest_release_tag": "202610282204",
-      "latest_release_name": "Released on 202610282204",
-      "latest_release_url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/tag/202610282204",
-      "latest_release_published_at": "2026-10-28T22:05:26Z",
+      "latest_release_tag": "202610292204",
+      "latest_release_name": "Released on 202610292204",
+      "latest_release_url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/tag/202610292204",
+      "latest_release_published_at": "2026-10-29T22:05:20Z",
       "release_age_days": 0,
       "platforms": {
         "android": false,
@@ -6861,91 +6861,91 @@
       "release_assets": [
         {
           "name": "apple-cn.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/apple-cn.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/apple-cn.txt",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "china-list.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/china-list.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/china-list.txt",
           "size_mb": 1.33,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "direct-list.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/direct-list.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/direct-list.txt",
           "size_mb": 1.34,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "direct-tld-list.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/direct-tld-list.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/direct-tld-list.txt",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "geoip.dat",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/geoip.dat",
-          "size_mb": 15.8,
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/geoip.dat",
+          "size_mb": 15.78,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "geoip.dat.sha256sum",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/geoip.dat.sha256sum",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/geoip.dat.sha256sum",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "geosite.dat",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/geosite.dat",
-          "size_mb": 10.78,
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/geosite.dat",
+          "size_mb": 10.79,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "geosite.dat.sha256sum",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/geosite.dat.sha256sum",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/geosite.dat.sha256sum",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "gfw.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/gfw.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/gfw.txt",
           "size_mb": 0.06,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "google-cn.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/google-cn.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/google-cn.txt",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "greatfire.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/greatfire.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/greatfire.txt",
           "size_mb": 0.0,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         },
         {
           "name": "proxy-list.txt",
-          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610282204/proxy-list.txt",
+          "url": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/202610292204/proxy-list.txt",
           "size_mb": 0.4,
           "content_type": "binary/octet-stream",
           "platform_hint": []
         }
       ],
       "status": "active",
-      "score": 26970
+      "score": 26972
     },
     {
       "id": 71,
@@ -7323,7 +7323,7 @@
         "clashmi",
         "mihomo"
       ],
-      "stars": 10161,
+      "stars": 10162,
       "forks": 635,
       "archived": false,
       "pushed_at": "2026-10-27T08:58:16Z",
@@ -7439,7 +7439,7 @@
         }
       ],
       "status": "active",
-      "score": 26001
+      "score": 26002
     },
     {
       "id": 75,
@@ -7470,7 +7470,7 @@
         "ssh",
         "wireguard"
       ],
-      "stars": 23393,
+      "stars": 23397,
       "forks": 1173,
       "archived": false,
       "pushed_at": "2025-06-27T01:51:16Z",
@@ -7496,7 +7496,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release",
-      "score": 25893
+      "score": 25897
     },
     {
       "id": 76,
@@ -7524,7 +7524,7 @@
       "latest_release_name": "@apollo/client@4.3.5",
       "latest_release_url": "https://github.com/apollographql/apollo-client/releases/tag/%40apollo/client%404.3.5",
       "latest_release_published_at": "2026-10-19T21:23:12Z",
-      "release_age_days": 9,
+      "release_age_days": 10,
       "platforms": {
         "android": false,
         "ios": false,
@@ -7536,7 +7536,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 25711
+      "score": 25703
     },
     {
       "id": 77,
@@ -7792,7 +7792,7 @@
       "stars": 13258,
       "forks": 808,
       "archived": false,
-      "pushed_at": "2026-10-29T18:31:24Z",
+      "pushed_at": "2026-10-29T23:50:36Z",
       "query_slugs": [
         "code",
         "repo"
@@ -7939,7 +7939,7 @@
         "tdengine",
         "tidb"
       ],
-      "stars": 18391,
+      "stars": 18392,
       "forks": 2277,
       "archived": false,
       "pushed_at": "2026-10-25T04:33:29Z",
@@ -7978,7 +7978,7 @@
         }
       ],
       "status": "active",
-      "score": 24199
+      "score": 24200
     },
     {
       "id": 82,
@@ -8245,18 +8245,18 @@
         "https"
       ],
       "stars": 16952,
-      "forks": 2773,
+      "forks": 2774,
       "archived": false,
-      "pushed_at": "2026-10-28T20:15:17Z",
+      "pushed_at": "2026-10-29T21:08:44Z",
       "query_slugs": [
         "repo"
       ],
       "has_release": true,
-      "latest_release_tag": "v0.63.0",
-      "latest_release_name": "v0.63.0",
-      "latest_release_url": "https://github.com/yhirose/cpp-httplib/releases/tag/v0.63.0",
-      "latest_release_published_at": "2026-10-22T02:28:38Z",
-      "release_age_days": 7,
+      "latest_release_tag": "v0.64.0",
+      "latest_release_name": "v0.64.0",
+      "latest_release_url": "https://github.com/yhirose/cpp-httplib/releases/tag/v0.64.0",
+      "latest_release_published_at": "2026-10-29T21:11:06Z",
+      "release_age_days": 0,
       "platforms": {
         "android": false,
         "ios": false,
@@ -8268,7 +8268,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 22896
+      "score": 22952
     },
     {
       "id": 86,
@@ -8419,19 +8419,19 @@
         "swagger",
         "vue"
       ],
-      "stars": 16339,
+      "stars": 16340,
       "forks": 960,
       "archived": false,
-      "pushed_at": "2026-10-29T20:52:22Z",
+      "pushed_at": "2026-10-30T00:29:34Z",
       "query_slugs": [
         "repo"
       ],
       "has_release": true,
-      "latest_release_tag": "release-2026-10-28-0d01943",
-      "latest_release_name": "Release 2026-10-28",
-      "latest_release_url": "https://github.com/scalar/scalar/releases/tag/release-2026-10-28-0d01943",
-      "latest_release_published_at": "2026-10-28T17:46:59Z",
-      "release_age_days": 1,
+      "latest_release_tag": "release-2026-10-30-4b04099",
+      "latest_release_name": "Release 2026-10-30",
+      "latest_release_url": "https://github.com/scalar/scalar/releases/tag/release-2026-10-30-4b04099",
+      "latest_release_published_at": "2026-10-30T00:29:34Z",
+      "release_age_days": 0,
       "platforms": {
         "android": false,
         "ios": false,
@@ -8443,7 +8443,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 22331
+      "score": 22340
     },
     {
       "id": 88,
@@ -8465,7 +8465,7 @@
         "wayland-client",
         "x11"
       ],
-      "stars": 13906,
+      "stars": 13908,
       "forks": 15564,
       "archived": false,
       "pushed_at": "2026-10-29T19:30:56Z",
@@ -8534,7 +8534,7 @@
         }
       ],
       "status": "active",
-      "score": 22270
+      "score": 22272
     },
     {
       "id": 89,
@@ -8921,7 +8921,7 @@
       "description": "2026机场推荐与机场评测",
       "language": null,
       "topics": [],
-      "stars": 21660,
+      "stars": 21664,
       "forks": 473,
       "archived": false,
       "pushed_at": "2026-10-25T06:53:23Z",
@@ -8945,7 +8945,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 21660
+      "score": 21664
     },
     {
       "id": 94,
@@ -8961,7 +8961,7 @@
         "xray-core",
         "xray-panel"
       ],
-      "stars": 19096,
+      "stars": 19095,
       "forks": 7181,
       "archived": false,
       "pushed_at": "2024-08-19T10:14:30Z",
@@ -9006,7 +9006,7 @@
         }
       ],
       "status": "outdated",
-      "score": 21596
+      "score": 21595
     },
     {
       "id": 95,
@@ -9180,10 +9180,10 @@
         "onedrive-storage",
         "personal"
       ],
-      "stars": 12950,
+      "stars": 12951,
       "forks": 920,
       "archived": false,
-      "pushed_at": "2026-10-29T07:28:26Z",
+      "pushed_at": "2026-10-29T22:57:11Z",
       "query_slugs": [
         "repo"
       ],
@@ -9206,7 +9206,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 21410
+      "score": 21411
     },
     {
       "id": 97,
@@ -9234,9 +9234,9 @@
         "url"
       ],
       "stars": 15261,
-      "forks": 1913,
+      "forks": 1912,
       "archived": false,
-      "pushed_at": "2026-10-29T19:05:49Z",
+      "pushed_at": "2026-10-29T22:15:12Z",
       "query_slugs": [
         "repo"
       ],
@@ -9287,7 +9287,7 @@
         "windscribe",
         "wireguard"
       ],
-      "stars": 15917,
+      "stars": 15920,
       "forks": 648,
       "archived": false,
       "pushed_at": "2026-10-29T12:03:45Z",
@@ -9312,7 +9312,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 21189
+      "score": 21192
     },
     {
       "id": 99,
@@ -9333,7 +9333,7 @@
         "vless",
         "vmess"
       ],
-      "stars": 10198,
+      "stars": 10199,
       "forks": 1901,
       "archived": false,
       "pushed_at": "2026-10-25T22:26:23Z",
@@ -9345,7 +9345,7 @@
       "latest_release_name": "v1.6.6",
       "latest_release_url": "https://github.com/alireza0/s-ui/releases/tag/v1.6.6",
       "latest_release_published_at": "2026-10-24T22:13:58Z",
-      "release_age_days": 4,
+      "release_age_days": 5,
       "platforms": {
         "android": false,
         "ios": false,
@@ -9449,7 +9449,7 @@
         }
       ],
       "status": "active",
-      "score": 21166
+      "score": 21159
     },
     {
       "id": 100,
@@ -9688,7 +9688,7 @@
         "wireguard",
         "wireguard-tunnel"
       ],
-      "stars": 7140,
+      "stars": 7141,
       "forks": 581,
       "archived": false,
       "pushed_at": "2026-10-19T18:38:45Z",
@@ -9819,7 +9819,7 @@
         }
       ],
       "status": "active",
-      "score": 20560
+      "score": 20561
     },
     {
       "id": 103,
@@ -9992,7 +9992,7 @@
       "stars": 6719,
       "forks": 925,
       "archived": false,
-      "pushed_at": "2026-10-29T20:56:45Z",
+      "pushed_at": "2026-10-30T00:36:56Z",
       "query_slugs": [
         "repo"
       ],
@@ -10133,8 +10133,8 @@
         "p2p",
         "privacy"
       ],
-      "stars": 9020,
-      "forks": 605,
+      "stars": 9021,
+      "forks": 606,
       "archived": false,
       "pushed_at": "2026-10-23T12:23:21Z",
       "query_slugs": [
@@ -10232,7 +10232,7 @@
         }
       ],
       "status": "active",
-      "score": 19812
+      "score": 19813
     },
     {
       "id": 106,
@@ -10250,7 +10250,7 @@
         "warp",
         "wireguard"
       ],
-      "stars": 8853,
+      "stars": 8854,
       "forks": 876,
       "archived": false,
       "pushed_at": "2026-10-26T11:42:54Z",
@@ -10262,7 +10262,7 @@
       "latest_release_name": "v2.3.1",
       "latest_release_url": "https://github.com/ViRb3/wgcf/releases/tag/v2.3.1",
       "latest_release_published_at": "2026-10-11T23:40:32Z",
-      "release_age_days": 17,
+      "release_age_days": 18,
       "platforms": {
         "android": false,
         "ios": false,
@@ -10372,7 +10372,7 @@
         }
       ],
       "status": "active",
-      "score": 19717
+      "score": 19710
     },
     {
       "id": 107,
@@ -10401,10 +10401,10 @@
         "vmess",
         "xtls"
       ],
-      "stars": 19692,
+      "stars": 19693,
       "forks": 1243,
       "archived": false,
-      "pushed_at": "2026-10-29T20:04:57Z",
+      "pushed_at": "2026-10-30T00:04:53Z",
       "query_slugs": [
         "code",
         "repo"
@@ -10426,7 +10426,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 19692
+      "score": 19693
     },
     {
       "id": 108,
@@ -10446,7 +10446,7 @@
       "stars": 17105,
       "forks": 1383,
       "archived": false,
-      "pushed_at": "2026-10-29T15:32:45Z",
+      "pushed_at": "2026-10-29T21:25:43Z",
       "query_slugs": [
         "repo"
       ],
@@ -10492,7 +10492,7 @@
         "vmess",
         "vpn"
       ],
-      "stars": 17077,
+      "stars": 17081,
       "forks": 429,
       "archived": false,
       "pushed_at": "2026-10-29T06:45:48Z",
@@ -10519,7 +10519,7 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 19577
+      "score": 19581
     },
     {
       "id": 110,
@@ -10539,7 +10539,7 @@
         "tizen-tv",
         "youtube"
       ],
-      "stars": 6582,
+      "stars": 6583,
       "forks": 282,
       "archived": false,
       "pushed_at": "2026-10-20T09:57:07Z",
@@ -10632,7 +10632,7 @@
         }
       ],
       "status": "active",
-      "score": 19530
+      "score": 19531
     },
     {
       "id": 111,
@@ -10667,7 +10667,7 @@
       "latest_release_name": "Outline Client 1.10.1 for Windows and Linux",
       "latest_release_url": "https://github.com/OutlineFoundation/outline-apps/releases/tag/v1.10.1",
       "latest_release_published_at": "2023-03-20T21:16:19Z",
-      "release_age_days": 1318,
+      "release_age_days": 1319,
       "platforms": {
         "android": true,
         "ios": true,
@@ -10731,7 +10731,7 @@
       "stars": 8374,
       "forks": 1417,
       "archived": false,
-      "pushed_at": "2026-10-29T18:58:54Z",
+      "pushed_at": "2026-10-30T00:16:42Z",
       "query_slugs": [
         "repo"
       ],
@@ -10869,7 +10869,7 @@
       "latest_release_name": "v0.4.2",
       "latest_release_url": "https://github.com/zerobrewhq/zerobrew/releases/tag/v0.4.2",
       "latest_release_published_at": "2026-10-21T22:23:32Z",
-      "release_age_days": 7,
+      "release_age_days": 8,
       "platforms": {
         "android": false,
         "ios": false,
@@ -10991,7 +10991,7 @@
         }
       ],
       "status": "active",
-      "score": 19166
+      "score": 19158
     },
     {
       "id": 115,
@@ -11122,7 +11122,7 @@
       "stars": 9266,
       "forks": 1287,
       "archived": false,
-      "pushed_at": "2026-10-29T20:50:10Z",
+      "pushed_at": "2026-10-29T23:13:53Z",
       "query_slugs": [
         "repo"
       ],
@@ -11165,90 +11165,6 @@
     },
     {
       "id": 117,
-      "name": "noVNC",
-      "full_name": "novnc/noVNC",
-      "url": "https://github.com/novnc/noVNC",
-      "description": "VNC client web application",
-      "language": "JavaScript",
-      "topics": [
-        "arraybuffer",
-        "html",
-        "html-canvas",
-        "html5",
-        "javascript",
-        "modern-browsers",
-        "novnc",
-        "vnc-client",
-        "websockets",
-        "websockify",
-        "wss"
-      ],
-      "stars": 14143,
-      "forks": 2690,
-      "archived": false,
-      "pushed_at": "2026-10-23T12:20:22Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": true,
-      "latest_release_tag": "v1.7.0",
-      "latest_release_name": "noVNC 1.7.0",
-      "latest_release_url": "https://github.com/novnc/noVNC/releases/tag/v1.7.0",
-      "latest_release_published_at": "2026-04-28T10:48:00Z",
-      "release_age_days": 184,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": false
-      },
-      "platform_labels": [],
-      "platforms_text": "Unknown",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "active",
-      "score": 18671
-    },
-    {
-      "id": 118,
-      "name": "mysql",
-      "full_name": "mysqljs/mysql",
-      "url": "https://github.com/mysqljs/mysql",
-      "description": "A pure node.js JavaScript Client implementing the MySQL protocol.",
-      "language": "JavaScript",
-      "topics": [
-        "javascript",
-        "mysql",
-        "nodejs"
-      ],
-      "stars": 18610,
-      "forks": 2520,
-      "archived": false,
-      "pushed_at": "2024-06-25T12:03:39Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": false,
-      "latest_release_tag": null,
-      "latest_release_name": null,
-      "latest_release_url": null,
-      "latest_release_published_at": null,
-      "release_age_days": null,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": false
-      },
-      "platform_labels": [],
-      "platforms_text": "Unknown",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "no_release",
-      "score": 18610
-    },
-    {
-      "id": 119,
       "name": "grpc-rust",
       "full_name": "grpc/grpc-rust",
       "url": "https://github.com/grpc/grpc-rust",
@@ -11262,9 +11178,9 @@
         "rust"
       ],
       "stars": 12511,
-      "forks": 1274,
+      "forks": 1275,
       "archived": false,
-      "pushed_at": "2026-10-29T17:38:34Z",
+      "pushed_at": "2026-10-30T00:01:41Z",
       "query_slugs": [
         "repo"
       ],
@@ -11288,7 +11204,7 @@
       "score": 18511
     },
     {
-      "id": 120,
+      "id": 118,
       "name": "SoftEtherVPN",
       "full_name": "SoftEtherVPN/SoftEtherVPN",
       "url": "https://github.com/SoftEtherVPN/SoftEtherVPN",
@@ -11387,7 +11303,7 @@
       "score": 18441
     },
     {
-      "id": 121,
+      "id": 119,
       "name": "dio",
       "full_name": "cfug/dio",
       "url": "https://github.com/cfug/dio",
@@ -11433,7 +11349,7 @@
       "score": 18401
     },
     {
-      "id": 122,
+      "id": 120,
       "name": "Throne",
       "full_name": "throneproj/Throne",
       "url": "https://github.com/throneproj/Throne",
@@ -11452,7 +11368,7 @@
         "vpn",
         "windows"
       ],
-      "stars": 7639,
+      "stars": 7640,
       "forks": 457,
       "archived": false,
       "pushed_at": "2026-10-24T14:28:03Z",
@@ -11585,10 +11501,10 @@
         }
       ],
       "status": "active",
-      "score": 18399
+      "score": 18400
     },
     {
-      "id": 123,
+      "id": 121,
       "name": "posting",
       "full_name": "darrenburns/posting",
       "url": "https://github.com/darrenburns/posting",
@@ -11636,7 +11552,7 @@
       "score": 18360
     },
     {
-      "id": 124,
+      "id": 122,
       "name": "google-api-nodejs-client",
       "full_name": "googleapis/google-api-nodejs-client",
       "url": "https://github.com/googleapis/google-api-nodejs-client",
@@ -11652,7 +11568,7 @@
       "stars": 12278,
       "forks": 2047,
       "archived": false,
-      "pushed_at": "2026-10-22T22:56:56Z",
+      "pushed_at": "2026-10-29T22:51:42Z",
       "query_slugs": [
         "repo"
       ],
@@ -11661,7 +11577,7 @@
       "latest_release_name": "firebasecrashlytics: v3.4.0",
       "latest_release_url": "https://github.com/googleapis/google-api-nodejs-client/releases/tag/firebasecrashlytics-v3.4.0",
       "latest_release_published_at": "2026-10-22T22:56:51Z",
-      "release_age_days": 6,
+      "release_age_days": 7,
       "platforms": {
         "android": false,
         "ios": false,
@@ -11673,10 +11589,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 18230
+      "score": 18222
     },
     {
-      "id": 125,
+      "id": 123,
       "name": "mycli",
       "full_name": "dbcli/mycli",
       "url": "https://github.com/dbcli/mycli",
@@ -11721,7 +11637,7 @@
       "score": 17979
     },
     {
-      "id": 126,
+      "id": 124,
       "name": "MoeKoeMusic",
       "full_name": "MoeKoeMusic/MoeKoeMusic",
       "url": "https://github.com/MoeKoeMusic/MoeKoeMusic",
@@ -11862,7 +11778,7 @@
       "score": 17908
     },
     {
-      "id": 127,
+      "id": 125,
       "name": "Hiddify-Manager",
       "full_name": "hiddify/Hiddify-Manager",
       "url": "https://github.com/hiddify/Hiddify-Manager",
@@ -11942,7 +11858,7 @@
       "score": 17864
     },
     {
-      "id": 128,
+      "id": 126,
       "name": "pgweb",
       "full_name": "sosedoff/pgweb",
       "url": "https://github.com/sosedoff/pgweb",
@@ -11954,7 +11870,7 @@
         "pgweb",
         "postgresql"
       ],
-      "stars": 9545,
+      "stars": 9546,
       "forks": 873,
       "archived": false,
       "pushed_at": "2026-07-26T22:30:33Z",
@@ -12045,10 +11961,10 @@
         }
       ],
       "status": "active",
-      "score": 17817
+      "score": 17818
     },
     {
-      "id": 129,
+      "id": 127,
       "name": "tribler",
       "full_name": "Tribler/tribler",
       "url": "https://github.com/Tribler/tribler",
@@ -12147,7 +12063,7 @@
       "score": 17778
     },
     {
-      "id": 130,
+      "id": 128,
       "name": "netch",
       "full_name": "netchx/netch",
       "url": "https://github.com/netchx/netch",
@@ -12200,7 +12116,7 @@
       "score": 17691
     },
     {
-      "id": 131,
+      "id": 129,
       "name": "ZLMediaKit",
       "full_name": "ZLMediaKit/ZLMediaKit",
       "url": "https://github.com/ZLMediaKit/ZLMediaKit",
@@ -12255,7 +12171,7 @@
       "score": 17660
     },
     {
-      "id": 132,
+      "id": 130,
       "name": "ShellCrash",
       "full_name": "juewuy/ShellCrash",
       "url": "https://github.com/juewuy/ShellCrash",
@@ -12298,7 +12214,7 @@
       "score": 17582
     },
     {
-      "id": 133,
+      "id": 131,
       "name": "ncspot",
       "full_name": "hrkfdn/ncspot",
       "url": "https://github.com/hrkfdn/ncspot",
@@ -12418,7 +12334,7 @@
       "score": 17576
     },
     {
-      "id": 134,
+      "id": 132,
       "name": "frpc-desktop",
       "full_name": "luckjiawei/frpc-desktop",
       "url": "https://github.com/luckjiawei/frpc-desktop",
@@ -12558,7 +12474,7 @@
       "score": 17537
     },
     {
-      "id": 135,
+      "id": 133,
       "name": "reqwest",
       "full_name": "seanmonstar/reqwest",
       "url": "https://github.com/seanmonstar/reqwest",
@@ -12596,7 +12512,7 @@
       "score": 17483
     },
     {
-      "id": 136,
+      "id": 134,
       "name": "HeidiSQL",
       "full_name": "HeidiSQL/HeidiSQL",
       "url": "https://github.com/HeidiSQL/HeidiSQL",
@@ -12722,7 +12638,7 @@
       "score": 17276
     },
     {
-      "id": 137,
+      "id": 135,
       "name": "gephi",
       "full_name": "gephi/gephi",
       "url": "https://github.com/gephi/gephi",
@@ -12739,7 +12655,7 @@
       "stars": 6693,
       "forks": 1610,
       "archived": false,
-      "pushed_at": "2026-10-29T21:01:47Z",
+      "pushed_at": "2026-10-29T21:05:00Z",
       "query_slugs": [
         "repo"
       ],
@@ -12815,7 +12731,7 @@
       "score": 17269
     },
     {
-      "id": 138,
+      "id": 136,
       "name": "sourcegit",
       "full_name": "sourcegit-scm/sourcegit",
       "url": "https://github.com/sourcegit-scm/sourcegit",
@@ -12962,7 +12878,7 @@
       "score": 17262
     },
     {
-      "id": 139,
+      "id": 137,
       "name": "CodePilot",
       "full_name": "op7418/CodePilot",
       "url": "https://github.com/op7418/CodePilot",
@@ -13101,7 +13017,7 @@
       "score": 17217
     },
     {
-      "id": 140,
+      "id": 138,
       "name": "Cloudflare-vless-trojan",
       "full_name": "yonggekkk/Cloudflare-vless-trojan",
       "url": "https://github.com/yonggekkk/Cloudflare-vless-trojan",
@@ -13125,7 +13041,7 @@
         "xray",
         "ygkkk"
       ],
-      "stars": 16660,
+      "stars": 16661,
       "forks": 9845,
       "archived": false,
       "pushed_at": "2026-09-20T01:59:29Z",
@@ -13178,10 +13094,10 @@
         }
       ],
       "status": "stale",
-      "score": 17172
+      "score": 17173
     },
     {
-      "id": 141,
+      "id": 139,
       "name": "docker-ipsec-vpn-server",
       "full_name": "hwdsl2/docker-ipsec-vpn-server",
       "url": "https://github.com/hwdsl2/docker-ipsec-vpn-server",
@@ -13240,7 +13156,7 @@
       "score": 17154
     },
     {
-      "id": 142,
+      "id": 140,
       "name": "Bangumi",
       "full_name": "czy0729/Bangumi",
       "url": "https://github.com/czy0729/Bangumi",
@@ -13299,7 +13215,7 @@
       "score": 17040
     },
     {
-      "id": 143,
+      "id": 141,
       "name": "ivideo",
       "full_name": "phobal/ivideo",
       "url": "https://github.com/phobal/ivideo",
@@ -13351,7 +13267,7 @@
       "score": 16814
     },
     {
-      "id": 144,
+      "id": 142,
       "name": "xray",
       "full_name": "chaitin/xray",
       "url": "https://github.com/chaitin/xray",
@@ -13442,7 +13358,7 @@
       "score": 16777
     },
     {
-      "id": 145,
+      "id": 143,
       "name": "Sub-Store",
       "full_name": "sub-store-org/Sub-Store",
       "url": "https://github.com/sub-store-org/Sub-Store",
@@ -13465,7 +13381,7 @@
       "stars": 10792,
       "forks": 1430,
       "archived": false,
-      "pushed_at": "2026-10-29T16:06:52Z",
+      "pushed_at": "2026-10-30T00:36:39Z",
       "query_slugs": [
         "code",
         "repo"
@@ -13547,7 +13463,7 @@
       "score": 16760
     },
     {
-      "id": 146,
+      "id": 144,
       "name": "graphql-platform",
       "full_name": "ChilliCream/graphql-platform",
       "url": "https://github.com/ChilliCream/graphql-platform",
@@ -13578,7 +13494,7 @@
       "stars": 5762,
       "forks": 809,
       "archived": false,
-      "pushed_at": "2026-10-29T19:58:26Z",
+      "pushed_at": "2026-10-29T21:38:41Z",
       "query_slugs": [
         "repo"
       ],
@@ -13698,7 +13614,7 @@
       "score": 16754
     },
     {
-      "id": 147,
+      "id": 145,
       "name": "warpgate",
       "full_name": "warp-tech/warpgate",
       "url": "https://github.com/warp-tech/warpgate",
@@ -13726,7 +13642,7 @@
         "ssh-server",
         "vnc-server"
       ],
-      "stars": 8163,
+      "stars": 8162,
       "forks": 433,
       "archived": false,
       "pushed_at": "2026-10-29T18:23:12Z",
@@ -13789,10 +13705,10 @@
         }
       ],
       "status": "active",
-      "score": 16639
+      "score": 16638
     },
     {
-      "id": 148,
+      "id": 146,
       "name": "psst",
       "full_name": "jpochyla/psst",
       "url": "https://github.com/jpochyla/psst",
@@ -13882,7 +13798,7 @@
       "score": 16598
     },
     {
-      "id": 149,
+      "id": 147,
       "name": "oblivion-desktop",
       "full_name": "bepass-org/oblivion-desktop",
       "url": "https://github.com/bepass-org/oblivion-desktop",
@@ -14042,7 +13958,7 @@
       "score": 16576
     },
     {
-      "id": 150,
+      "id": 148,
       "name": "go-openai",
       "full_name": "sashabaranov/go-openai",
       "url": "https://github.com/sashabaranov/go-openai",
@@ -14085,7 +14001,7 @@
       "score": 16557
     },
     {
-      "id": 151,
+      "id": 149,
       "name": "KasmVNC",
       "full_name": "kasmtech/KasmVNC",
       "url": "https://github.com/kasmtech/KasmVNC",
@@ -14231,7 +14147,7 @@
       "score": 16307
     },
     {
-      "id": 152,
+      "id": 150,
       "name": "ddgksf2013",
       "full_name": "ddgksf2013/ddgksf2013",
       "url": "https://github.com/ddgksf2013/ddgksf2013",
@@ -14284,7 +14200,7 @@
       "score": 16304
     },
     {
-      "id": 153,
+      "id": 151,
       "name": "gunicorn",
       "full_name": "benoitc/gunicorn",
       "url": "https://github.com/benoitc/gunicorn",
@@ -14324,7 +14240,7 @@
       "score": 16293
     },
     {
-      "id": 154,
+      "id": 152,
       "name": "altair",
       "full_name": "altair-graphql/altair",
       "url": "https://github.com/altair-graphql/altair",
@@ -14361,7 +14277,7 @@
       "latest_release_name": "v8.5.11",
       "latest_release_url": "https://github.com/altair-graphql/altair/releases/tag/v8.5.11",
       "latest_release_published_at": "2026-10-09T22:17:36Z",
-      "release_age_days": 19,
+      "release_age_days": 20,
       "platforms": {
         "android": false,
         "ios": false,
@@ -14469,10 +14385,10 @@
         }
       ],
       "status": "active",
-      "score": 16281
+      "score": 16273
     },
     {
-      "id": 155,
+      "id": 153,
       "name": "streamyfin",
       "full_name": "streamyfin/streamyfin",
       "url": "https://github.com/streamyfin/streamyfin",
@@ -14488,7 +14404,7 @@
       "stars": 5321,
       "forks": 302,
       "archived": false,
-      "pushed_at": "2026-10-29T19:06:49Z",
+      "pushed_at": "2026-10-29T21:10:51Z",
       "query_slugs": [
         "repo"
       ],
@@ -14561,7 +14477,7 @@
       "score": 16217
     },
     {
-      "id": 156,
+      "id": 154,
       "name": "MQTTX",
       "full_name": "emqx/MQTTX",
       "url": "https://github.com/emqx/MQTTX",
@@ -14712,7 +14628,7 @@
       "score": 16063
     },
     {
-      "id": 157,
+      "id": 155,
       "name": "wireproxy",
       "full_name": "windtf/wireproxy",
       "url": "https://github.com/windtf/wireproxy",
@@ -14863,7 +14779,7 @@
       "score": 16019
     },
     {
-      "id": 158,
+      "id": 156,
       "name": "mullvadvpn-app",
       "full_name": "mullvad/mullvadvpn-app",
       "url": "https://github.com/mullvad/mullvadvpn-app",
@@ -14880,7 +14796,7 @@
       "stars": 7717,
       "forks": 560,
       "archived": false,
-      "pushed_at": "2026-10-29T19:53:25Z",
+      "pushed_at": "2026-10-30T00:17:19Z",
       "query_slugs": [
         "repo"
       ],
@@ -14923,62 +14839,7 @@
       "score": 15985
     },
     {
-      "id": 159,
-      "name": "resty",
-      "full_name": "go-resty/resty",
-      "url": "https://github.com/go-resty/resty",
-      "description": "Simple HTTP, REST, and SSE client library for Go",
-      "language": "Go",
-      "topics": [
-        "backoff",
-        "circuit-breaker",
-        "curl-command",
-        "digest-authentication",
-        "go",
-        "go-library",
-        "go-resty",
-        "golang",
-        "golang-library",
-        "hacktoberfest",
-        "http-client",
-        "http-trace",
-        "load-balancer",
-        "middleware",
-        "redirects",
-        "rest-client",
-        "retry",
-        "service-discovery",
-        "srv-record",
-        "sse-client"
-      ],
-      "stars": 11824,
-      "forks": 827,
-      "archived": false,
-      "pushed_at": "2026-10-19T06:48:28Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": true,
-      "latest_release_tag": "v2.17.2",
-      "latest_release_name": "v2.17.2",
-      "latest_release_url": "https://github.com/go-resty/resty/releases/tag/v2.17.2",
-      "latest_release_published_at": "2026-02-14T22:43:18Z",
-      "release_age_days": 256,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": false
-      },
-      "platform_labels": [],
-      "platforms_text": "Unknown",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "active",
-      "score": 15776
-    },
-    {
-      "id": 160,
+      "id": 157,
       "name": "domain-list-community",
       "full_name": "v2fly/domain-list-community",
       "url": "https://github.com/v2fly/domain-list-community",
@@ -14988,7 +14849,7 @@
         "geosite",
         "v2ray"
       ],
-      "stars": 9782,
+      "stars": 9784,
       "forks": 1465,
       "archived": false,
       "pushed_at": "2026-10-28T11:18:15Z",
@@ -15069,17 +14930,72 @@
         }
       ],
       "status": "active",
-      "score": 15774
+      "score": 15776
     },
     {
-      "id": 161,
+      "id": 158,
+      "name": "resty",
+      "full_name": "go-resty/resty",
+      "url": "https://github.com/go-resty/resty",
+      "description": "Simple HTTP, REST, and SSE client library for Go",
+      "language": "Go",
+      "topics": [
+        "backoff",
+        "circuit-breaker",
+        "curl-command",
+        "digest-authentication",
+        "go",
+        "go-library",
+        "go-resty",
+        "golang",
+        "golang-library",
+        "hacktoberfest",
+        "http-client",
+        "http-trace",
+        "load-balancer",
+        "middleware",
+        "redirects",
+        "rest-client",
+        "retry",
+        "service-discovery",
+        "srv-record",
+        "sse-client"
+      ],
+      "stars": 11824,
+      "forks": 827,
+      "archived": false,
+      "pushed_at": "2026-10-19T06:48:28Z",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "v2.17.2",
+      "latest_release_name": "v2.17.2",
+      "latest_release_url": "https://github.com/go-resty/resty/releases/tag/v2.17.2",
+      "latest_release_published_at": "2026-02-14T22:43:18Z",
+      "release_age_days": 257,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [],
+      "platforms_text": "Unknown",
+      "release_assets_count": 0,
+      "release_assets": [],
+      "status": "active",
+      "score": 15768
+    },
+    {
+      "id": 159,
       "name": "RestSharp",
       "full_name": "restsharp/RestSharp",
       "url": "https://github.com/restsharp/RestSharp",
       "description": "Simple REST and HTTP API Client for .NET",
       "language": "C#",
       "topics": [],
-      "stars": 9815,
+      "stars": 9814,
       "forks": 2295,
       "archived": false,
       "pushed_at": "2026-10-21T13:17:27Z",
@@ -15103,10 +15019,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 15751
+      "score": 15750
     },
     {
-      "id": 162,
+      "id": 160,
       "name": "google-api-php-client",
       "full_name": "googleapis/google-api-php-client",
       "url": "https://github.com/googleapis/google-api-php-client",
@@ -15155,7 +15071,7 @@
       "score": 15541
     },
     {
-      "id": 163,
+      "id": 161,
       "name": "drawio",
       "full_name": "jgraph/drawio",
       "url": "https://github.com/jgraph/drawio",
@@ -15166,8 +15082,8 @@
         "javascript",
         "whiteboard"
       ],
-      "stars": 9063,
-      "forks": 1350,
+      "stars": 9064,
+      "forks": 1351,
       "archived": false,
       "pushed_at": "2026-10-23T17:44:10Z",
       "query_slugs": [
@@ -15198,10 +15114,10 @@
         }
       ],
       "status": "active",
-      "score": 15015
+      "score": 15016
     },
     {
-      "id": 164,
+      "id": 162,
       "name": "node-ws",
       "full_name": "eooce/node-ws",
       "url": "https://github.com/eooce/node-ws",
@@ -15328,57 +15244,14 @@
       "score": 14864
     },
     {
-      "id": 165,
-      "name": "postgres",
-      "full_name": "porsager/postgres",
-      "url": "https://github.com/porsager/postgres",
-      "description": "Postgres.js - The Fastest full featured PostgreSQL client for Node.js, Deno, Bun and CloudFlare",
-      "language": "JavaScript",
-      "topics": [
-        "client",
-        "cockroachdb",
-        "database",
-        "deno",
-        "driver",
-        "nodejs",
-        "postgres",
-        "postgresql"
-      ],
-      "stars": 8738,
-      "forks": 398,
-      "archived": false,
-      "pushed_at": "2026-10-29T18:02:02Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": true,
-      "latest_release_tag": "v4.0.0",
-      "latest_release_name": "v4.0.0",
-      "latest_release_url": "https://github.com/porsager/postgres/releases/tag/v4.0.0",
-      "latest_release_published_at": "2026-10-29T18:03:06Z",
-      "release_age_days": 0,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": false
-      },
-      "platform_labels": [],
-      "platforms_text": "Unknown",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "active",
-      "score": 14738
-    },
-    {
-      "id": 166,
+      "id": 163,
       "name": "google-api-python-client",
       "full_name": "googleapis/google-api-python-client",
       "url": "https://github.com/googleapis/google-api-python-client",
       "description": "🐍 The official Python client library for Google's discovery based APIs.",
       "language": "Python",
       "topics": [],
-      "stars": 8961,
+      "stars": 8960,
       "forks": 2595,
       "archived": false,
       "pushed_at": "2026-10-27T07:55:04Z",
@@ -15390,7 +15263,7 @@
       "latest_release_name": "v2.201.0",
       "latest_release_url": "https://github.com/googleapis/google-api-python-client/releases/tag/v2.201.0",
       "latest_release_published_at": "2026-09-30T21:29:47Z",
-      "release_age_days": 28,
+      "release_age_days": 29,
       "platforms": {
         "android": false,
         "ios": false,
@@ -15402,10 +15275,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 14737
+      "score": 14728
     },
     {
-      "id": 167,
+      "id": 164,
       "name": "v2rayfree",
       "full_name": "free-nodes/v2rayfree",
       "url": "https://github.com/free-nodes/v2rayfree",
@@ -15423,8 +15296,8 @@
         "vmess",
         "vpn"
       ],
-      "stars": 14632,
-      "forks": 1205,
+      "stars": 14634,
+      "forks": 1204,
       "archived": false,
       "pushed_at": "2026-10-29T20:57:02Z",
       "query_slugs": [
@@ -15447,10 +15320,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 14632
+      "score": 14634
     },
     {
-      "id": 168,
+      "id": 165,
       "name": "oapi-codegen",
       "full_name": "oapi-codegen/oapi-codegen",
       "url": "https://github.com/oapi-codegen/oapi-codegen",
@@ -15467,7 +15340,7 @@
         "rest-api-client",
         "swagger"
       ],
-      "stars": 8636,
+      "stars": 8637,
       "forks": 1060,
       "archived": false,
       "pushed_at": "2026-10-28T14:08:11Z",
@@ -15479,7 +15352,7 @@
       "latest_release_name": "v2.8.1: Security fixes for codegen and at runtime",
       "latest_release_url": "https://github.com/oapi-codegen/oapi-codegen/releases/tag/v2.8.1",
       "latest_release_published_at": "2026-10-24T00:20:07Z",
-      "release_age_days": 5,
+      "release_age_days": 6,
       "platforms": {
         "android": false,
         "ios": false,
@@ -15491,10 +15364,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 14596
+      "score": 14589
     },
     {
-      "id": 169,
+      "id": 166,
       "name": "5ire",
       "full_name": "nanbingxyz/5ire",
       "url": "https://github.com/nanbingxyz/5ire",
@@ -15626,7 +15499,7 @@
       "score": 14573
     },
     {
-      "id": 170,
+      "id": 167,
       "name": "swift-nio",
       "full_name": "apple/swift-nio",
       "url": "https://github.com/apple/swift-nio",
@@ -15671,7 +15544,7 @@
       "score": 14356
     },
     {
-      "id": 171,
+      "id": 168,
       "name": "shaka-player",
       "full_name": "shaka-project/shaka-player",
       "url": "https://github.com/shaka-project/shaka-player",
@@ -15681,7 +15554,7 @@
       "stars": 8265,
       "forks": 1527,
       "archived": false,
-      "pushed_at": "2026-10-29T19:26:46Z",
+      "pushed_at": "2026-10-29T22:16:14Z",
       "query_slugs": [
         "repo"
       ],
@@ -15713,7 +15586,7 @@
       "score": 14265
     },
     {
-      "id": 172,
+      "id": 169,
       "name": "rethink-app",
       "full_name": "celzero/rethink-app",
       "url": "https://github.com/celzero/rethink-app",
@@ -15737,8 +15610,8 @@
         "privacy-enhancing-technologies",
         "wireguard"
       ],
-      "stars": 5810,
-      "forks": 369,
+      "stars": 5811,
+      "forks": 370,
       "archived": false,
       "pushed_at": "2026-10-26T17:43:11Z",
       "query_slugs": [
@@ -15854,10 +15727,10 @@
         }
       ],
       "status": "active",
-      "score": 14182
+      "score": 14183
     },
     {
-      "id": 173,
+      "id": 170,
       "name": "cloud-torrent",
       "full_name": "jpillora/cloud-torrent",
       "url": "https://github.com/jpillora/cloud-torrent",
@@ -15882,7 +15755,7 @@
       "latest_release_name": "v0.9.4",
       "latest_release_url": "https://github.com/jpillora/cloud-torrent/releases/tag/v0.9.4",
       "latest_release_published_at": "2024-11-30T00:27:13Z",
-      "release_age_days": 698,
+      "release_age_days": 699,
       "platforms": {
         "android": true,
         "ios": false,
@@ -16008,10 +15881,10 @@
         }
       ],
       "status": "stale",
-      "score": 14163
+      "score": 14155
     },
     {
-      "id": 174,
+      "id": 171,
       "name": "Neo-Store",
       "full_name": "NeoApplications/Neo-Store",
       "url": "https://github.com/NeoApplications/Neo-Store",
@@ -16024,7 +15897,7 @@
         "hacktoberfest"
       ],
       "stars": 5570,
-      "forks": 192,
+      "forks": 194,
       "archived": false,
       "pushed_at": "2026-10-23T00:40:33Z",
       "query_slugs": [
@@ -16062,7 +15935,7 @@
       "score": 14022
     },
     {
-      "id": 175,
+      "id": 172,
       "name": "thelounge",
       "full_name": "thelounge/thelounge",
       "url": "https://github.com/thelounge/thelounge",
@@ -16079,7 +15952,7 @@
         "vuejs",
         "web"
       ],
-      "stars": 6360,
+      "stars": 6361,
       "forks": 789,
       "archived": false,
       "pushed_at": "2026-10-29T20:41:25Z",
@@ -16115,10 +15988,10 @@
         }
       ],
       "status": "active",
-      "score": 13988
+      "score": 13989
     },
     {
-      "id": 176,
+      "id": 173,
       "name": "asyncpg",
       "full_name": "MagicStack/asyncpg",
       "url": "https://github.com/MagicStack/asyncpg",
@@ -16161,7 +16034,7 @@
       "score": 13933
     },
     {
-      "id": 177,
+      "id": 174,
       "name": "cachecloud",
       "full_name": "sohutv/cachecloud",
       "url": "https://github.com/sohutv/cachecloud",
@@ -16214,7 +16087,7 @@
       "score": 13881
     },
     {
-      "id": 178,
+      "id": 175,
       "name": "fancyss",
       "full_name": "hq450/fancyss",
       "url": "https://github.com/hq450/fancyss",
@@ -16261,7 +16134,7 @@
       "score": 13817
     },
     {
-      "id": 179,
+      "id": 176,
       "name": "adblockfilters",
       "full_name": "217heidai/adblockfilters",
       "url": "https://github.com/217heidai/adblockfilters",
@@ -16288,7 +16161,7 @@
         "v2ray",
         "xray"
       ],
-      "stars": 7723,
+      "stars": 7724,
       "forks": 430,
       "archived": false,
       "pushed_at": "2026-10-29T20:58:52Z",
@@ -16398,10 +16271,10 @@
         }
       ],
       "status": "active",
-      "score": 13723
+      "score": 13724
     },
     {
-      "id": 180,
+      "id": 177,
       "name": "predis",
       "full_name": "predis/predis",
       "url": "https://github.com/predis/predis",
@@ -16441,7 +16314,7 @@
       "score": 13609
     },
     {
-      "id": 181,
+      "id": 178,
       "name": "python",
       "full_name": "kubernetes-client/python",
       "url": "https://github.com/kubernetes-client/python",
@@ -16481,7 +16354,7 @@
       "score": 13526
     },
     {
-      "id": 182,
+      "id": 179,
       "name": "PyMySQL",
       "full_name": "PyMySQL/PyMySQL",
       "url": "https://github.com/PyMySQL/PyMySQL",
@@ -16518,7 +16391,7 @@
       "score": 13520
     },
     {
-      "id": 183,
+      "id": 180,
       "name": "clash-for-linux",
       "full_name": "wnlen/clash-for-linux",
       "url": "https://github.com/wnlen/clash-for-linux",
@@ -16534,7 +16407,7 @@
         "shell-script",
         "vpn"
       ],
-      "stars": 6235,
+      "stars": 6236,
       "forks": 1231,
       "archived": false,
       "pushed_at": "2026-09-24T07:34:55Z",
@@ -16588,10 +16461,10 @@
         }
       ],
       "status": "active",
-      "score": 13151
+      "score": 13152
     },
     {
-      "id": 184,
+      "id": 181,
       "name": "android-async-http",
       "full_name": "android-async-http/android-async-http",
       "url": "https://github.com/android-async-http/android-async-http",
@@ -16667,7 +16540,7 @@
       "score": 13064
     },
     {
-      "id": 185,
+      "id": 182,
       "name": "nats.go",
       "full_name": "nats-io/nats.go",
       "url": "https://github.com/nats-io/nats.go",
@@ -16711,7 +16584,7 @@
       "score": 12748
     },
     {
-      "id": 186,
+      "id": 183,
       "name": "gitsome",
       "full_name": "donnemartin/gitsome",
       "url": "https://github.com/donnemartin/gitsome",
@@ -16769,7 +16642,7 @@
       "score": 12695
     },
     {
-      "id": 187,
+      "id": 184,
       "name": "Share-SSR-V2ray",
       "full_name": "selierlin/Share-SSR-V2ray",
       "url": "https://github.com/selierlin/Share-SSR-V2ray",
@@ -16785,7 +16658,7 @@
         "vpn"
       ],
       "stars": 12674,
-      "forks": 1180,
+      "forks": 1181,
       "archived": false,
       "pushed_at": "2026-10-11T04:21:58Z",
       "query_slugs": [
@@ -16811,7 +16684,7 @@
       "score": 12674
     },
     {
-      "id": 188,
+      "id": 185,
       "name": "geoip",
       "full_name": "Loyalsoldier/geoip",
       "url": "https://github.com/Loyalsoldier/geoip",
@@ -16852,7 +16725,7 @@
       "latest_release_name": "202610290022",
       "latest_release_url": "https://github.com/Loyalsoldier/geoip/releases/tag/202610290022",
       "latest_release_published_at": "2026-10-29T00:23:49Z",
-      "release_age_days": 0,
+      "release_age_days": 1,
       "platforms": {
         "android": false,
         "ios": false,
@@ -16949,10 +16822,10 @@
         }
       ],
       "status": "active",
-      "score": 12647
+      "score": 12639
     },
     {
-      "id": 189,
+      "id": 186,
       "name": "sshfs",
       "full_name": "libfuse/sshfs",
       "url": "https://github.com/libfuse/sshfs",
@@ -16971,7 +16844,7 @@
       "latest_release_name": "SSHFS 3.7.6",
       "latest_release_url": "https://github.com/libfuse/sshfs/releases/tag/sshfs-3.7.6",
       "latest_release_published_at": "2026-05-29T23:44:48Z",
-      "release_age_days": 152,
+      "release_age_days": 153,
       "platforms": {
         "android": false,
         "ios": false,
@@ -16998,10 +16871,10 @@
         }
       ],
       "status": "active",
-      "score": 12517
+      "score": 12509
     },
     {
-      "id": 190,
+      "id": 187,
       "name": "harlequin",
       "full_name": "tconbeer/harlequin",
       "url": "https://github.com/tconbeer/harlequin",
@@ -17041,7 +16914,7 @@
       "latest_release_name": "v2.17.0",
       "latest_release_url": "https://github.com/tconbeer/harlequin/releases/tag/v2.17.0",
       "latest_release_published_at": "2026-10-26T21:45:04Z",
-      "release_age_days": 2,
+      "release_age_days": 3,
       "platforms": {
         "android": false,
         "ios": false,
@@ -17089,10 +16962,10 @@
         }
       ],
       "status": "active",
-      "score": 12479
+      "score": 12471
     },
     {
-      "id": 191,
+      "id": 188,
       "name": "MacPass",
       "full_name": "MacPass/MacPass",
       "url": "https://github.com/MacPass/MacPass",
@@ -17150,7 +17023,7 @@
       "score": 12455
     },
     {
-      "id": 192,
+      "id": 189,
       "name": "AWAvenue-Ads-Rule",
       "full_name": "TG-Twilight/AWAvenue-Ads-Rule",
       "url": "https://github.com/TG-Twilight/AWAvenue-Ads-Rule",
@@ -17198,7 +17071,7 @@
       "score": 12405
     },
     {
-      "id": 193,
+      "id": 190,
       "name": "TablePro",
       "full_name": "TableProApp/TablePro",
       "url": "https://github.com/TableProApp/TablePro",
@@ -17229,7 +17102,7 @@
       "stars": 6338,
       "forks": 426,
       "archived": false,
-      "pushed_at": "2026-10-29T18:49:54Z",
+      "pushed_at": "2026-10-29T22:36:09Z",
       "query_slugs": [
         "repo"
       ],
@@ -17338,7 +17211,7 @@
       "score": 12314
     },
     {
-      "id": 194,
+      "id": 191,
       "name": "ClashMac",
       "full_name": "666OS/ClashMac",
       "url": "https://github.com/666OS/ClashMac",
@@ -17395,7 +17268,7 @@
       "score": 12091
     },
     {
-      "id": 195,
+      "id": 192,
       "name": "Telethon",
       "full_name": "LonamiWebs/Telethon",
       "url": "https://github.com/LonamiWebs/Telethon",
@@ -17411,7 +17284,7 @@
         "telethon"
       ],
       "stars": 12064,
-      "forks": 1658,
+      "forks": 1659,
       "archived": true,
       "pushed_at": "2026-02-21T21:11:58Z",
       "query_slugs": [
@@ -17437,7 +17310,7 @@
       "score": 12064
     },
     {
-      "id": 196,
+      "id": 193,
       "name": "goa",
       "full_name": "goadesign/goa",
       "url": "https://github.com/goadesign/goa",
@@ -17481,7 +17354,7 @@
       "score": 12058
     },
     {
-      "id": 197,
+      "id": 194,
       "name": "faraday",
       "full_name": "lostisland/faraday",
       "url": "https://github.com/lostisland/faraday",
@@ -17515,7 +17388,7 @@
       "score": 11930
     },
     {
-      "id": 198,
+      "id": 195,
       "name": "tigervnc",
       "full_name": "TigerVNC/tigervnc",
       "url": "https://github.com/TigerVNC/tigervnc",
@@ -17549,7 +17422,7 @@
       "score": 11924
     },
     {
-      "id": 199,
+      "id": 196,
       "name": "get_subscribe",
       "full_name": "ermaozi/get_subscribe",
       "url": "https://github.com/ermaozi/get_subscribe",
@@ -17568,7 +17441,7 @@
       "stars": 9409,
       "forks": 677,
       "archived": false,
-      "pushed_at": "2026-10-29T12:17:37Z",
+      "pushed_at": "2026-10-30T00:32:42Z",
       "query_slugs": [
         "repo"
       ],
@@ -17594,7 +17467,7 @@
       "score": 11909
     },
     {
-      "id": 200,
+      "id": 197,
       "name": "client_golang",
       "full_name": "prometheus/client_golang",
       "url": "https://github.com/prometheus/client_golang",
@@ -17628,7 +17501,7 @@
       "score": 11874
     },
     {
-      "id": 201,
+      "id": 198,
       "name": "sing-box-yg",
       "full_name": "yonggekkk/sing-box-yg",
       "url": "https://github.com/yonggekkk/sing-box-yg",
@@ -17655,8 +17528,8 @@
         "warp",
         "xray"
       ],
-      "stars": 10771,
-      "forks": 3191,
+      "stars": 10772,
+      "forks": 3190,
       "archived": false,
       "pushed_at": "2026-10-22T03:15:11Z",
       "query_slugs": [
@@ -17709,10 +17582,10 @@
         }
       ],
       "status": "stale",
-      "score": 11835
+      "score": 11836
     },
     {
-      "id": 202,
+      "id": 199,
       "name": "parity-ethereum",
       "full_name": "openethereum/parity-ethereum",
       "url": "https://github.com/openethereum/parity-ethereum",
@@ -17781,7 +17654,7 @@
       "score": 11815
     },
     {
-      "id": 203,
+      "id": 200,
       "name": "dotnet-starter-kit",
       "full_name": "fullstackhero/dotnet-starter-kit",
       "url": "https://github.com/fullstackhero/dotnet-starter-kit",
@@ -17806,7 +17679,7 @@
         "vertical-slice-architecture",
         "webapi"
       ],
-      "stars": 6837,
+      "stars": 6838,
       "forks": 2009,
       "archived": false,
       "pushed_at": "2026-10-09T04:09:06Z",
@@ -17818,7 +17691,7 @@
       "latest_release_name": "10.0.0",
       "latest_release_url": "https://github.com/fullstackhero/dotnet-starter-kit/releases/tag/10.0.0",
       "latest_release_published_at": "2026-06-19T22:35:58Z",
-      "release_age_days": 131,
+      "release_age_days": 132,
       "platforms": {
         "android": false,
         "ios": false,
@@ -17830,10 +17703,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 11789
+      "score": 11782
     },
     {
-      "id": 204,
+      "id": 201,
       "name": "dog",
       "full_name": "ogham/dog",
       "url": "https://github.com/ogham/dog",
@@ -17937,7 +17810,7 @@
       "score": 11692
     },
     {
-      "id": 205,
+      "id": 202,
       "name": "websockets",
       "full_name": "python-websockets/websockets",
       "url": "https://github.com/python-websockets/websockets",
@@ -17979,7 +17852,7 @@
       "score": 11662
     },
     {
-      "id": 206,
+      "id": 203,
       "name": "slack-term",
       "full_name": "jpbruinsslot/slack-term",
       "url": "https://github.com/jpbruinsslot/slack-term",
@@ -18042,7 +17915,7 @@
       "score": 11612
     },
     {
-      "id": 207,
+      "id": 204,
       "name": "go-elasticsearch",
       "full_name": "elastic/go-elasticsearch",
       "url": "https://github.com/elastic/go-elasticsearch",
@@ -18081,7 +17954,7 @@
       "score": 11606
     },
     {
-      "id": 208,
+      "id": 205,
       "name": "client",
       "full_name": "openai-php/client",
       "url": "https://github.com/openai-php/client",
@@ -18128,7 +18001,7 @@
       "score": 11501
     },
     {
-      "id": 209,
+      "id": 206,
       "name": "gemini-watermark-remover",
       "full_name": "GargantuaX/gemini-watermark-remover",
       "url": "https://github.com/GargantuaX/gemini-watermark-remover",
@@ -18220,7 +18093,7 @@
       "score": 11470
     },
     {
-      "id": 210,
+      "id": 207,
       "name": "quip-node-manager",
       "full_name": "QuipNetwork/quip-node-manager",
       "url": "https://github.com/QuipNetwork/quip-node-manager",
@@ -18254,7 +18127,7 @@
       "score": 11470
     },
     {
-      "id": 211,
+      "id": 208,
       "name": "google-cloud-python",
       "full_name": "googleapis/google-cloud-python",
       "url": "https://github.com/googleapis/google-cloud-python",
@@ -18266,7 +18139,7 @@
       "stars": 5414,
       "forks": 1815,
       "archived": false,
-      "pushed_at": "2026-10-29T20:46:33Z",
+      "pushed_at": "2026-10-30T00:38:27Z",
       "query_slugs": [
         "repo"
       ],
@@ -18290,7 +18163,7 @@
       "score": 11414
     },
     {
-      "id": 212,
+      "id": 209,
       "name": "faststream",
       "full_name": "ag2ai/faststream",
       "url": "https://github.com/ag2ai/faststream",
@@ -18338,7 +18211,7 @@
       "score": 11331
     },
     {
-      "id": 213,
+      "id": 210,
       "name": "authlib",
       "full_name": "authlib/authlib",
       "url": "https://github.com/authlib/authlib",
@@ -18386,7 +18259,7 @@
       "score": 11324
     },
     {
-      "id": 214,
+      "id": 211,
       "name": "OpenWrt-nikki",
       "full_name": "nikkinikki-org/OpenWrt-nikki",
       "url": "https://github.com/nikkinikki-org/OpenWrt-nikki",
@@ -18401,7 +18274,7 @@
         "openwrt",
         "transparent-proxy"
       ],
-      "stars": 5420,
+      "stars": 5422,
       "forks": 596,
       "archived": false,
       "pushed_at": "2026-10-29T00:25:47Z",
@@ -18510,10 +18383,10 @@
         }
       ],
       "status": "active",
-      "score": 11268
+      "score": 11270
     },
     {
-      "id": 215,
+      "id": 212,
       "name": "mountpoint-s3",
       "full_name": "awslabs/mountpoint-s3",
       "url": "https://github.com/awslabs/mountpoint-s3",
@@ -18526,7 +18399,7 @@
         "object-storage",
         "s3"
       ],
-      "stars": 5793,
+      "stars": 5792,
       "forks": 255,
       "archived": false,
       "pushed_at": "2026-10-29T20:37:34Z",
@@ -18550,10 +18423,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 11265
+      "score": 11264
     },
     {
-      "id": 216,
+      "id": 213,
       "name": "SS-Rule-Snippet",
       "full_name": "Hackl0us/SS-Rule-Snippet",
       "url": "https://github.com/Hackl0us/SS-Rule-Snippet",
@@ -18604,7 +18477,7 @@
       "score": 11216
     },
     {
-      "id": 217,
+      "id": 214,
       "name": "confluent-kafka-go",
       "full_name": "confluentinc/confluent-kafka-go",
       "url": "https://github.com/confluentinc/confluent-kafka-go",
@@ -18647,7 +18520,7 @@
       "score": 11158
     },
     {
-      "id": 218,
+      "id": 215,
       "name": "hickory-dns",
       "full_name": "hickory-dns/hickory-dns",
       "url": "https://github.com/hickory-dns/hickory-dns",
@@ -18691,7 +18564,7 @@
       "score": 11080
     },
     {
-      "id": 219,
+      "id": 216,
       "name": "react_on_rails",
       "full_name": "shakacode/react_on_rails",
       "url": "https://github.com/shakacode/react_on_rails",
@@ -18717,7 +18590,7 @@
       "stars": 5192,
       "forks": 630,
       "archived": false,
-      "pushed_at": "2026-10-29T20:59:00Z",
+      "pushed_at": "2026-10-30T00:40:54Z",
       "query_slugs": [
         "repo"
       ],
@@ -18741,7 +18614,7 @@
       "score": 11072
     },
     {
-      "id": 220,
+      "id": 217,
       "name": "jira_clone",
       "full_name": "oldboyxx/jira_clone",
       "url": "https://github.com/oldboyxx/jira_clone",
@@ -18775,7 +18648,7 @@
       "score": 11064
     },
     {
-      "id": 221,
+      "id": 218,
       "name": "requestly",
       "full_name": "requestly/requestly",
       "url": "https://github.com/requestly/requestly",
@@ -18821,7 +18694,7 @@
       "score": 10997
     },
     {
-      "id": 222,
+      "id": 219,
       "name": "ProxySU",
       "full_name": "proxysu/ProxySU",
       "url": "https://github.com/proxysu/ProxySU",
@@ -18887,7 +18760,7 @@
       "score": 10993
     },
     {
-      "id": 223,
+      "id": 220,
       "name": "Script",
       "full_name": "NobyDa/Script",
       "url": "https://github.com/NobyDa/Script",
@@ -18931,7 +18804,7 @@
       "score": 10944
     },
     {
-      "id": 224,
+      "id": 221,
       "name": "anti-AD",
       "full_name": "privacy-protection-tools/anti-AD",
       "url": "https://github.com/privacy-protection-tools/anti-AD",
@@ -18974,7 +18847,7 @@
       "score": 10903
     },
     {
-      "id": 225,
+      "id": 222,
       "name": "discordo",
       "full_name": "ayn2op/discordo",
       "url": "https://github.com/ayn2op/discordo",
@@ -19032,7 +18905,7 @@
       "score": 10856
     },
     {
-      "id": 226,
+      "id": 223,
       "name": "v2ray",
       "full_name": "free18/v2ray",
       "url": "https://github.com/free18/v2ray",
@@ -19091,7 +18964,7 @@
       "score": 10785
     },
     {
-      "id": 227,
+      "id": 224,
       "name": "weweChat",
       "full_name": "trazyn/weweChat",
       "url": "https://github.com/trazyn/weweChat",
@@ -19231,7 +19104,7 @@
       "score": 10699
     },
     {
-      "id": 228,
+      "id": 225,
       "name": "elasticsearch-php",
       "full_name": "elastic/elasticsearch-php",
       "url": "https://github.com/elastic/elasticsearch-php",
@@ -19269,7 +19142,7 @@
       "score": 10645
     },
     {
-      "id": 229,
+      "id": 226,
       "name": "libhv",
       "full_name": "ithewei/libhv",
       "url": "https://github.com/ithewei/libhv",
@@ -19320,47 +19193,7 @@
       "score": 10617
     },
     {
-      "id": 230,
-      "name": "socket.io-client",
-      "full_name": "socketio/socket.io-client",
-      "url": "https://github.com/socketio/socket.io-client",
-      "description": "Realtime application framework (client)",
-      "language": null,
-      "topics": [
-        "browser",
-        "javascript",
-        "nodejs",
-        "socket-io",
-        "websocket"
-      ],
-      "stars": 10582,
-      "forks": 2956,
-      "archived": false,
-      "pushed_at": "2024-07-09T10:20:28Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": true,
-      "latest_release_tag": "4.7.5",
-      "latest_release_name": "4.7.5",
-      "latest_release_url": "https://github.com/socketio/socket.io-client/releases/tag/4.7.5",
-      "latest_release_published_at": "2024-03-14T17:05:33Z",
-      "release_age_days": 959,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": false
-      },
-      "platform_labels": [],
-      "platforms_text": "Unknown",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "outdated",
-      "score": 10582
-    },
-    {
-      "id": 231,
+      "id": 227,
       "name": "clash",
       "full_name": "clashbk/clash",
       "url": "https://github.com/clashbk/clash",
@@ -19372,7 +19205,7 @@
         "clashmeta",
         "mihomo"
       ],
-      "stars": 10574,
+      "stars": 10578,
       "forks": 1591,
       "archived": false,
       "pushed_at": "2026-10-04T11:02:45Z",
@@ -19396,10 +19229,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 10574
+      "score": 10578
     },
     {
-      "id": 232,
+      "id": 228,
       "name": "librespot",
       "full_name": "librespot-org/librespot",
       "url": "https://github.com/librespot-org/librespot",
@@ -19412,7 +19245,7 @@
         "spotify-connect"
       ],
       "stars": 7345,
-      "forks": 963,
+      "forks": 964,
       "archived": false,
       "pushed_at": "2026-10-21T14:12:36Z",
       "query_slugs": [
@@ -19438,7 +19271,7 @@
       "score": 10521
     },
     {
-      "id": 233,
+      "id": 229,
       "name": "shadowsocks-qt5",
       "full_name": "shadowsocks/shadowsocks-qt5",
       "url": "https://github.com/shadowsocks/shadowsocks-qt5",
@@ -19490,7 +19323,7 @@
       "score": 10407
     },
     {
-      "id": 234,
+      "id": 230,
       "name": "saws",
       "full_name": "donnemartin/saws",
       "url": "https://github.com/donnemartin/saws",
@@ -19515,7 +19348,7 @@
         "utility",
         "windows"
       ],
-      "stars": 5298,
+      "stars": 5297,
       "forks": 279,
       "archived": false,
       "pushed_at": "2024-04-02T14:14:38Z",
@@ -19542,10 +19375,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "outdated",
-      "score": 10298
+      "score": 10297
     },
     {
-      "id": 235,
+      "id": 231,
       "name": "wireguard-ui",
       "full_name": "ngoduykhanh/wireguard-ui",
       "url": "https://github.com/ngoduykhanh/wireguard-ui",
@@ -19683,7 +19516,61 @@
       "score": 10152
     },
     {
-      "id": 236,
+      "id": 232,
+      "name": "MQTTnet",
+      "full_name": "dotnet/MQTTnet",
+      "url": "https://github.com/dotnet/MQTTnet",
+      "description": "MQTTnet is a high performance .NET library for MQTT based communication. It provides a MQTT client and a MQTT server (broker). The implementation is based on the documentation from http://mqtt.org/.",
+      "language": "C#",
+      "topics": [
+        "anycpu",
+        "broker",
+        "communication",
+        "csharp",
+        "iot",
+        "iot-framework",
+        "iot-platform",
+        "mqtt",
+        "mqtt-broker",
+        "mqtt-client",
+        "mqtt-protocol",
+        "mqtt-server",
+        "net",
+        "netcore",
+        "netframework",
+        "nuget",
+        "tcp",
+        "tls",
+        "uwp"
+      ],
+      "stars": 5080,
+      "forks": 1154,
+      "archived": false,
+      "pushed_at": "2026-09-30T18:55:47Z",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "v5.2.0",
+      "latest_release_name": "v5.2.0",
+      "latest_release_url": "https://github.com/dotnet/MQTTnet/releases/tag/v5.2.0",
+      "latest_release_published_at": "2026-07-01T17:28:22Z",
+      "release_age_days": 120,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [],
+      "platforms_text": "Unknown",
+      "release_assets_count": 0,
+      "release_assets": [],
+      "status": "active",
+      "score": 10120
+    },
+    {
+      "id": 233,
       "name": "falcon",
       "full_name": "plotly/falcon",
       "url": "https://github.com/plotly/falcon",
@@ -19753,7 +19640,7 @@
       "score": 10091
     },
     {
-      "id": 237,
+      "id": 234,
       "name": "sublink-worker",
       "full_name": "7Sageer/sublink-worker",
       "url": "https://github.com/7Sageer/sublink-worker",
@@ -19769,8 +19656,8 @@
         "v2rayng",
         "xray-core"
       ],
-      "stars": 5552,
-      "forks": 9688,
+      "stars": 5554,
+      "forks": 9689,
       "archived": false,
       "pushed_at": "2026-10-16T04:04:05Z",
       "query_slugs": [
@@ -19794,10 +19681,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "active",
-      "score": 10072
+      "score": 10074
     },
     {
-      "id": 238,
+      "id": 235,
       "name": "AndroidAsync",
       "full_name": "koush/AndroidAsync",
       "url": "https://github.com/koush/AndroidAsync",
@@ -19833,7 +19720,7 @@
       "score": 10022
     },
     {
-      "id": 239,
+      "id": 236,
       "name": "sing-box",
       "full_name": "233boy/sing-box",
       "url": "https://github.com/233boy/sing-box",
@@ -19847,7 +19734,7 @@
         "v2ray",
         "xray"
       ],
-      "stars": 5137,
+      "stars": 5138,
       "forks": 1839,
       "archived": false,
       "pushed_at": "2026-06-04T06:27:22Z",
@@ -19879,10 +19766,10 @@
         }
       ],
       "status": "active",
-      "score": 9961
+      "score": 9962
     },
     {
-      "id": 240,
+      "id": 237,
       "name": "flat",
       "full_name": "netless-io/flat",
       "url": "https://github.com/netless-io/flat",
@@ -19929,7 +19816,7 @@
       "score": 9764
     },
     {
-      "id": 241,
+      "id": 238,
       "name": "SocketRocket",
       "full_name": "facebookincubator/SocketRocket",
       "url": "https://github.com/facebookincubator/SocketRocket",
@@ -19948,7 +19835,7 @@
       "latest_release_name": "0.7.1",
       "latest_release_url": "https://github.com/facebookincubator/SocketRocket/releases/tag/0.7.1",
       "latest_release_published_at": "2024-08-31T00:33:55Z",
-      "release_age_days": 789,
+      "release_age_days": 790,
       "platforms": {
         "android": false,
         "ios": false,
@@ -19963,7 +19850,7 @@
       "score": 9595
     },
     {
-      "id": 242,
+      "id": 239,
       "name": "graffle",
       "full_name": "graffle-js/graffle",
       "url": "https://github.com/graffle-js/graffle",
@@ -20003,7 +19890,7 @@
       "score": 9553
     },
     {
-      "id": 243,
+      "id": 240,
       "name": "lsp-mode",
       "full_name": "emacs-lsp/lsp-mode",
       "url": "https://github.com/emacs-lsp/lsp-mode",
@@ -20057,7 +19944,7 @@
       "score": 9459
     },
     {
-      "id": 244,
+      "id": 241,
       "name": "vpn-configs-for-russia",
       "full_name": "igareck/vpn-configs-for-russia",
       "url": "https://github.com/igareck/vpn-configs-for-russia",
@@ -20088,7 +19975,7 @@
       "stars": 9370,
       "forks": 461,
       "archived": false,
-      "pushed_at": "2026-10-29T20:55:36Z",
+      "pushed_at": "2026-10-29T23:34:30Z",
       "query_slugs": [
         "repo"
       ],
@@ -20112,7 +19999,7 @@
       "score": 9370
     },
     {
-      "id": 245,
+      "id": 242,
       "name": "Xray_onekey",
       "full_name": "wulabing/Xray_onekey",
       "url": "https://github.com/wulabing/Xray_onekey",
@@ -20155,7 +20042,7 @@
       "score": 9257
     },
     {
-      "id": 246,
+      "id": 243,
       "name": "td",
       "full_name": "tdlib/td",
       "url": "https://github.com/tdlib/td",
@@ -20166,8 +20053,8 @@
         "library",
         "telegram"
       ],
-      "stars": 9227,
-      "forks": 2219,
+      "stars": 9229,
+      "forks": 2220,
       "archived": false,
       "pushed_at": "2026-10-27T14:52:36Z",
       "query_slugs": [
@@ -20190,10 +20077,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 9227
+      "score": 9229
     },
     {
-      "id": 247,
+      "id": 244,
       "name": "http-prompt",
       "full_name": "httpie/http-prompt",
       "url": "https://github.com/httpie/http-prompt",
@@ -20245,7 +20132,7 @@
       "score": 9107
     },
     {
-      "id": 248,
+      "id": 245,
       "name": "SpotX-Bash",
       "full_name": "SpotX-Official/SpotX-Bash",
       "url": "https://github.com/SpotX-Official/SpotX-Bash",
@@ -20298,7 +20185,7 @@
       "score": 8901
     },
     {
-      "id": 249,
+      "id": 246,
       "name": "WARP-Clash-API",
       "full_name": "vvbbnn00/WARP-Clash-API",
       "url": "https://github.com/vvbbnn00/WARP-Clash-API",
@@ -20342,7 +20229,7 @@
       "score": 8812
     },
     {
-      "id": 250,
+      "id": 247,
       "name": "Mailpile",
       "full_name": "mailpile/Mailpile",
       "url": "https://github.com/mailpile/Mailpile",
@@ -20384,7 +20271,7 @@
       "score": 8810
     },
     {
-      "id": 251,
+      "id": 248,
       "name": "bypy",
       "full_name": "houtianze/bypy",
       "url": "https://github.com/houtianze/bypy",
@@ -20418,7 +20305,7 @@
       "score": 8587
     },
     {
-      "id": 252,
+      "id": 249,
       "name": "agentic-inbox",
       "full_name": "cloudflare/agentic-inbox",
       "url": "https://github.com/cloudflare/agentic-inbox",
@@ -20452,7 +20339,7 @@
       "score": 8553
     },
     {
-      "id": 253,
+      "id": 250,
       "name": "nodejs-argo",
       "full_name": "eooce/nodejs-argo",
       "url": "https://github.com/eooce/nodejs-argo",
@@ -20494,7 +20381,7 @@
       "score": 8435
     },
     {
-      "id": 254,
+      "id": 251,
       "name": "xray",
       "full_name": "atom-archive/xray",
       "url": "https://github.com/atom-archive/xray",
@@ -20528,7 +20415,7 @@
       "score": 8417
     },
     {
-      "id": 255,
+      "id": 252,
       "name": "substrate",
       "full_name": "paritytech/substrate",
       "url": "https://github.com/paritytech/substrate",
@@ -20569,7 +20456,7 @@
       "score": 8379
     },
     {
-      "id": 256,
+      "id": 253,
       "name": "V2ray-for-Doprax",
       "full_name": "hiifeng/V2ray-for-Doprax",
       "url": "https://github.com/hiifeng/V2ray-for-Doprax",
@@ -20583,7 +20470,7 @@
         "vmess"
       ],
       "stars": 8313,
-      "forks": 21436,
+      "forks": 21435,
       "archived": false,
       "pushed_at": "2026-03-02T06:07:20Z",
       "query_slugs": [
@@ -20609,7 +20496,7 @@
       "score": 8313
     },
     {
-      "id": 257,
+      "id": 254,
       "name": "AutoMergePublicNodes",
       "full_name": "chengaopan/AutoMergePublicNodes",
       "url": "https://github.com/chengaopan/AutoMergePublicNodes",
@@ -20643,7 +20530,7 @@
       "score": 8293
     },
     {
-      "id": 258,
+      "id": 255,
       "name": "cpprestsdk",
       "full_name": "microsoft/cpprestsdk",
       "url": "https://github.com/microsoft/cpprestsdk",
@@ -20663,7 +20550,7 @@
         "tasks",
         "websockets"
       ],
-      "stars": 8248,
+      "stars": 8247,
       "forks": 1689,
       "archived": true,
       "pushed_at": "2026-06-01T19:54:26Z",
@@ -20687,10 +20574,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "outdated",
-      "score": 8248
+      "score": 8247
     },
     {
-      "id": 259,
+      "id": 256,
       "name": "FastHub",
       "full_name": "k0shk0sh/FastHub",
       "url": "https://github.com/k0shk0sh/FastHub",
@@ -20738,7 +20625,7 @@
       "score": 8242
     },
     {
-      "id": 260,
+      "id": 257,
       "name": "Marzban",
       "full_name": "Gozargah/Marzban",
       "url": "https://github.com/Gozargah/Marzban",
@@ -20784,7 +20671,7 @@
       "score": 8223
     },
     {
-      "id": 261,
+      "id": 258,
       "name": "shadowrocket-rules",
       "full_name": "GMOogway/shadowrocket-rules",
       "url": "https://github.com/GMOogway/shadowrocket-rules",
@@ -20835,7 +20722,7 @@
       "score": 8181
     },
     {
-      "id": 262,
+      "id": 259,
       "name": "ClashX-V2Ray-TopFreeProxy",
       "full_name": "VPN-Subcription-Links/ClashX-V2Ray-TopFreeProxy",
       "url": "https://github.com/VPN-Subcription-Links/ClashX-V2Ray-TopFreeProxy",
@@ -20892,7 +20779,7 @@
       "score": 8180
     },
     {
-      "id": 263,
+      "id": 260,
       "name": "litegraph.js",
       "full_name": "jagenjo/litegraph.js",
       "url": "https://github.com/jagenjo/litegraph.js",
@@ -20941,7 +20828,7 @@
       "score": 8176
     },
     {
-      "id": 264,
+      "id": 261,
       "name": "dehydrated",
       "full_name": "dehydrated-io/dehydrated",
       "url": "https://github.com/dehydrated-io/dehydrated",
@@ -20969,7 +20856,7 @@
       "latest_release_name": "v0.7.2",
       "latest_release_url": "https://github.com/dehydrated-io/dehydrated/releases/tag/v0.7.2",
       "latest_release_published_at": "2025-05-17T23:37:55Z",
-      "release_age_days": 529,
+      "release_age_days": 530,
       "platforms": {
         "android": false,
         "ios": false,
@@ -20996,57 +20883,10 @@
         }
       ],
       "status": "stale",
-      "score": 8031
+      "score": 8023
     },
     {
-      "id": 265,
-      "name": "Librum",
-      "full_name": "Librum-Reader/Librum",
-      "url": "https://github.com/Librum-Reader/Librum",
-      "description": "The Librum client application",
-      "language": "C++",
-      "topics": [
-        "cmake",
-        "cpp",
-        "ebook-reader",
-        "ebooks",
-        "library-management",
-        "linux",
-        "qml",
-        "qt",
-        "qt6",
-        "reader"
-      ],
-      "stars": 5318,
-      "forks": 190,
-      "archived": false,
-      "pushed_at": "2026-04-26T16:57:19Z",
-      "query_slugs": [
-        "repo"
-      ],
-      "has_release": true,
-      "latest_release_tag": "v.0.12.2",
-      "latest_release_name": "v.0.12.2",
-      "latest_release_url": "https://github.com/Librum-Reader/Librum/releases/tag/v.0.12.2",
-      "latest_release_published_at": "2024-03-29T23:44:26Z",
-      "release_age_days": 943,
-      "platforms": {
-        "android": false,
-        "ios": false,
-        "windows": false,
-        "linux": true
-      },
-      "platform_labels": [
-        "Linux"
-      ],
-      "platforms_text": "Linux",
-      "release_assets_count": 0,
-      "release_assets": [],
-      "status": "outdated",
-      "score": 7818
-    },
-    {
-      "id": 266,
+      "id": 262,
       "name": "Awesome-MCP-ZH",
       "full_name": "yzfly/Awesome-MCP-ZH",
       "url": "https://github.com/yzfly/Awesome-MCP-ZH",
@@ -21093,7 +20933,7 @@
       "score": 7790
     },
     {
-      "id": 267,
+      "id": 263,
       "name": "argosbx",
       "full_name": "yonggekkk/argosbx",
       "url": "https://github.com/yonggekkk/argosbx",
@@ -21122,7 +20962,7 @@
       "stars": 5972,
       "forks": 2316,
       "archived": false,
-      "pushed_at": "2026-10-29T03:33:27Z",
+      "pushed_at": "2026-10-29T21:55:23Z",
       "query_slugs": [
         "repo"
       ],
@@ -21189,7 +21029,7 @@
       "score": 7756
     },
     {
-      "id": 268,
+      "id": 264,
       "name": "AndroRAT",
       "full_name": "karma9874/AndroRAT",
       "url": "https://github.com/karma9874/AndroRAT",
@@ -21212,8 +21052,8 @@
         "reverse-shell",
         "sockets"
       ],
-      "stars": 5245,
-      "forks": 1677,
+      "stars": 5246,
+      "forks": 1678,
       "archived": false,
       "pushed_at": "2024-07-17T17:22:43Z",
       "query_slugs": [
@@ -21238,10 +21078,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release",
-      "score": 7745
+      "score": 7746
     },
     {
-      "id": 269,
+      "id": 265,
       "name": "websocketpp",
       "full_name": "zaphoyd/websocketpp",
       "url": "https://github.com/zaphoyd/websocketpp",
@@ -21275,7 +21115,7 @@
       "score": 7716
     },
     {
-      "id": 270,
+      "id": 266,
       "name": "Paolujichang",
       "full_name": "limbopro/Paolujichang",
       "url": "https://github.com/limbopro/Paolujichang",
@@ -21294,7 +21134,7 @@
         "vless",
         "vpn"
       ],
-      "stars": 7699,
+      "stars": 7700,
       "forks": 104,
       "archived": false,
       "pushed_at": "2026-10-29T01:57:36Z",
@@ -21319,10 +21159,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 7699
+      "score": 7700
     },
     {
-      "id": 271,
+      "id": 267,
       "name": "V2RayX",
       "full_name": "Cenmrev/V2RayX",
       "url": "https://github.com/Cenmrev/V2RayX",
@@ -21365,7 +21205,57 @@
       "score": 7614
     },
     {
-      "id": 272,
+      "id": 268,
+      "name": "wireguard-docs",
+      "full_name": "pirate/wireguard-docs",
+      "url": "https://github.com/pirate/wireguard-docs",
+      "description": "📖 Unofficial WireGuard Documentation: Setup, Usage, Configuration, and full example setups for VPNs supporting both servers & roaming clients.",
+      "language": "Shell",
+      "topics": [
+        "internet",
+        "kernel-module",
+        "linux",
+        "mesh-networking",
+        "nat",
+        "networking",
+        "security",
+        "tunnel",
+        "tuntap",
+        "udp",
+        "vpn",
+        "vpn-solution",
+        "wireguard"
+      ],
+      "stars": 5062,
+      "forks": 332,
+      "archived": false,
+      "pushed_at": "2026-03-21T16:59:32Z",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": false,
+      "latest_release_tag": null,
+      "latest_release_name": null,
+      "latest_release_url": null,
+      "latest_release_published_at": null,
+      "release_age_days": null,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": true
+      },
+      "platform_labels": [
+        "Linux"
+      ],
+      "platforms_text": "Linux",
+      "release_assets_count": 0,
+      "release_assets": [],
+      "status": "no_release",
+      "score": 7562
+    },
+    {
+      "id": 269,
       "name": "webssh",
       "full_name": "huashengdun/webssh",
       "url": "https://github.com/huashengdun/webssh",
@@ -21379,8 +21269,8 @@
         "websockets",
         "xtermjs"
       ],
-      "stars": 5152,
-      "forks": 1610,
+      "stars": 5153,
+      "forks": 1611,
       "archived": false,
       "pushed_at": "2025-07-27T13:48:13Z",
       "query_slugs": [
@@ -21403,10 +21293,55 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "stale",
-      "score": 7480
+      "score": 7481
     },
     {
-      "id": 273,
+      "id": 270,
+      "name": "clashN",
+      "full_name": "2dust/clashN",
+      "url": "https://github.com/2dust/clashN",
+      "description": "A clash client for Windows, support Mihomo",
+      "language": "C#",
+      "topics": [],
+      "stars": 4974,
+      "forks": 594,
+      "archived": false,
+      "pushed_at": "2024-06-29T02:06:24Z",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "2.22",
+      "latest_release_name": "2.22",
+      "latest_release_url": "https://github.com/2dust/clashN/releases/tag/2.22",
+      "latest_release_published_at": "2024-04-28T04:25:18Z",
+      "release_age_days": 914,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": true,
+        "linux": false
+      },
+      "platform_labels": [
+        "Windows"
+      ],
+      "platforms_text": "Windows",
+      "release_assets_count": 1,
+      "release_assets": [
+        {
+          "name": "clashN.zip",
+          "url": "https://github.com/2dust/clashN/releases/download/2.22/clashN.zip",
+          "size_mb": 45.45,
+          "content_type": "application/x-zip-compressed",
+          "platform_hint": []
+        }
+      ],
+      "status": "outdated",
+      "score": 7474
+    },
+    {
+      "id": 271,
       "name": "GeoIP2-CN",
       "full_name": "Hackl0us/GeoIP2-CN",
       "url": "https://github.com/Hackl0us/GeoIP2-CN",
@@ -21450,7 +21385,7 @@
       "score": 7441
     },
     {
-      "id": 274,
+      "id": 272,
       "name": "elastic",
       "full_name": "olivere/elastic",
       "url": "https://github.com/olivere/elastic",
@@ -21487,7 +21422,7 @@
       "score": 7439
     },
     {
-      "id": 275,
+      "id": 273,
       "name": "studio",
       "full_name": "outerbase/studio",
       "url": "https://github.com/outerbase/studio",
@@ -21531,7 +21466,7 @@
       "score": 7383
     },
     {
-      "id": 276,
+      "id": 274,
       "name": "openwrt-packages",
       "full_name": "kenzok8/openwrt-packages",
       "url": "https://github.com/kenzok8/openwrt-packages",
@@ -21562,7 +21497,7 @@
       "stars": 7198,
       "forks": 2520,
       "archived": false,
-      "pushed_at": "2026-10-29T11:51:26Z",
+      "pushed_at": "2026-10-29T22:05:02Z",
       "query_slugs": [
         "repo"
       ],
@@ -21586,14 +21521,14 @@
       "score": 7198
     },
     {
-      "id": 277,
+      "id": 275,
       "name": "v2rayNvpn",
       "full_name": "githubvpn007/v2rayNvpn",
       "url": "https://github.com/githubvpn007/v2rayNvpn",
       "description": "翻墙、免费翻墙、免费科学上网、免费节点、免费梯子、免费ss/ssr/v2ray/trojan节点、蓝灯、谷歌商店、翻墙梯子 、外网游戏、国外游戏、vpn、vpn推荐、每天更新、上外网、外网、V2rayN、Qv2ray、V2rayW、V2RayS、Mellow、V2rayX、V2rayU、ClashX、Kitsunebi、BifrostV、i2Ray 、Quantumult、Surge 4、winXray、Qv2ray、Kitsunebi、Trojan-Qt5、代理服务器、机场、马里奥、魔兽世界、poshMark、亚马逊、虾皮、煤炉、Mercari、外贸",
       "language": null,
       "topics": [],
-      "stars": 7127,
+      "stars": 7128,
       "forks": 492,
       "archived": false,
       "pushed_at": "2026-10-12T08:19:12Z",
@@ -21626,10 +21561,10 @@
         }
       ],
       "status": "outdated",
-      "score": 7127
+      "score": 7128
     },
     {
-      "id": 278,
+      "id": 276,
       "name": "multi-v2ray",
       "full_name": "Jrohy/multi-v2ray",
       "url": "https://github.com/Jrohy/multi-v2ray",
@@ -21679,7 +21614,7 @@
       "score": 6939
     },
     {
-      "id": 279,
+      "id": 277,
       "name": "mxgraph",
       "full_name": "jgraph/mxgraph",
       "url": "https://github.com/jgraph/mxgraph",
@@ -21713,7 +21648,7 @@
       "score": 6899
     },
     {
-      "id": 280,
+      "id": 278,
       "name": "Sing-box",
       "full_name": "eooce/Sing-box",
       "url": "https://github.com/eooce/Sing-box",
@@ -21731,7 +21666,7 @@
         "vmess-ws-tls"
       ],
       "stars": 5229,
-      "forks": 1847,
+      "forks": 1846,
       "archived": false,
       "pushed_at": "2026-10-29T04:49:44Z",
       "query_slugs": [
@@ -21779,7 +21714,7 @@
       "score": 6893
     },
     {
-      "id": 281,
+      "id": 279,
       "name": "awesome-vpn",
       "full_name": "awesome-vpn/awesome-vpn",
       "url": "https://github.com/awesome-vpn/awesome-vpn",
@@ -21804,7 +21739,7 @@
         "vmess",
         "xray"
       ],
-      "stars": 6808,
+      "stars": 6809,
       "forks": 576,
       "archived": false,
       "pushed_at": "2026-10-29T03:47:24Z",
@@ -21829,10 +21764,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 6808
+      "score": 6809
     },
     {
-      "id": 282,
+      "id": 280,
       "name": "react-apollo",
       "full_name": "apollographql/react-apollo",
       "url": "https://github.com/apollographql/react-apollo",
@@ -21872,7 +21807,7 @@
       "score": 6790
     },
     {
-      "id": 283,
+      "id": 281,
       "name": "shadowrocket-rules",
       "full_name": "deezertidal/shadowrocket-rules",
       "url": "https://github.com/deezertidal/shadowrocket-rules",
@@ -21882,7 +21817,7 @@
       "stars": 6777,
       "forks": 345,
       "archived": false,
-      "pushed_at": "2026-10-29T19:24:51Z",
+      "pushed_at": "2026-10-30T00:24:45Z",
       "query_slugs": [
         "code",
         "repo"
@@ -21907,7 +21842,7 @@
       "score": 6777
     },
     {
-      "id": 284,
+      "id": 282,
       "name": "Custom_OpenClash_Rules",
       "full_name": "Aethersailor/Custom_OpenClash_Rules",
       "url": "https://github.com/Aethersailor/Custom_OpenClash_Rules",
@@ -21949,7 +21884,7 @@
       "score": 6700
     },
     {
-      "id": 285,
+      "id": 283,
       "name": "WorkerVless2sub",
       "full_name": "cmliu/WorkerVless2sub",
       "url": "https://github.com/cmliu/WorkerVless2sub",
@@ -21983,7 +21918,7 @@
       "score": 6302
     },
     {
-      "id": 286,
+      "id": 284,
       "name": "GateOne",
       "full_name": "liftoff/GateOne",
       "url": "https://github.com/liftoff/GateOne",
@@ -22017,7 +21952,7 @@
       "score": 6285
     },
     {
-      "id": 287,
+      "id": 285,
       "name": "torrent",
       "full_name": "anacrolix/torrent",
       "url": "https://github.com/anacrolix/torrent",
@@ -22059,7 +21994,7 @@
       "score": 6129
     },
     {
-      "id": 288,
+      "id": 286,
       "name": "sing-box",
       "full_name": "fscarmen/sing-box",
       "url": "https://github.com/fscarmen/sing-box",
@@ -22114,7 +22049,7 @@
       "score": 5931
     },
     {
-      "id": 289,
+      "id": 287,
       "name": "cost-xray",
       "full_name": "tigerless-labs/cost-xray",
       "url": "https://github.com/tigerless-labs/cost-xray",
@@ -22156,7 +22091,7 @@
       "score": 5913
     },
     {
-      "id": 290,
+      "id": 288,
       "name": "wool_scripts",
       "full_name": "fmz200/wool_scripts",
       "url": "https://github.com/fmz200/wool_scripts",
@@ -22191,7 +22126,7 @@
       "score": 5871
     },
     {
-      "id": 291,
+      "id": 289,
       "name": "sqlchat",
       "full_name": "sqlchat/sqlchat",
       "url": "https://github.com/sqlchat/sqlchat",
@@ -22246,7 +22181,7 @@
       "score": 5848
     },
     {
-      "id": 292,
+      "id": 290,
       "name": "ssh2",
       "full_name": "mscdex/ssh2",
       "url": "https://github.com/mscdex/ssh2",
@@ -22280,7 +22215,7 @@
       "score": 5828
     },
     {
-      "id": 293,
+      "id": 291,
       "name": "plupload",
       "full_name": "moxiecode/plupload",
       "url": "https://github.com/moxiecode/plupload",
@@ -22318,7 +22253,7 @@
       "score": 5617
     },
     {
-      "id": 294,
+      "id": 292,
       "name": "Shadowrocket-First",
       "full_name": "LOWERTOP/Shadowrocket-First",
       "url": "https://github.com/LOWERTOP/Shadowrocket-First",
@@ -22335,7 +22270,7 @@
         "vowifi",
         "wifi-call"
       ],
-      "stars": 5584,
+      "stars": 5586,
       "forks": 346,
       "archived": false,
       "pushed_at": "2026-10-29T17:07:08Z",
@@ -22360,10 +22295,10 @@
       "release_assets_count": 0,
       "release_assets": [],
       "status": "no_release_recent_repo",
-      "score": 5584
+      "score": 5586
     },
     {
-      "id": 295,
+      "id": 293,
       "name": "vibora",
       "full_name": "vibora-io/vibora",
       "url": "https://github.com/vibora-io/vibora",
@@ -22406,7 +22341,7 @@
       "score": 5582
     },
     {
-      "id": 296,
+      "id": 294,
       "name": "REALITY",
       "full_name": "XTLS/REALITY",
       "url": "https://github.com/XTLS/REALITY",
@@ -22446,7 +22381,7 @@
       "score": 5578
     },
     {
-      "id": 297,
+      "id": 295,
       "name": "miragejs",
       "full_name": "miragejs/miragejs",
       "url": "https://github.com/miragejs/miragejs",
@@ -22486,7 +22421,7 @@
       "score": 5528
     },
     {
-      "id": 298,
+      "id": 296,
       "name": "runelite",
       "full_name": "runelite/runelite",
       "url": "https://github.com/runelite/runelite",
@@ -22498,7 +22433,7 @@
         "runescape"
       ],
       "stars": 5515,
-      "forks": 5849,
+      "forks": 5848,
       "archived": false,
       "pushed_at": "2026-10-27T01:06:39Z",
       "query_slugs": [
@@ -22524,7 +22459,7 @@
       "score": 5515
     },
     {
-      "id": 299,
+      "id": 297,
       "name": "rest-client",
       "full_name": "rest-client/rest-client",
       "url": "https://github.com/rest-client/rest-client",
@@ -22558,7 +22493,7 @@
       "score": 5213
     },
     {
-      "id": 300,
+      "id": 298,
       "name": "php-webdriver",
       "full_name": "php-webdriver/php-webdriver",
       "url": "https://github.com/php-webdriver/php-webdriver",
@@ -22597,6 +22532,87 @@
       "release_assets": [],
       "status": "no_release_recent_repo",
       "score": 5194
+    },
+    {
+      "id": 299,
+      "name": "v2board",
+      "full_name": "v2board/v2board",
+      "url": "https://github.com/v2board/v2board",
+      "description": "🚀A multiple proxy protocol manage panel application interface",
+      "language": "PHP",
+      "topics": [
+        "hysteria",
+        "panel",
+        "shadowsocks",
+        "sspanel",
+        "trojan",
+        "v2board",
+        "v2panel",
+        "v2ray",
+        "vless"
+      ],
+      "stars": 5064,
+      "forks": 1843,
+      "archived": false,
+      "pushed_at": "2024-03-19T03:02:35Z",
+      "query_slugs": [
+        "repo"
+      ],
+      "has_release": true,
+      "latest_release_tag": "1.7.4",
+      "latest_release_name": "1.7.4",
+      "latest_release_url": "https://github.com/v2board/v2board/releases/tag/1.7.4",
+      "latest_release_published_at": "2023-06-03T17:48:06Z",
+      "release_age_days": 1244,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [],
+      "platforms_text": "Unknown",
+      "release_assets_count": 0,
+      "release_assets": [],
+      "status": "outdated",
+      "score": 5064
+    },
+    {
+      "id": 300,
+      "name": "Shadowrocket",
+      "full_name": "LOWERTOP/Shadowrocket",
+      "url": "https://github.com/LOWERTOP/Shadowrocket",
+      "description": "Shadowrocket 使用手册 补完计划",
+      "language": "HTML",
+      "topics": [
+        "shadowrocket"
+      ],
+      "stars": 4992,
+      "forks": 391,
+      "archived": false,
+      "pushed_at": "2026-10-17T05:58:51Z",
+      "query_slugs": [
+        "code",
+        "repo"
+      ],
+      "has_release": false,
+      "latest_release_tag": null,
+      "latest_release_name": null,
+      "latest_release_url": null,
+      "latest_release_published_at": null,
+      "release_age_days": null,
+      "platforms": {
+        "android": false,
+        "ios": false,
+        "windows": false,
+        "linux": false
+      },
+      "platform_labels": [],
+      "platforms_text": "Unknown",
+      "release_assets_count": 0,
+      "release_assets": [],
+      "status": "no_release_recent_repo",
+      "score": 4992
     }
   ]
 }
