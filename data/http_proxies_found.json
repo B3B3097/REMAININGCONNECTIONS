@@ -1,5 +1,18 @@
 {
-  "generated_at": "2026-11-02T09:45:35.431966+00:00",
-  "total_working": 0,
-  "proxies": []
+  "generated_at": "2026-11-02T20:29:19.448395+00:00",
+  "total_checked": 139,
+  "total_working": 1,
+  "success_rate": 0.72,
+  "proxies": [
+    {
+      "host": "5.104.174.199",
+      "port": 23500,
+      "protocol": "http",
+      "type": "http",
+      "latency_ms": 8484.81,
+      "status": "working",
+      "verified_at": "2026-11-02T20:29:05.936934+00:00",
+      "source": "jetkai/proxy-list"
+    }
+  ]
 }
