@@ -1,5 +1,18 @@
 {
-  "generated_at": "2026-11-05T23:46:10.905716+00:00",
-  "total_working": 0,
-  "proxies": []
+  "generated_at": "2026-11-06T07:09:00.186479+00:00",
+  "total_checked": 141,
+  "total_working": 1,
+  "success_rate": 0.71,
+  "proxies": [
+    {
+      "host": "1.1.189.58",
+      "port": 8080,
+      "protocol": "http",
+      "type": "http",
+      "latency_ms": 2479.47,
+      "status": "working",
+      "verified_at": "2026-11-06T07:08:40.665879+00:00",
+      "source": "jetkai/proxy-list"
+    }
+  ]
 }
